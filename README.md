@@ -7,4 +7,4 @@ Uses:
 
 - vobcopy
 - cat
-- ffmpeg.
+- ffmpeg
