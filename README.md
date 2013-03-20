@@ -5,6 +5,6 @@ Mp4DVD is a simple GUI for ripping DVDs into mp4s.
 
 Uses:
 
--vobcopy
--cat
--ffmpeg.
+- vobcopy
+- cat
+- ffmpeg.
