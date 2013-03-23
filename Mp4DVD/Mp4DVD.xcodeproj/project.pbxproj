@@ -1,0 +1,443 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0A30B59816FA5C4E008EA990 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A30B59716FA5C4E008EA990 /* Cocoa.framework */; };
+		0A30B5A216FA5C4E008EA990 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0A30B5A016FA5C4E008EA990 /* InfoPlist.strings */; };
+		0A30B5A416FA5C4E008EA990 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A30B5A316FA5C4E008EA990 /* main.m */; };
+		0A30B5A816FA5C4E008EA990 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 0A30B5A616FA5C4E008EA990 /* Credits.rtf */; };
+		0A30B5AB16FA5C4E008EA990 /* POPAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A30B5AA16FA5C4E008EA990 /* POPAppDelegate.m */; };
+		0A30B5AE16FA5C4F008EA990 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0A30B5AC16FA5C4F008EA990 /* MainMenu.xib */; };
+		0A30B5BE16FA6971008EA990 /* mp4dvd.icns in Resources */ = {isa = PBXBuildFile; fileRef = 0A30B5BD16FA6971008EA990 /* mp4dvd.icns */; };
+		0A30B5C016FAAB73008EA990 /* dropdvdhere.png in Resources */ = {isa = PBXBuildFile; fileRef = 0A30B5BF16FAAB73008EA990 /* dropdvdhere.png */; };
+		0A30B5C316FACF0A008EA990 /* POPDropDVDImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A30B5C216FACF0A008EA990 /* POPDropDVDImageView.m */; };
+		0A30B5C716FAE902008EA990 /* POPVobcopy.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A30B5C616FAE902008EA990 /* POPVobcopy.m */; };
+		0A30B5D316FB56F7008EA990 /* POPXMLReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A30B5D216FB56F7008EA990 /* POPXMLReader.m */; };
+		0A30B5D616FB573A008EA990 /* POPLsDvd.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A30B5D516FB573A008EA990 /* POPLsDvd.m */; };
+		0A30B5D916FB7887008EA990 /* POPDvdTracks.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A30B5D816FB7887008EA990 /* POPDvdTracks.m */; };
+		0A30B5DC16FB8BE4008EA990 /* POPTimeConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A30B5DB16FB8BE4008EA990 /* POPTimeConverter.m */; };
+		0A30B5DE16FB8F97008EA990 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A30B5DD16FB8F97008EA990 /* QTKit.framework */; };
+		0A30B5E616FB9AEF008EA990 /* POPDvdTracksViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A30B5E516FB9AEF008EA990 /* POPDvdTracksViewController.m */; };
+		0A30B5E916FC0194008EA990 /* POPDvd2Mp4.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A30B5E816FC0194008EA990 /* POPDvd2Mp4.m */; };
+		0A30B5ED16FCC42B008EA990 /* POPConcat.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A30B5EC16FCC42B008EA990 /* POPConcat.m */; };
+		0A30B62016FCEF6E008EA990 /* POPFfmpeg.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A30B61F16FCEF6E008EA990 /* POPFfmpeg.m */; };
+		0A30B62216FD0AF0008EA990 /* ffmpeg in Resources */ = {isa = PBXBuildFile; fileRef = 0A30B62116FD0AF0008EA990 /* ffmpeg */; };
+		0A30B62516FD0B5E008EA990 /* lsdvd in Resources */ = {isa = PBXBuildFile; fileRef = 0A30B62316FD0B5E008EA990 /* lsdvd */; };
+		0A30B62616FD0B5E008EA990 /* vobcopy in Resources */ = {isa = PBXBuildFile; fileRef = 0A30B62416FD0B5E008EA990 /* vobcopy */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0A30B59316FA5C4E008EA990 /* Mp4DVD.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mp4DVD.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0A30B59716FA5C4E008EA990 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		0A30B59A16FA5C4E008EA990 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		0A30B59B16FA5C4E008EA990 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		0A30B59C16FA5C4E008EA990 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		0A30B59F16FA5C4E008EA990 /* Mp4DVD-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Mp4DVD-Info.plist"; sourceTree = "<group>"; };
+		0A30B5A116FA5C4E008EA990 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		0A30B5A316FA5C4E008EA990 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		0A30B5A516FA5C4E008EA990 /* Mp4DVD-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Mp4DVD-Prefix.pch"; sourceTree = "<group>"; };
+		0A30B5A716FA5C4E008EA990 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		0A30B5A916FA5C4E008EA990 /* POPAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = POPAppDelegate.h; sourceTree = "<group>"; };
+		0A30B5AA16FA5C4E008EA990 /* POPAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = POPAppDelegate.m; sourceTree = "<group>"; };
+		0A30B5AD16FA5C4F008EA990 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		0A30B5BD16FA6971008EA990 /* mp4dvd.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = mp4dvd.icns; sourceTree = "<group>"; };
+		0A30B5BF16FAAB73008EA990 /* dropdvdhere.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = dropdvdhere.png; path = artwork/dropdvdhere.png; sourceTree = "<group>"; };
+		0A30B5C116FACF0A008EA990 /* POPDropDVDImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POPDropDVDImageView.h; sourceTree = "<group>"; };
+		0A30B5C216FACF0A008EA990 /* POPDropDVDImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POPDropDVDImageView.m; sourceTree = "<group>"; };
+		0A30B5C516FAE902008EA990 /* POPVobcopy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POPVobcopy.h; sourceTree = "<group>"; };
+		0A30B5C616FAE902008EA990 /* POPVobcopy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POPVobcopy.m; sourceTree = "<group>"; };
+		0A30B5D116FB56F7008EA990 /* POPXMLReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POPXMLReader.h; sourceTree = "<group>"; };
+		0A30B5D216FB56F7008EA990 /* POPXMLReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POPXMLReader.m; sourceTree = "<group>"; };
+		0A30B5D416FB573A008EA990 /* POPLsDvd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POPLsDvd.h; sourceTree = "<group>"; };
+		0A30B5D516FB573A008EA990 /* POPLsDvd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POPLsDvd.m; sourceTree = "<group>"; };
+		0A30B5D716FB7887008EA990 /* POPDvdTracks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POPDvdTracks.h; sourceTree = "<group>"; };
+		0A30B5D816FB7887008EA990 /* POPDvdTracks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POPDvdTracks.m; sourceTree = "<group>"; };
+		0A30B5DA16FB8BE4008EA990 /* POPTimeConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POPTimeConverter.h; sourceTree = "<group>"; };
+		0A30B5DB16FB8BE4008EA990 /* POPTimeConverter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POPTimeConverter.m; sourceTree = "<group>"; };
+		0A30B5DD16FB8F97008EA990 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = System/Library/Frameworks/QTKit.framework; sourceTree = SDKROOT; };
+		0A30B5E416FB9AEF008EA990 /* POPDvdTracksViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POPDvdTracksViewController.h; sourceTree = "<group>"; };
+		0A30B5E516FB9AEF008EA990 /* POPDvdTracksViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POPDvdTracksViewController.m; sourceTree = "<group>"; };
+		0A30B5E716FC0193008EA990 /* POPDvd2Mp4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POPDvd2Mp4.h; sourceTree = "<group>"; };
+		0A30B5E816FC0194008EA990 /* POPDvd2Mp4.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POPDvd2Mp4.m; sourceTree = "<group>"; };
+		0A30B5EB16FCC42B008EA990 /* POPConcat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POPConcat.h; sourceTree = "<group>"; };
+		0A30B5EC16FCC42B008EA990 /* POPConcat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POPConcat.m; sourceTree = "<group>"; };
+		0A30B61E16FCEF6E008EA990 /* POPFfmpeg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POPFfmpeg.h; sourceTree = "<group>"; };
+		0A30B61F16FCEF6E008EA990 /* POPFfmpeg.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POPFfmpeg.m; sourceTree = "<group>"; };
+		0A30B62116FD0AF0008EA990 /* ffmpeg */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = ffmpeg; sourceTree = "<group>"; };
+		0A30B62316FD0B5E008EA990 /* lsdvd */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = lsdvd; sourceTree = "<group>"; };
+		0A30B62416FD0B5E008EA990 /* vobcopy */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = vobcopy; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0A30B59016FA5C4E008EA990 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0A30B5DE16FB8F97008EA990 /* QTKit.framework in Frameworks */,
+				0A30B59816FA5C4E008EA990 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0A30B58816FA5C4E008EA990 = {
+			isa = PBXGroup;
+			children = (
+				0A30B5DD16FB8F97008EA990 /* QTKit.framework */,
+				0A30B5BD16FA6971008EA990 /* mp4dvd.icns */,
+				0A30B59D16FA5C4E008EA990 /* Mp4DVD */,
+				0A30B59616FA5C4E008EA990 /* Frameworks */,
+				0A30B59416FA5C4E008EA990 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		0A30B59416FA5C4E008EA990 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0A30B59316FA5C4E008EA990 /* Mp4DVD.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0A30B59616FA5C4E008EA990 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0A30B59716FA5C4E008EA990 /* Cocoa.framework */,
+				0A30B59916FA5C4E008EA990 /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		0A30B59916FA5C4E008EA990 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0A30B59A16FA5C4E008EA990 /* AppKit.framework */,
+				0A30B59B16FA5C4E008EA990 /* CoreData.framework */,
+				0A30B59C16FA5C4E008EA990 /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		0A30B59D16FA5C4E008EA990 /* Mp4DVD */ = {
+			isa = PBXGroup;
+			children = (
+				0A30B5EA16FCB441008EA990 /* Models */,
+				0A30B5C816FAE91C008EA990 /* Views */,
+				0A30B5C916FAE937008EA990 /* Controllers */,
+				0A30B5CA16FAE957008EA990 /* Bin Wrappers */,
+				0A30B5D016FB56BB008EA990 /* Helpers */,
+				0A30B5B416FA6061008EA990 /* artwork */,
+				0A30B59E16FA5C4E008EA990 /* Supporting Files */,
+			);
+			path = Mp4DVD;
+			sourceTree = "<group>";
+		};
+		0A30B59E16FA5C4E008EA990 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				0A30B59F16FA5C4E008EA990 /* Mp4DVD-Info.plist */,
+				0A30B5A016FA5C4E008EA990 /* InfoPlist.strings */,
+				0A30B5A316FA5C4E008EA990 /* main.m */,
+				0A30B5A516FA5C4E008EA990 /* Mp4DVD-Prefix.pch */,
+				0A30B5A616FA5C4E008EA990 /* Credits.rtf */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		0A30B5B416FA6061008EA990 /* artwork */ = {
+			isa = PBXGroup;
+			children = (
+				0A30B5BF16FAAB73008EA990 /* dropdvdhere.png */,
+			);
+			name = artwork;
+			sourceTree = "<group>";
+		};
+		0A30B5C816FAE91C008EA990 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				0A30B5C116FACF0A008EA990 /* POPDropDVDImageView.h */,
+				0A30B5C216FACF0A008EA990 /* POPDropDVDImageView.m */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		0A30B5C916FAE937008EA990 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				0A30B5AC16FA5C4F008EA990 /* MainMenu.xib */,
+				0A30B5A916FA5C4E008EA990 /* POPAppDelegate.h */,
+				0A30B5AA16FA5C4E008EA990 /* POPAppDelegate.m */,
+				0A30B5E416FB9AEF008EA990 /* POPDvdTracksViewController.h */,
+				0A30B5E516FB9AEF008EA990 /* POPDvdTracksViewController.m */,
+			);
+			name = Controllers;
+			sourceTree = "<group>";
+		};
+		0A30B5CA16FAE957008EA990 /* Bin Wrappers */ = {
+			isa = PBXGroup;
+			children = (
+				0A30B5CB16FAE9A7008EA990 /* Bins */,
+				0A30B5D416FB573A008EA990 /* POPLsDvd.h */,
+				0A30B5D516FB573A008EA990 /* POPLsDvd.m */,
+				0A30B5C516FAE902008EA990 /* POPVobcopy.h */,
+				0A30B5C616FAE902008EA990 /* POPVobcopy.m */,
+				0A30B5EB16FCC42B008EA990 /* POPConcat.h */,
+				0A30B5EC16FCC42B008EA990 /* POPConcat.m */,
+				0A30B61E16FCEF6E008EA990 /* POPFfmpeg.h */,
+				0A30B61F16FCEF6E008EA990 /* POPFfmpeg.m */,
+			);
+			name = "Bin Wrappers";
+			sourceTree = "<group>";
+		};
+		0A30B5CB16FAE9A7008EA990 /* Bins */ = {
+			isa = PBXGroup;
+			children = (
+				0A30B62316FD0B5E008EA990 /* lsdvd */,
+				0A30B62416FD0B5E008EA990 /* vobcopy */,
+				0A30B62116FD0AF0008EA990 /* ffmpeg */,
+			);
+			name = Bins;
+			sourceTree = "<group>";
+		};
+		0A30B5D016FB56BB008EA990 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				0A30B5DA16FB8BE4008EA990 /* POPTimeConverter.h */,
+				0A30B5DB16FB8BE4008EA990 /* POPTimeConverter.m */,
+				0A30B5D116FB56F7008EA990 /* POPXMLReader.h */,
+				0A30B5D216FB56F7008EA990 /* POPXMLReader.m */,
+			);
+			name = Helpers;
+			sourceTree = "<group>";
+		};
+		0A30B5EA16FCB441008EA990 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				0A30B5D716FB7887008EA990 /* POPDvdTracks.h */,
+				0A30B5D816FB7887008EA990 /* POPDvdTracks.m */,
+				0A30B5E716FC0193008EA990 /* POPDvd2Mp4.h */,
+				0A30B5E816FC0194008EA990 /* POPDvd2Mp4.m */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		0A30B59216FA5C4E008EA990 /* Mp4DVD */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0A30B5B116FA5C4F008EA990 /* Build configuration list for PBXNativeTarget "Mp4DVD" */;
+			buildPhases = (
+				0A30B58F16FA5C4E008EA990 /* Sources */,
+				0A30B59016FA5C4E008EA990 /* Frameworks */,
+				0A30B59116FA5C4E008EA990 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Mp4DVD;
+			productName = Mp4DVD;
+			productReference = 0A30B59316FA5C4E008EA990 /* Mp4DVD.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0A30B58A16FA5C4E008EA990 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = POP;
+				LastUpgradeCheck = 0450;
+				ORGANIZATIONNAME = "Popmedic Labs";
+			};
+			buildConfigurationList = 0A30B58D16FA5C4E008EA990 /* Build configuration list for PBXProject "Mp4DVD" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 0A30B58816FA5C4E008EA990;
+			productRefGroup = 0A30B59416FA5C4E008EA990 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0A30B59216FA5C4E008EA990 /* Mp4DVD */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0A30B59116FA5C4E008EA990 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0A30B5A216FA5C4E008EA990 /* InfoPlist.strings in Resources */,
+				0A30B5A816FA5C4E008EA990 /* Credits.rtf in Resources */,
+				0A30B5AE16FA5C4F008EA990 /* MainMenu.xib in Resources */,
+				0A30B5BE16FA6971008EA990 /* mp4dvd.icns in Resources */,
+				0A30B5C016FAAB73008EA990 /* dropdvdhere.png in Resources */,
+				0A30B62216FD0AF0008EA990 /* ffmpeg in Resources */,
+				0A30B62516FD0B5E008EA990 /* lsdvd in Resources */,
+				0A30B62616FD0B5E008EA990 /* vobcopy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0A30B58F16FA5C4E008EA990 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0A30B5A416FA5C4E008EA990 /* main.m in Sources */,
+				0A30B5AB16FA5C4E008EA990 /* POPAppDelegate.m in Sources */,
+				0A30B5C316FACF0A008EA990 /* POPDropDVDImageView.m in Sources */,
+				0A30B5C716FAE902008EA990 /* POPVobcopy.m in Sources */,
+				0A30B5D316FB56F7008EA990 /* POPXMLReader.m in Sources */,
+				0A30B5D616FB573A008EA990 /* POPLsDvd.m in Sources */,
+				0A30B5D916FB7887008EA990 /* POPDvdTracks.m in Sources */,
+				0A30B5DC16FB8BE4008EA990 /* POPTimeConverter.m in Sources */,
+				0A30B5E616FB9AEF008EA990 /* POPDvdTracksViewController.m in Sources */,
+				0A30B5E916FC0194008EA990 /* POPDvd2Mp4.m in Sources */,
+				0A30B5ED16FCC42B008EA990 /* POPConcat.m in Sources */,
+				0A30B62016FCEF6E008EA990 /* POPFfmpeg.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		0A30B5A016FA5C4E008EA990 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0A30B5A116FA5C4E008EA990 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		0A30B5A616FA5C4E008EA990 /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0A30B5A716FA5C4E008EA990 /* en */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+		0A30B5AC16FA5C4F008EA990 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0A30B5AD16FA5C4F008EA990 /* en */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		0A30B5AF16FA5C4F008EA990 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		0A30B5B016FA5C4F008EA990 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		0A30B5B216FA5C4F008EA990 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Mp4DVD/Mp4DVD-Prefix.pch";
+				INFOPLIST_FILE = "Mp4DVD/Mp4DVD-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		0A30B5B316FA5C4F008EA990 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Mp4DVD/Mp4DVD-Prefix.pch";
+				INFOPLIST_FILE = "Mp4DVD/Mp4DVD-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0A30B58D16FA5C4E008EA990 /* Build configuration list for PBXProject "Mp4DVD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0A30B5AF16FA5C4F008EA990 /* Debug */,
+				0A30B5B016FA5C4F008EA990 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0A30B5B116FA5C4F008EA990 /* Build configuration list for PBXNativeTarget "Mp4DVD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0A30B5B216FA5C4F008EA990 /* Debug */,
+				0A30B5B316FA5C4F008EA990 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0A30B58A16FA5C4E008EA990 /* Project object */;
+}
