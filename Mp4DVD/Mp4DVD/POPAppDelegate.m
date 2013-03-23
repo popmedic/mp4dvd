@@ -52,13 +52,15 @@
 
 - (IBAction)cancelRipButtonClick:(id)sender
 {
-	[_dvd2mp4 terminate];
-	[self setCurrentPage:POPMp4DVDPageTrackSelect];
-}
-
-- (IBAction)closeButtonClick:(id)sender
-{
-	[self setCurrentPage:POPMp4DVDPageDVDDrop];
+	if([[[self cancelRipButton] title] compare:@"Cancel"] == 0)
+	{
+		[[self cancelRipButton] setTitle:@"Close"];
+		[_dvd2mp4 terminate];
+	}
+	else if([[[self cancelRipButton] title] compare:@"Close"] == 0)
+	{
+		[[self window] close];
+	}
 }
 
 -(POPMp4DVDPage)currentPage
@@ -161,15 +163,20 @@
 }
 -(void) stageProgress:(POPDvd2Mp4Stage)stage progress:(float)percent
 {
-	double overall = 0;
-	if(percent > 0)
+	double overall;
+	if(stage != 0)
+		overall = (percent/3.0)+(((float)stage/3.0)*100.0);
+	else
+		overall = (percent/3.0);//percent*(((float)stage+1.0)/3.0);
+	//	NSLog(@"%f/3.0 = %f * %f = %f",(float)stage, t, percent, overall);
+	/*if(percent > 0)
 	{
 		overall = (((double)percent/3.0)*(double)stage);
 	}
 	else
 	{
 		overall = ((double)stage/3.0)*(double)(stage-1);
-	}
+	}*/
 	[[self currentProgressIndicator] setDoubleValue:percent];
 	[[self overallProgressIndicator] setDoubleValue:overall];
 	[[self currentProgressIndicator] display];

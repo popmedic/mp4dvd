@@ -25,6 +25,7 @@ typedef enum
 @property (assign) IBOutlet NSBox *tracksBoxView;
 @property (assign) IBOutlet NSButton *ripButton;
 @property (assign) IBOutlet NSBox *ripBoxView;
+@property (assign) IBOutlet NSButton *cancelRipButton;
 @property (assign) IBOutlet NSTextField *currentProgressLabel;
 @property (assign) IBOutlet NSProgressIndicator *currentProgressIndicator;
 @property (assign) IBOutlet NSTextField *overallProgressLabel;
@@ -37,7 +38,6 @@ typedef enum
 
 - (IBAction)ripButtonClick:(id)sender;
 - (IBAction)cancelRipButtonClick:(id)sender;
-- (IBAction)closeButtonClick:(id)sender;
 
 -(void)dvdDragEnded:(NSString*)path;
 
