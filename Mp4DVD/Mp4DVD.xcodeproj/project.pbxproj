@@ -29,6 +29,8 @@
 		0A30B62216FD0AF0008EA990 /* ffmpeg in Resources */ = {isa = PBXBuildFile; fileRef = 0A30B62116FD0AF0008EA990 /* ffmpeg */; };
 		0A30B62516FD0B5E008EA990 /* lsdvd in Resources */ = {isa = PBXBuildFile; fileRef = 0A30B62316FD0B5E008EA990 /* lsdvd */; };
 		0A30B62616FD0B5E008EA990 /* vobcopy in Resources */ = {isa = PBXBuildFile; fileRef = 0A30B62416FD0B5E008EA990 /* vobcopy */; };
+		0A80C00D17038E2A00903BCB /* POPmp4v2dylibloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A80C00C17038E2A00903BCB /* POPmp4v2dylibloader.m */; };
+		0A80C00F17038EEC00903BCB /* libmp4v2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A80C00E17038EEC00903BCB /* libmp4v2.2.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -71,6 +73,10 @@
 		0A30B62116FD0AF0008EA990 /* ffmpeg */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = ffmpeg; sourceTree = "<group>"; };
 		0A30B62316FD0B5E008EA990 /* lsdvd */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = lsdvd; sourceTree = "<group>"; };
 		0A30B62416FD0B5E008EA990 /* vobcopy */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = vobcopy; sourceTree = "<group>"; };
+		0A80C00717037D4F00903BCB /* Mp4DVD.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Mp4DVD.entitlements; sourceTree = "<group>"; };
+		0A80C00B17038E2A00903BCB /* POPmp4v2dylibloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POPmp4v2dylibloader.h; sourceTree = "<group>"; };
+		0A80C00C17038E2A00903BCB /* POPmp4v2dylibloader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POPmp4v2dylibloader.m; sourceTree = "<group>"; };
+		0A80C00E17038EEC00903BCB /* libmp4v2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libmp4v2.2.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +86,7 @@
 			files = (
 				0A30B5DE16FB8F97008EA990 /* QTKit.framework in Frameworks */,
 				0A30B59816FA5C4E008EA990 /* Cocoa.framework in Frameworks */,
+				0A80C00F17038EEC00903BCB /* libmp4v2.2.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -127,6 +134,7 @@
 		0A30B59D16FA5C4E008EA990 /* Mp4DVD */ = {
 			isa = PBXGroup;
 			children = (
+				0A80C00717037D4F00903BCB /* Mp4DVD.entitlements */,
 				0A30B5EA16FCB441008EA990 /* Models */,
 				0A30B5C816FAE91C008EA990 /* Views */,
 				0A30B5C916FAE937008EA990 /* Controllers */,
@@ -191,6 +199,8 @@
 				0A30B5EC16FCC42B008EA990 /* POPConcat.m */,
 				0A30B61E16FCEF6E008EA990 /* POPFfmpeg.h */,
 				0A30B61F16FCEF6E008EA990 /* POPFfmpeg.m */,
+				0A80C00B17038E2A00903BCB /* POPmp4v2dylibloader.h */,
+				0A80C00C17038E2A00903BCB /* POPmp4v2dylibloader.m */,
 			);
 			name = "Bin Wrappers";
 			sourceTree = "<group>";
@@ -198,6 +208,7 @@
 		0A30B5CB16FAE9A7008EA990 /* Bins */ = {
 			isa = PBXGroup;
 			children = (
+				0A80C00E17038EEC00903BCB /* libmp4v2.2.dylib */,
 				0A30B62316FD0B5E008EA990 /* lsdvd */,
 				0A30B62416FD0B5E008EA990 /* vobcopy */,
 				0A30B62116FD0AF0008EA990 /* ffmpeg */,
@@ -309,6 +320,7 @@
 				0A30B5E916FC0194008EA990 /* POPDvd2Mp4.m in Sources */,
 				0A30B5ED16FCC42B008EA990 /* POPConcat.m in Sources */,
 				0A30B62016FCEF6E008EA990 /* POPFfmpeg.m in Sources */,
+				0A80C00D17038E2A00903BCB /* POPmp4v2dylibloader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -365,6 +377,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -384,11 +397,15 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = /usr/local/include;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -396,10 +413,15 @@
 		0A30B5B216FA5C4F008EA990 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Mp4DVD/Mp4DVD-Prefix.pch";
 				INFOPLIST_FILE = "Mp4DVD/Mp4DVD-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Mp4DVD\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -408,10 +430,15 @@
 		0A30B5B316FA5C4F008EA990 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Mp4DVD/Mp4DVD-Prefix.pch";
 				INFOPLIST_FILE = "Mp4DVD/Mp4DVD-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Mp4DVD\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -436,6 +463,7 @@
 				0A30B5B316FA5C4F008EA990 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

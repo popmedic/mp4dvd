@@ -12,6 +12,7 @@
 @implementation POPFfmpeg
 {
 	NSString* _ffmpegPath;
+	NSString* _ffmpegOut;
 }
 
 +(BOOL)checkIfFfmpegBinary:(NSString*)path
@@ -50,6 +51,7 @@
 	_ffmpegTask = [[NSTask alloc] init];
 	_isEncoding = NO;
 	_trackDuration = duration;
+	_ffmpegOut = @"";
 	
 	NSString* ffmpegPath = [[NSUserDefaults standardUserDefaults] objectForKey:@"ffmpeg-path"];
 	if(ffmpegPath == nil) ffmpegPath = @"";
@@ -58,8 +60,7 @@
 	[_ffmpegTask setLaunchPath:[self ffmpegPath]];
 	[_ffmpegTask setStandardOutput:[[NSPipe alloc] init]];
 	[_ffmpegTask setStandardError:[_ffmpegTask standardOutput]];
-	[_ffmpegTask setArguments:[NSArray arrayWithObjects:@"-y", @"-i", inputPath,
-							  @"-copyts", @"-vsync", @"passthrough", 
+	[_ffmpegTask setArguments:[NSArray arrayWithObjects:@"-y", @"-i", inputPath, 
 							  @"-acodec", @"libfaac", @"-ac", @"2", @"-ab", @"128k",
 							  @"-vcodec", @"libx264", @"-threads", @"0", outputPath,nil]];
 	
@@ -74,9 +75,9 @@
      object:[[_ffmpegTask standardOutput] fileHandleForReading]];
     
 	[_ffmpegTask waitUntilExit];
-	if([_ffmpegTask terminationStatus] != 0)
+	if([_ffmpegTask terminationStatus] != 0 && _isEncoding == YES)
 	{
-		NSRunAlertPanel(@"FFMPEG ERROR", [NSString stringWithFormat:@"ffmpeg was unable to complete its task with exit status %i", [_ffmpegTask terminationStatus]], @"OK", nil, nil);
+		NSRunAlertPanel(@"FFMPEG ERROR", [NSString stringWithFormat:@"ffmpeg was unable to complete its task with exit status %i\n\n%@", [_ffmpegTask terminationStatus], _ffmpegOut], @"OK", nil, nil);
 	}
 	
 	_isEncoding = NO;
@@ -117,6 +118,10 @@
 						{
 							[_delegate ffmpegProgress:(currentSecs/_trackDuration)*100];
 						}
+					}
+					else
+					{
+						_ffmpegOut = [[_ffmpegOut stringByAppendingString:[line stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]] copy];
 					}
 				}
 			}

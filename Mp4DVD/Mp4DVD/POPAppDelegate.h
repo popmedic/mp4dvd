@@ -30,6 +30,8 @@ typedef enum
 @property (assign) IBOutlet NSProgressIndicator *currentProgressIndicator;
 @property (assign) IBOutlet NSTextField *overallProgressLabel;
 @property (assign) IBOutlet NSProgressIndicator *overallProgressIndicator;
+@property (assign) IBOutlet NSProgressIndicator *tracksProgressIndicator;
+@property (assign) IBOutlet NSTextField *tracksProgressLabel;
 
 @property (getter=currentPage,setter=setCurrentPage:) POPMp4DVDPage currentPage;
 @property (retain) NSString* outputFileBasePath;

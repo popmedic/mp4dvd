@@ -16,6 +16,8 @@
 	POPMp4DVDPage _currentPage;
 	POPDvdTracks* _tracks;
 	POPDvdTracksViewController* _tracksViewController;
+	NSInteger _currentConvertTrackIndex;
+	NSInteger _currentConvertTrackCount;
 }
 - (void)dealloc
 {
@@ -83,7 +85,7 @@
 		[[self ripBoxView] setTitle:[_outputFileBasePath lastPathComponent]];
 		
 		_dvd2mp4 = [[POPDvd2Mp4 alloc] initWithTracks:_tracks
-											  dvdPath:_dvdPath
+											  dvdPath:[_dvdPath stringByResolvingSymlinksInPath]
 								   outputFileBasePath:_outputFileBasePath];
 		[_dvd2mp4 setDelegate:self];
 		[_dvd2mp4 launch];
@@ -125,24 +127,30 @@
 	NSLog(@"Ripping Started.");
 	[[self currentProgressLabel] setStringValue:@"Ripping Started..."];
 	[[self currentProgressIndicator] setDoubleValue:0.0];
+	[[self tracksProgressLabel] setStringValue:[NSString stringWithFormat:@"Ripping: %@", _tracks.device]];
+	[[self tracksProgressIndicator] setDoubleValue:0.0];
 	[[self overallProgressLabel] setStringValue:[NSString stringWithFormat:@"Ripping: %@", _tracks.device]];
 	[[self overallProgressIndicator] setDoubleValue:0.0];
 	[[self currentProgressLabel] display];
 	[[self currentProgressIndicator] display];
+	[[self tracksProgressLabel] display];
+	[[self tracksProgressIndicator] display];
 	[[self overallProgressLabel] display];
 	[[self overallProgressIndicator] display];
 }
 -(void) converterStarted:(NSInteger)i Of:(NSInteger)n
 {
 	NSLog(@"Converter Started. %li of %li", i, n);
+	_currentConvertTrackIndex = i;
+	_currentConvertTrackCount = n;
 	[[self currentProgressLabel] setStringValue:[NSString stringWithFormat:@"Converting track %li of %li.", i, n]];
-	[[self overallProgressLabel] setStringValue:[NSString stringWithFormat:@"Converting track %li of %li.", i, n]];
-	[[self overallProgressIndicator] setDoubleValue:(i/n)*100];
+	[[self tracksProgressLabel] setStringValue:[NSString stringWithFormat:@"Converting track %li of %li.", i, n]];
+	[[self tracksProgressIndicator] setDoubleValue:(i/n)*100];
 	[[self currentProgressIndicator] setDoubleValue:0.0];
 	[[self currentProgressLabel] display];
 	[[self currentProgressIndicator] display];
-	[[self overallProgressLabel] display];
-	[[self overallProgressIndicator] display];
+	[[self tracksProgressLabel] display];
+	[[self tracksProgressIndicator] display];
 }
 -(void) stageStarted:(NSInteger)i Of:(NSInteger)n
 {
@@ -164,22 +172,17 @@
 -(void) stageProgress:(POPDvd2Mp4Stage)stage progress:(float)percent
 {
 	double overall;
-	if(stage != 0)
-		overall = (percent/3.0)+(((float)stage/3.0)*100.0);
-	else
-		overall = (percent/3.0);//percent*(((float)stage+1.0)/3.0);
-	//	NSLog(@"%f/3.0 = %f * %f = %f",(float)stage, t, percent, overall);
-	/*if(percent > 0)
-	{
-		overall = (((double)percent/3.0)*(double)stage);
-	}
-	else
-	{
-		overall = ((double)stage/3.0)*(double)(stage-1);
-	}*/
+	double track;
+	
+	track = (percent/(double)POPDvd2Mp4NumberOfStages)+(((double)stage/(double)POPDvd2Mp4NumberOfStages)*100.0);
+	overall = (track/(double)_currentConvertTrackCount)+(((double)_currentConvertTrackIndex-1/(double)_currentConvertTrackCount)*100.0);
+	
 	[[self currentProgressIndicator] setDoubleValue:percent];
+	[[self tracksProgressIndicator] setDoubleValue:track];
 	[[self overallProgressIndicator] setDoubleValue:overall];
 	[[self currentProgressIndicator] display];
+	[[self tracksProgressIndicator] display];
+	[[self overallProgressIndicator] display];
 }
 -(void) stageEnded:(NSInteger)i Of:(NSInteger)n
 {
@@ -194,11 +197,14 @@
 	NSLog(@"Rip Ended.");
 	[[self currentProgressLabel] setStringValue:[NSString stringWithFormat:@"Rip Finished"]];
 	[[self overallProgressLabel] setStringValue:[NSString stringWithFormat:@"Rip Finished."]];
+	[[self tracksProgressLabel] setStringValue:[NSString stringWithFormat:@"Rip Finished."]];
+	[[self tracksProgressIndicator] setDoubleValue:100.0];
 	[[self overallProgressIndicator] setDoubleValue:100.0];
 	[[self currentProgressIndicator] setDoubleValue:100.0];
 	[[self currentProgressLabel] display];
 	[[self currentProgressIndicator] display];
 	[[self overallProgressLabel] display];
 	[[self overallProgressIndicator] display];
+	[[self cancelRipButton] setTitle:@"Close"];
 }
 @end

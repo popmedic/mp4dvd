@@ -12,6 +12,7 @@
 {
 	NSTask* vobcopyTask;
 	NSString* _vobcopyPath;
+	NSString* _vobOut;
 }
 
 +(BOOL)checkIfVobcopyBinary:(NSString*)path
@@ -49,6 +50,7 @@
 	
 	vobcopyTask = [[NSTask alloc] init];
 	_isCopying = NO;
+	_vobOut = @"";
 	
 	NSString* vobcopyPath = [[NSUserDefaults standardUserDefaults] objectForKey:@"vobcopy-path"];
 	if(vobcopyPath == nil) vobcopyPath = @"";
@@ -70,9 +72,9 @@
      object:[[vobcopyTask standardOutput] fileHandleForReading]];
     
 	[vobcopyTask waitUntilExit];
-	if([vobcopyTask terminationStatus] != 0)
+	if([vobcopyTask terminationStatus] != 0 && _isCopying == YES)
 	{
-		NSRunAlertPanel(@"VOBCOPY ERROR", [NSString stringWithFormat:@"vobcopy was unable to complete its task with exit status %i", [vobcopyTask terminationStatus]], @"OK", nil, nil);
+		NSRunAlertPanel(@"VOBCOPY ERROR", [NSString stringWithFormat:@"vobcopy was unable to complete its task with exit status %i\n\n%@", [vobcopyTask terminationStatus], _vobOut], @"OK", nil, nil);
 	}
 	
 	_isCopying = NO;
@@ -114,6 +116,10 @@
 						{
 							[_delegate vobcopyProgress:percent];
 						}
+					}
+					else
+					{
+						_vobOut = [[_vobOut stringByAppendingString:[line stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]] copy];//[line stringByAppendingString:@"\r"]];
 					}
 				}
 			}

@@ -7,6 +7,7 @@
 //
 
 #import "POPDvd2Mp4.h"
+#import "POPmp4v2dylibloader.h"
 
 @implementation POPDvd2Mp4TrackConverter
 {
@@ -25,12 +26,16 @@
 	_outputFileName = [outputFilePath copy];
 	_isConverting = NO;
 	
-	_tempFolderPath = [NSTemporaryDirectory() stringByAppendingPathComponent:[[[_outputFileName lastPathComponent] stringByDeletingPathExtension] stringByAppendingFormat:@"%i",(int)[NSDate timeIntervalSinceReferenceDate]]];
+	/*_tempFolderPath = [NSTemporaryDirectory() stringByAppendingPathComponent:[[[_outputFileName lastPathComponent] stringByDeletingPathExtension] stringByAppendingFormat:@"%i",(int)[NSDate timeIntervalSinceReferenceDate]]];
+	[[NSFileManager defaultManager] createDirectoryAtPath:_tempFolderPath
+							  withIntermediateDirectories:YES
+											   attributes:nil
+													error:nil];*/
+	_tempFolderPath = [[outputFilePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:[[[_outputFileName lastPathComponent] stringByDeletingPathExtension] stringByAppendingFormat:@"%i",(int)[NSDate timeIntervalSinceReferenceDate]]];
 	[[NSFileManager defaultManager] createDirectoryAtPath:_tempFolderPath
 							  withIntermediateDirectories:YES
 											   attributes:nil
 													error:nil];
-	
 	_vobcopy = [[POPVobcopy alloc] initWithDvdPath:dvdPath
 											 title:[track title]
 										outputPath:_tempFolderPath];
@@ -129,6 +134,23 @@
 	_isConverting = NO;
 }
 
+-(void) setChapters
+{
+	[POPmp4v2dylibloader loadMp4v2Lib:[[NSBundle mainBundle] pathForResource:@"libmp4v2.2.dylib" ofType:@"dylib"]];
+	MP4FileHandle mp4File = _MP4Modify([[self outputFileName] cStringUsingEncoding:NSStringEncodingConversionAllowLossy], 0);
+	MP4Chapter_t* mp4Chapters = malloc(sizeof(MP4Chapter_t)*[[_track chapters] chapterCount]);
+	for(int i = 0; i < [[_track chapters] chapterCount]; i++)
+	{
+		mp4Chapters[i].duration = [[[_track chapters] chapterAt:i] lengthInSeconds]*1000;
+		strcpy(mp4Chapters[i].title, [[[[_track chapters] chapterAt:i] title] cStringUsingEncoding:NSStringEncodingConversionAllowLossy]);
+	}
+	if(_MP4SetChapters(mp4File, mp4Chapters, (unsigned int)[[_track chapters] chapterCount], MP4ChapterTypeAny) != MP4ChapterTypeAny)
+	{
+		NSLog(@"Chapters were not able to be set");
+	}
+	_MP4Close(mp4File, 0);
+	free(mp4Chapters);
+}
 -(BOOL) launch
 {
 	_isConverting = YES;
@@ -160,7 +182,7 @@
 	{
 		[_delegate endConverter];
 	}
-	[[NSFileManager defaultManager] removeItemAtPath:_tempFolderPath error:nil];
+	//[[NSFileManager defaultManager] removeItemAtPath:_tempFolderPath error:nil];
 	return YES;
 }
 @end
@@ -263,6 +285,21 @@
 }
 -(void)endConverter
 {
+	NSError* error;
+	if(_currentConverterIndex < [_trackConverters count])
+	{
+		if([[NSFileManager defaultManager] fileExistsAtPath:[[_trackConverters objectAtIndex:_currentConverterIndex] tempFolderPath]])
+		{
+			if(![[NSFileManager defaultManager] removeItemAtPath:[[_trackConverters objectAtIndex:_currentConverterIndex] tempFolderPath] error:&error])
+			{
+				NSRunAlertPanel(@"Remove Temporary Folder ERROR", [NSString stringWithFormat:@"Unable to remove the temporary folder. Error: %@", [error description]], @"Ok", nil, nil);
+			}
+			else
+			{
+				NSLog(@"removed %@", [[_trackConverters objectAtIndex:_currentConverterIndex] tempFolderPath]);
+			}
+		}
+	}
 	if(_isConverting)
 	{
 		++_currentConverterIndex;
@@ -295,15 +332,6 @@
 		{
 			[_delegate dvdRipEnded];
 		}
-	}
-	NSError* error;
-	if(![[NSFileManager defaultManager] removeItemAtPath:[[_trackConverters objectAtIndex:_currentConverterIndex-1] tempFolderPath] error:&error])
-	{
-		NSRunAlertPanel(@"Remove Temporary Folder ERROR", [NSString stringWithFormat:@"Unable to remove the temporary folder. Error: %@", [error description]], @"Ok", nil, nil);
-	}
-	else
-	{
-		NSLog(@"removed %@", [[_trackConverters objectAtIndex:_currentConverterIndex-1] tempFolderPath]);
 	}
 }
 
