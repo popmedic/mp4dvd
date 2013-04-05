@@ -53,7 +53,7 @@
 				{
 					[self setIsHighlighted:YES];
 					[self display];
-					return NSDragOperationEvery;
+					return NSDragOperationCopy;
 				}
 			}
 		}

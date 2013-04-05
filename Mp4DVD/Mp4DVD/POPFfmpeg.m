@@ -61,7 +61,7 @@
 	[_ffmpegTask setStandardOutput:[[NSPipe alloc] init]];
 	[_ffmpegTask setStandardError:[_ffmpegTask standardOutput]];
 	[_ffmpegTask setArguments:[NSArray arrayWithObjects:@"-y", @"-i", inputPath, 
-							  @"-acodec", @"libfaac", @"-ac", @"2", @"-ab", @"128k",
+							  @"-acodec", @"libfaac", @"-ac", @"2", @"-ab", @"128k", @"-copyts",
 							  @"-vcodec", @"libx264", @"-threads", @"0", outputPath,nil]];
 	
 	return self;

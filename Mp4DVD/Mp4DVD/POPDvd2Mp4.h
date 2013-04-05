@@ -8,16 +8,14 @@
 
 #import <Foundation/Foundation.h>
 #import "POPDvdTracks.h"
-#import "POPVobcopy.h"
-#import "POPConcat.h"
 #import "POPFfmpeg.h"
+#import "POPDvd.h"
 
 typedef enum
 {
 	POPDvd2Mp4StageVobcopy=0,
-	POPDvd2Mp4StageCat=1,
-	POPDvd2Mp4StageVob2Mp4=2,
-	POPDvd2Mp4NumberOfStages=3
+	POPDvd2Mp4StageVob2Mp4=1,
+	POPDvd2Mp4NumberOfStages=2
 } POPDvd2Mp4Stage;
 
 @protocol POPDvd2Mp4Delegate <NSObject>
@@ -38,15 +36,14 @@ typedef enum
 -(void) endConverter;
 @end
 
-@interface POPDvd2Mp4TrackConverter : NSObject <POPVobcopyDelegate, POPConcatDelegate, POPFfmpegDelegate>
+@interface POPDvd2Mp4TrackConverter : NSObject <POPDvdDelegate, POPFfmpegDelegate>
 
 @property (readonly, retain) POPDvdTrack* track;
 @property (readonly, retain) NSString* dvdPath;
 @property (readonly, retain) NSString* tempFolderPath;
+@property (readonly, assign) NSString* tempFilePath;
 @property (readonly, retain) NSString* outputFileName;
 @property (readonly, assign) POPDvd2Mp4Stage stage;
-@property (readonly, retain) POPVobcopy* vobcopy;
-@property (readonly, retain, strong) POPConcat* concat;
 @property (readonly, retain) POPFfmpeg* ffmpeg;
 @property (readwrite, assign) BOOL isConverting;
 @property (readwrite, retain) id<POPDvd2Mp4TrackConverterDelegate> delegate;

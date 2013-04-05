@@ -12,7 +12,7 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			YKJIFIsxneJuNkJNJQIcJIjiPOg=
+			jRNvtGZqp4e7EdGasrPLL074hpk=
 			</data>
 			<key>optional</key>
 			<true/>
@@ -30,18 +30,26 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			vUyNOGW8EMqT49baEelr3fHOFTc=
+			yvLPmAMZWvwJ06GbSh85PibXLzs=
 			</data>
 			<key>optional</key>
 			<true/>
 		</dict>
 		<key>Resources/ffmpeg</key>
 		<data>
-		J8DawvJZDMtDoLRL8HrWGVyT8Pk=
+		oo5IKMkV6ofHkWQu0DTtm1eVivQ=
 		</data>
-		<key>Resources/lsdvd</key>
+		<key>Resources/libdvdcss.2.dylib</key>
 		<data>
-		ekyKw6JELGX0XBjLB6EBNU8cBa8=
+		R0qDeHC++g250J1PLZKPv39x2lw=
+		</data>
+		<key>Resources/libdvdread.4.dylib</key>
+		<data>
+		LdoQhoJAsq7bdVDiwqXvw6eQSq4=
+		</data>
+		<key>Resources/libmp4v2.2.dylib</key>
+		<data>
+		WA3fItWF+oX5+m0NCh1CLvu8lbM=
 		</data>
 		<key>Resources/mp4dvd.icns</key>
 		<data>
@@ -49,7 +57,7 @@
 		</data>
 		<key>Resources/vobcopy</key>
 		<data>
-		8qH0VDMc6Ra7oWowp4yS5WRuRX0=
+		EGWXkgifIu/u0zhQ/2tmBHSTAKM=
 		</data>
 	</dict>
 	<key>rules</key>

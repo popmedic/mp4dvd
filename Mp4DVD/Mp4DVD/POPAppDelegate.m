@@ -8,16 +8,20 @@
 
 #import "POPAppDelegate.h"
 #import "POPDvdTracks.h"
-#import "POPDvdTracksViewController.h"
+#import "POPDvdTracksTableViewDataSource.h"
 #import "POPDvd2Mp4.h"
+#import "POPDvd.h"
+#import "POPlibdvddylibloader.h"
+#import "POPmp4v2dylibloader.h"
 
 @implementation POPAppDelegate
 {
 	POPMp4DVDPage _currentPage;
 	POPDvdTracks* _tracks;
-	POPDvdTracksViewController* _tracksViewController;
+	POPDvdTracksTableViewDataSource* _tracksTableViewDataSource;
 	NSInteger _currentConvertTrackIndex;
 	NSInteger _currentConvertTrackCount;
+	POPDvd* _dvd;
 }
 - (void)dealloc
 {
@@ -30,6 +34,10 @@
 	_tracks = nil;
 	_dvdPath = @"";
 	_dvd2mp4 = nil;
+	_dvd = nil;
+	
+	[POPmp4v2dylibloader loadMp4v2Lib:[[NSBundle mainBundle] pathForResource:@"libmp4v2.2.dylib" ofType:@"dylib"]];
+	[POPlibdvddylibloader loadLibDvd:[[NSBundle mainBundle] pathForResource:@"libdvdread.4.dylib" ofType:@"dylib"]];
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender
@@ -41,8 +49,10 @@
 {
 	_dvdPath = path;
 	if(_tracks != nil) _tracks = nil;
-	_tracks = [POPDvdTracks dvdTracksFromDvdPath:path];
-	_tracksViewController = [[POPDvdTracksViewController alloc] initWithTracks:_tracks];
+	
+	_dvd = [[POPDvd alloc] initWithDevicePath:path];
+	_tracks = [[POPDvdTracks alloc] initWithDictionary:[_dvd contents]];
+	_tracksTableViewDataSource = [[POPDvdTracksTableViewDataSource alloc] initWithTracks:_tracks];
 	[[self tracksBoxView] setTitle:[_tracks title]];
 	[self setCurrentPage:POPMp4DVDPageTrackSelect];
 }
@@ -95,29 +105,22 @@
 }
 -(void)setCurrentPage:(POPMp4DVDPage)page
 {
-	
 	if(page == POPMp4DVDPageDVDDrop)
 	{
 		[[self dropDVDImageView] setDelegate:(id<POPDropDVDImageViewDelegate>)self];
 		
-		[[self dropDVDImageView] setHidden:NO];
-		[[self tracksBoxView] setHidden:YES];
-		[[self ripBoxView] setHidden:YES];
+		[[self window]setContentView:[self dropDVDImageView]];
 	}
 	else if(page == POPMp4DVDPageTrackSelect)
 	{
-		[[self trackTableView] setDataSource:(id<NSTableViewDataSource>)_tracksViewController];
+		[[self trackTableView] setDataSource:(id<NSTableViewDataSource>)_tracksTableViewDataSource];
 		[[self trackTableView] reloadData];
 		
-		[[self dropDVDImageView] setHidden:YES];
-		[[self tracksBoxView] setHidden:NO];
-		[[self ripBoxView] setHidden:YES];
+		[[self window]setContentView:[self tracksBoxView]];
 	}
 	else if(page == POPMp4DVDPageRipping)
 	{
-		[[self dropDVDImageView] setHidden:YES];
-		[[self tracksBoxView] setHidden:YES];
-		[[self ripBoxView] setHidden:NO];
+		[[self window]setContentView:[self ripBoxView]];
 	}
 	_currentPage = page;
 }
@@ -160,10 +163,6 @@
 		[[self currentProgressLabel] setStringValue:[NSString stringWithFormat:@"Copying VOB file. (%li/%li)", i, n]];
 	}
 	else if(i == 2)
-	{
-		[[self currentProgressLabel] setStringValue:[NSString stringWithFormat:@"Concatenating VOB files. (%li/%li)", i, n]];
-	}
-	else if(i == 3)
 	{
 		[[self currentProgressLabel] setStringValue:[NSString stringWithFormat:@"Encoding to MP4 file. (%li/%li)", i, n]];
 	}

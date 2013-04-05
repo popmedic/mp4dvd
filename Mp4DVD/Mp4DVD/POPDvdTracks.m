@@ -7,18 +7,17 @@
 //
 
 #import "POPDvdTracks.h"
-#import "POPLsDvd.h"
-#import "POPXMLReader.h"
+#import "POPDvd.h"
 #import "POPTimeConverter.h"
 
 @implementation POPDvdTrackChapter
 
--(id)initWithXmlNode:(NSDictionary*)node
+-(id)initWithDictionary:(NSDictionary*)chapter
 {
 	self = [super init];
 	
-	_title = [[POPXMLReader safeDictionaryGet:node path:[NSArray arrayWithObjects:@"ix", @"text", nil]] copy];
-	_lengthInSeconds = [[POPXMLReader safeDictionaryGet:node path:[NSArray arrayWithObjects:@"length", @"text", nil]] floatValue];
+	_title = [chapter objectForKey:@"Title"];
+	_lengthInSeconds = [[chapter objectForKey:@"Length"] floatValue];
 	
 	return self;
 }
@@ -30,24 +29,15 @@
 	NSMutableArray* _chapters;
 }
 
--(id)initWithXmlNode:(NSDictionary*)node
+-(id)initWithArray:(NSArray*)chapters
 {
 	self = [super init];
 	
 	_chapters = [[NSMutableArray alloc] init];
 	
-	if([node isKindOfClass:[NSArray class]])
+	for(int i = 0; i < [chapters count]; i++)
 	{
-		for (NSDictionary* chapter in node)
-		{
-			POPDvdTrackChapter* chap = [[POPDvdTrackChapter alloc] initWithXmlNode:chapter];
-			[self addChapter:chap];
-		}
-	}
-	else if([node isKindOfClass:[NSDictionary class]])
-	{
-		POPDvdTrackChapter* chap = [[POPDvdTrackChapter alloc] initWithXmlNode:node];
-		[self addChapter:chap];
+		[self addChapter:[[POPDvdTrackChapter alloc] initWithDictionary:[chapters objectAtIndex:i]]];
 	}
 	
 	return self;
@@ -57,17 +47,6 @@
 {
 	[_chapters addObject:chapter];
 	return TRUE;
-}
-
--(POPDvdTrackChapter*)removeChapterAt:(NSUInteger)idx
-{
-	if([_chapters count] < idx)
-	{
-		POPDvdTrackChapter* rtn = [self chapterAt:idx];
-		[_chapters removeObjectAtIndex:idx];
-		return rtn;
-	}
-	return nil;
 }
 
 -(POPDvdTrackChapter*)chapterAt:(NSUInteger)idx
@@ -84,19 +63,17 @@
 
 @implementation POPDvdTrack
 
--(id)initWithXmlNode:(NSDictionary*)node
+-(id)initWithDictionary:(NSDictionary*)track
 {
 	self = [super init];
 	
-	_lengthInSeconds = [[POPXMLReader safeDictionaryGet:node path:[NSArray arrayWithObjects:@"length", @"text", nil]] floatValue];
-	
-	_title = [[POPXMLReader safeDictionaryGet:node path:[NSArray arrayWithObjects:@"ix", @"text", nil]] copy];
+	_title = [[track objectForKey:@"Title"] copy];
+	_lengthInSeconds = [[track objectForKey:@"Length"] floatValue];
 	_state = @"0";
-	_chapters = [[POPDvdTrackChapters alloc] initWithXmlNode:[POPXMLReader safeDictionaryGet:node path:[NSArray arrayWithObjects:@"chapter", nil]]];
+	_chapters = [[POPDvdTrackChapters alloc] initWithArray:[track objectForKey:@"Chapters"]];
 	
 	return self;
 }
-
 @end
 
 @implementation POPDvdTracks
@@ -108,71 +85,39 @@
 {
 	POPDvdTracks* rtn = nil;
 	
-	POPLsDvd* lsDvd = [[POPLsDvd alloc] initWithDvdPath:path];
-	if([lsDvd launch])
-	{
-		rtn = [[POPDvdTracks alloc] initWithXmlNode:[POPXMLReader safeDictionaryGet:[lsDvd result]
-																			   path:[NSArray arrayWithObjects:@"lsdvd", nil]]];
-	}
-	else
-	{
-		NSLog(@"%@", [[lsDvd xmlParseError] description]);
-	}
+	POPDvd* dvd = [[POPDvd alloc] initWithDevicePath:path];
+	rtn = [[POPDvdTracks alloc] initWithDictionary:[dvd contents]];
+	dvd = nil;
 	
 	return rtn;
 }
 
-
-/*NSLog(@"%@", [[NSString alloc] initWithData:[NSJSONSerialization dataWithJSONObject:node
- options:0
- error:nil]
- encoding:NSUTF8StringEncoding]);*/
-
--(id)initWithXmlNode:(NSDictionary*)node
+-(id)initWithDictionary:(NSDictionary*)contents
 {
-	POPDvdTrack* trck = nil;
 	float mtl = [[[NSUserDefaults standardUserDefaults] objectForKey:@"min-track-length"] floatValue];
 	if(mtl <= 0.0) mtl = 30.0;
 	
 	self = [super init];
 	
 	_tracks = [[NSMutableArray alloc] init];
-	_device = [[POPXMLReader safeDictionaryGet:node path:[NSArray arrayWithObjects:@"device", @"text", nil]] copy];
-	_title = [[POPXMLReader safeDictionaryGet:node path:[NSArray arrayWithObjects:@"title", @"text", nil]] copy];
-	_longestTrack = [[POPXMLReader safeDictionaryGet:node path:[NSArray arrayWithObjects:@"longest_track", @"text", nil]] copy];
+	_device = [contents objectForKey:@"Title"];
+	_title = [contents objectForKey:@"Title"];;
+	_longestTrack = [contents objectForKey:@"LongestTrack"];;
 	if([_title compare:@"unknown"] == 0)
 	{
-		_title = [[_device lastPathComponent] copy];
+		_title = [_device lastPathComponent];
 	}
-	id tracks = [POPXMLReader safeDictionaryGet:node path:[NSArray arrayWithObjects:@"track", nil]];
-	if(tracks != @"")
+	NSArray* tracks = [contents objectForKey:@"Tracks"];
+	for (NSDictionary* track in tracks)
 	{
-		if([tracks isKindOfClass:[NSArray class]])
+		POPDvdTrack* trck = [[POPDvdTrack alloc] initWithDictionary:track];
+		if([trck lengthInSeconds] >= mtl)
 		{
-			for (NSDictionary* track in tracks)
+			if([[trck title] compare:[self longestTrack]] == 0)
 			{
-				trck = [[POPDvdTrack alloc] initWithXmlNode:track];
-				if([trck lengthInSeconds] >= mtl)
-				{
-					if([[trck title] compare:[self longestTrack]] == 0)
-					{
-						[trck setState:@"1"];
-					}
-					[self addTrack:trck];
-				}
+				[trck setState:@"1"];
 			}
-		}
-		else if([tracks isKindOfClass:[NSDictionary class]])
-		{
-			trck = [[POPDvdTrack alloc] initWithXmlNode:tracks];
-			if([trck lengthInSeconds] >= mtl)
-			{
-				if([[trck title] compare:[self longestTrack]] == 0)
-				{
-					[trck setState:@"1"];
-				}
-				[self addTrack:trck];
-			}
+			[self addTrack:trck];
 		}
 	}
 	return self;

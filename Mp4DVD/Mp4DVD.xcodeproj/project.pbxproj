@@ -14,24 +14,42 @@
 		0A30B5AB16FA5C4E008EA990 /* POPAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A30B5AA16FA5C4E008EA990 /* POPAppDelegate.m */; };
 		0A30B5AE16FA5C4F008EA990 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0A30B5AC16FA5C4F008EA990 /* MainMenu.xib */; };
 		0A30B5BE16FA6971008EA990 /* mp4dvd.icns in Resources */ = {isa = PBXBuildFile; fileRef = 0A30B5BD16FA6971008EA990 /* mp4dvd.icns */; };
-		0A30B5C016FAAB73008EA990 /* dropdvdhere.png in Resources */ = {isa = PBXBuildFile; fileRef = 0A30B5BF16FAAB73008EA990 /* dropdvdhere.png */; };
 		0A30B5C316FACF0A008EA990 /* POPDropDVDImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A30B5C216FACF0A008EA990 /* POPDropDVDImageView.m */; };
-		0A30B5C716FAE902008EA990 /* POPVobcopy.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A30B5C616FAE902008EA990 /* POPVobcopy.m */; };
-		0A30B5D316FB56F7008EA990 /* POPXMLReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A30B5D216FB56F7008EA990 /* POPXMLReader.m */; };
-		0A30B5D616FB573A008EA990 /* POPLsDvd.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A30B5D516FB573A008EA990 /* POPLsDvd.m */; };
 		0A30B5D916FB7887008EA990 /* POPDvdTracks.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A30B5D816FB7887008EA990 /* POPDvdTracks.m */; };
 		0A30B5DC16FB8BE4008EA990 /* POPTimeConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A30B5DB16FB8BE4008EA990 /* POPTimeConverter.m */; };
 		0A30B5DE16FB8F97008EA990 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A30B5DD16FB8F97008EA990 /* QTKit.framework */; };
-		0A30B5E616FB9AEF008EA990 /* POPDvdTracksViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A30B5E516FB9AEF008EA990 /* POPDvdTracksViewController.m */; };
+		0A30B5E616FB9AEF008EA990 /* POPDvdTracksTableViewDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A30B5E516FB9AEF008EA990 /* POPDvdTracksTableViewDataSource.m */; };
 		0A30B5E916FC0194008EA990 /* POPDvd2Mp4.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A30B5E816FC0194008EA990 /* POPDvd2Mp4.m */; };
-		0A30B5ED16FCC42B008EA990 /* POPConcat.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A30B5EC16FCC42B008EA990 /* POPConcat.m */; };
 		0A30B62016FCEF6E008EA990 /* POPFfmpeg.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A30B61F16FCEF6E008EA990 /* POPFfmpeg.m */; };
 		0A30B62216FD0AF0008EA990 /* ffmpeg in Resources */ = {isa = PBXBuildFile; fileRef = 0A30B62116FD0AF0008EA990 /* ffmpeg */; };
-		0A30B62516FD0B5E008EA990 /* lsdvd in Resources */ = {isa = PBXBuildFile; fileRef = 0A30B62316FD0B5E008EA990 /* lsdvd */; };
-		0A30B62616FD0B5E008EA990 /* vobcopy in Resources */ = {isa = PBXBuildFile; fileRef = 0A30B62416FD0B5E008EA990 /* vobcopy */; };
 		0A80C00D17038E2A00903BCB /* POPmp4v2dylibloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A80C00C17038E2A00903BCB /* POPmp4v2dylibloader.m */; };
-		0A80C00F17038EEC00903BCB /* libmp4v2.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A80C00E17038EEC00903BCB /* libmp4v2.2.dylib */; };
+		0A80C01F1704A27900903BCB /* libdvdcss.2.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 0A80C01B1704A25700903BCB /* libdvdcss.2.dylib */; };
+		0A80C0201704A27900903BCB /* libdvdread.4.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 0A80C01C1704A25700903BCB /* libdvdread.4.dylib */; };
+		0A80C0211704A27900903BCB /* libmp4v2.2.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 0A80C00E17038EEC00903BCB /* libmp4v2.2.dylib */; };
+		0A80C028170CD9BC00903BCB /* POPDvd.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A80C027170CD9BB00903BCB /* POPDvd.m */; };
+		0A80C02B170CEAEB00903BCB /* POPlibdvddylibloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A80C02A170CEAEB00903BCB /* POPlibdvddylibloader.m */; };
+		0A80C034170E0A4C00903BCB /* libdvdcss.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A80C01B1704A25700903BCB /* libdvdcss.2.dylib */; settings = {ATTRIBUTES = (Required, ); }; };
+		0A80C035170E0A5400903BCB /* libdvdread.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A80C01C1704A25700903BCB /* libdvdread.4.dylib */; settings = {ATTRIBUTES = (Required, ); }; };
+		0A80C036170E0A8F00903BCB /* dropdvdhere.png in Resources */ = {isa = PBXBuildFile; fileRef = 0A30B5BF16FAAB73008EA990 /* dropdvdhere.png */; };
+		0A80C038170E17DC00903BCB /* libdvdcss.2.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0A80C01B1704A25700903BCB /* libdvdcss.2.dylib */; };
+		0A80C039170E17DC00903BCB /* libdvdread.4.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0A80C01C1704A25700903BCB /* libdvdread.4.dylib */; };
+		0A80C03A170E17DC00903BCB /* libmp4v2.2.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0A80C00E17038EEC00903BCB /* libmp4v2.2.dylib */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		0A80C037170E17CE00903BCB /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 8;
+			dstPath = "";
+			dstSubfolderSpec = 11;
+			files = (
+				0A80C038170E17DC00903BCB /* libdvdcss.2.dylib in CopyFiles */,
+				0A80C039170E17DC00903BCB /* libdvdread.4.dylib in CopyFiles */,
+				0A80C03A170E17DC00903BCB /* libmp4v2.2.dylib in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		0A30B59316FA5C4E008EA990 /* Mp4DVD.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mp4DVD.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -51,32 +69,28 @@
 		0A30B5BF16FAAB73008EA990 /* dropdvdhere.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = dropdvdhere.png; path = artwork/dropdvdhere.png; sourceTree = "<group>"; };
 		0A30B5C116FACF0A008EA990 /* POPDropDVDImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POPDropDVDImageView.h; sourceTree = "<group>"; };
 		0A30B5C216FACF0A008EA990 /* POPDropDVDImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POPDropDVDImageView.m; sourceTree = "<group>"; };
-		0A30B5C516FAE902008EA990 /* POPVobcopy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POPVobcopy.h; sourceTree = "<group>"; };
-		0A30B5C616FAE902008EA990 /* POPVobcopy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POPVobcopy.m; sourceTree = "<group>"; };
-		0A30B5D116FB56F7008EA990 /* POPXMLReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POPXMLReader.h; sourceTree = "<group>"; };
-		0A30B5D216FB56F7008EA990 /* POPXMLReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POPXMLReader.m; sourceTree = "<group>"; };
-		0A30B5D416FB573A008EA990 /* POPLsDvd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POPLsDvd.h; sourceTree = "<group>"; };
-		0A30B5D516FB573A008EA990 /* POPLsDvd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POPLsDvd.m; sourceTree = "<group>"; };
 		0A30B5D716FB7887008EA990 /* POPDvdTracks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POPDvdTracks.h; sourceTree = "<group>"; };
 		0A30B5D816FB7887008EA990 /* POPDvdTracks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POPDvdTracks.m; sourceTree = "<group>"; };
 		0A30B5DA16FB8BE4008EA990 /* POPTimeConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POPTimeConverter.h; sourceTree = "<group>"; };
 		0A30B5DB16FB8BE4008EA990 /* POPTimeConverter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POPTimeConverter.m; sourceTree = "<group>"; };
 		0A30B5DD16FB8F97008EA990 /* QTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QTKit.framework; path = System/Library/Frameworks/QTKit.framework; sourceTree = SDKROOT; };
-		0A30B5E416FB9AEF008EA990 /* POPDvdTracksViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POPDvdTracksViewController.h; sourceTree = "<group>"; };
-		0A30B5E516FB9AEF008EA990 /* POPDvdTracksViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POPDvdTracksViewController.m; sourceTree = "<group>"; };
+		0A30B5E416FB9AEF008EA990 /* POPDvdTracksTableViewDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POPDvdTracksTableViewDataSource.h; sourceTree = "<group>"; };
+		0A30B5E516FB9AEF008EA990 /* POPDvdTracksTableViewDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POPDvdTracksTableViewDataSource.m; sourceTree = "<group>"; };
 		0A30B5E716FC0193008EA990 /* POPDvd2Mp4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POPDvd2Mp4.h; sourceTree = "<group>"; };
 		0A30B5E816FC0194008EA990 /* POPDvd2Mp4.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POPDvd2Mp4.m; sourceTree = "<group>"; };
-		0A30B5EB16FCC42B008EA990 /* POPConcat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POPConcat.h; sourceTree = "<group>"; };
-		0A30B5EC16FCC42B008EA990 /* POPConcat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POPConcat.m; sourceTree = "<group>"; };
 		0A30B61E16FCEF6E008EA990 /* POPFfmpeg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POPFfmpeg.h; sourceTree = "<group>"; };
 		0A30B61F16FCEF6E008EA990 /* POPFfmpeg.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POPFfmpeg.m; sourceTree = "<group>"; };
 		0A30B62116FD0AF0008EA990 /* ffmpeg */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = ffmpeg; sourceTree = "<group>"; };
-		0A30B62316FD0B5E008EA990 /* lsdvd */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = lsdvd; sourceTree = "<group>"; };
-		0A30B62416FD0B5E008EA990 /* vobcopy */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = vobcopy; sourceTree = "<group>"; };
 		0A80C00717037D4F00903BCB /* Mp4DVD.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Mp4DVD.entitlements; sourceTree = "<group>"; };
 		0A80C00B17038E2A00903BCB /* POPmp4v2dylibloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POPmp4v2dylibloader.h; sourceTree = "<group>"; };
 		0A80C00C17038E2A00903BCB /* POPmp4v2dylibloader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POPmp4v2dylibloader.m; sourceTree = "<group>"; };
 		0A80C00E17038EEC00903BCB /* libmp4v2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libmp4v2.2.dylib; sourceTree = "<group>"; };
+		0A80C01B1704A25700903BCB /* libdvdcss.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libdvdcss.2.dylib; sourceTree = "<group>"; };
+		0A80C01C1704A25700903BCB /* libdvdread.4.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libdvdread.4.dylib; sourceTree = "<group>"; };
+		0A80C026170CD9BB00903BCB /* POPDvd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POPDvd.h; sourceTree = "<group>"; };
+		0A80C027170CD9BB00903BCB /* POPDvd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POPDvd.m; sourceTree = "<group>"; };
+		0A80C029170CEAEA00903BCB /* POPlibdvddylibloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POPlibdvddylibloader.h; sourceTree = "<group>"; };
+		0A80C02A170CEAEB00903BCB /* POPlibdvddylibloader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POPlibdvddylibloader.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,7 +100,8 @@
 			files = (
 				0A30B5DE16FB8F97008EA990 /* QTKit.framework in Frameworks */,
 				0A30B59816FA5C4E008EA990 /* Cocoa.framework in Frameworks */,
-				0A80C00F17038EEC00903BCB /* libmp4v2.2.dylib in Frameworks */,
+				0A80C034170E0A4C00903BCB /* libdvdcss.2.dylib in Frameworks */,
+				0A80C035170E0A5400903BCB /* libdvdread.4.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -181,8 +196,8 @@
 				0A30B5AC16FA5C4F008EA990 /* MainMenu.xib */,
 				0A30B5A916FA5C4E008EA990 /* POPAppDelegate.h */,
 				0A30B5AA16FA5C4E008EA990 /* POPAppDelegate.m */,
-				0A30B5E416FB9AEF008EA990 /* POPDvdTracksViewController.h */,
-				0A30B5E516FB9AEF008EA990 /* POPDvdTracksViewController.m */,
+				0A30B5E416FB9AEF008EA990 /* POPDvdTracksTableViewDataSource.h */,
+				0A30B5E516FB9AEF008EA990 /* POPDvdTracksTableViewDataSource.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -191,16 +206,12 @@
 			isa = PBXGroup;
 			children = (
 				0A30B5CB16FAE9A7008EA990 /* Bins */,
-				0A30B5D416FB573A008EA990 /* POPLsDvd.h */,
-				0A30B5D516FB573A008EA990 /* POPLsDvd.m */,
-				0A30B5C516FAE902008EA990 /* POPVobcopy.h */,
-				0A30B5C616FAE902008EA990 /* POPVobcopy.m */,
-				0A30B5EB16FCC42B008EA990 /* POPConcat.h */,
-				0A30B5EC16FCC42B008EA990 /* POPConcat.m */,
 				0A30B61E16FCEF6E008EA990 /* POPFfmpeg.h */,
 				0A30B61F16FCEF6E008EA990 /* POPFfmpeg.m */,
 				0A80C00B17038E2A00903BCB /* POPmp4v2dylibloader.h */,
 				0A80C00C17038E2A00903BCB /* POPmp4v2dylibloader.m */,
+				0A80C029170CEAEA00903BCB /* POPlibdvddylibloader.h */,
+				0A80C02A170CEAEB00903BCB /* POPlibdvddylibloader.m */,
 			);
 			name = "Bin Wrappers";
 			sourceTree = "<group>";
@@ -208,9 +219,9 @@
 		0A30B5CB16FAE9A7008EA990 /* Bins */ = {
 			isa = PBXGroup;
 			children = (
+				0A80C01B1704A25700903BCB /* libdvdcss.2.dylib */,
+				0A80C01C1704A25700903BCB /* libdvdread.4.dylib */,
 				0A80C00E17038EEC00903BCB /* libmp4v2.2.dylib */,
-				0A30B62316FD0B5E008EA990 /* lsdvd */,
-				0A30B62416FD0B5E008EA990 /* vobcopy */,
 				0A30B62116FD0AF0008EA990 /* ffmpeg */,
 			);
 			name = Bins;
@@ -221,8 +232,6 @@
 			children = (
 				0A30B5DA16FB8BE4008EA990 /* POPTimeConverter.h */,
 				0A30B5DB16FB8BE4008EA990 /* POPTimeConverter.m */,
-				0A30B5D116FB56F7008EA990 /* POPXMLReader.h */,
-				0A30B5D216FB56F7008EA990 /* POPXMLReader.m */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -234,6 +243,8 @@
 				0A30B5D816FB7887008EA990 /* POPDvdTracks.m */,
 				0A30B5E716FC0193008EA990 /* POPDvd2Mp4.h */,
 				0A30B5E816FC0194008EA990 /* POPDvd2Mp4.m */,
+				0A80C026170CD9BB00903BCB /* POPDvd.h */,
+				0A80C027170CD9BB00903BCB /* POPDvd.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -248,6 +259,7 @@
 				0A30B58F16FA5C4E008EA990 /* Sources */,
 				0A30B59016FA5C4E008EA990 /* Frameworks */,
 				0A30B59116FA5C4E008EA990 /* Resources */,
+				0A80C037170E17CE00903BCB /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -294,10 +306,11 @@
 				0A30B5A816FA5C4E008EA990 /* Credits.rtf in Resources */,
 				0A30B5AE16FA5C4F008EA990 /* MainMenu.xib in Resources */,
 				0A30B5BE16FA6971008EA990 /* mp4dvd.icns in Resources */,
-				0A30B5C016FAAB73008EA990 /* dropdvdhere.png in Resources */,
 				0A30B62216FD0AF0008EA990 /* ffmpeg in Resources */,
-				0A30B62516FD0B5E008EA990 /* lsdvd in Resources */,
-				0A30B62616FD0B5E008EA990 /* vobcopy in Resources */,
+				0A80C036170E0A8F00903BCB /* dropdvdhere.png in Resources */,
+				0A80C01F1704A27900903BCB /* libdvdcss.2.dylib in Resources */,
+				0A80C0201704A27900903BCB /* libdvdread.4.dylib in Resources */,
+				0A80C0211704A27900903BCB /* libmp4v2.2.dylib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -311,16 +324,14 @@
 				0A30B5A416FA5C4E008EA990 /* main.m in Sources */,
 				0A30B5AB16FA5C4E008EA990 /* POPAppDelegate.m in Sources */,
 				0A30B5C316FACF0A008EA990 /* POPDropDVDImageView.m in Sources */,
-				0A30B5C716FAE902008EA990 /* POPVobcopy.m in Sources */,
-				0A30B5D316FB56F7008EA990 /* POPXMLReader.m in Sources */,
-				0A30B5D616FB573A008EA990 /* POPLsDvd.m in Sources */,
 				0A30B5D916FB7887008EA990 /* POPDvdTracks.m in Sources */,
 				0A30B5DC16FB8BE4008EA990 /* POPTimeConverter.m in Sources */,
-				0A30B5E616FB9AEF008EA990 /* POPDvdTracksViewController.m in Sources */,
+				0A30B5E616FB9AEF008EA990 /* POPDvdTracksTableViewDataSource.m in Sources */,
 				0A30B5E916FC0194008EA990 /* POPDvd2Mp4.m in Sources */,
-				0A30B5ED16FCC42B008EA990 /* POPConcat.m in Sources */,
 				0A30B62016FCEF6E008EA990 /* POPFfmpeg.m in Sources */,
 				0A80C00D17038E2A00903BCB /* POPmp4v2dylibloader.m in Sources */,
+				0A80C028170CD9BC00903BCB /* POPDvd.m in Sources */,
+				0A80C02B170CEAEB00903BCB /* POPlibdvddylibloader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -13,15 +13,14 @@
 @property (readonly, assign) NSString* title;
 @property (readonly, assign) float lengthInSeconds;
 
--(id)initWithXmlNode:(NSDictionary*)node;
+-(id)initWithDictionary:(NSDictionary*)chapter;
 
 @end
 
 @interface POPDvdTrackChapters : NSObject
 
--(id)initWithXmlNode:(NSDictionary*)node;
+-(id)initWithArray:(NSArray*)chapters;
 -(BOOL)addChapter:(POPDvdTrackChapter*)chapter;
--(POPDvdTrackChapter*)removeChapterAt:(NSUInteger)idx;
 -(POPDvdTrackChapter*)chapterAt:(NSUInteger)idx;
 -(NSInteger)chapterCount;
 
@@ -34,7 +33,7 @@
 @property (readonly, assign) POPDvdTrackChapters* chapters;
 @property (readwrite, assign) NSString* state;
 
--(id)initWithXmlNode:(NSDictionary*)node;
+-(id)initWithDictionary:(NSDictionary*)track;
 
 @end
 
@@ -46,7 +45,7 @@
 @property (readwrite, assign) NSString* title;
 @property (readonly, assign) NSString* longestTrack;
 
--(id)initWithXmlNode:(NSDictionary*)node;
+-(id)initWithDictionary:(NSDictionary*)contents;
 -(BOOL)addTrack:(POPDvdTrack*)track;
 -(POPDvdTrack*)removeTrackAt:(NSUInteger)idx;
 -(POPDvdTrack*)trackAt:(NSUInteger)idx;

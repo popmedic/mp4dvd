@@ -20,6 +20,7 @@ typedef enum
 @interface POPAppDelegate : NSObject <NSApplicationDelegate, POPDvd2Mp4Delegate>
 
 @property (assign) IBOutlet NSWindow *window;
+@property (assign) IBOutlet NSView *canvas;
 @property (assign) IBOutlet POPDropDVDImageView *dropDVDImageView;
 @property (assign) IBOutlet NSTableView *trackTableView;
 @property (assign) IBOutlet NSBox *tracksBoxView;

@@ -101,7 +101,6 @@
 				float prcnt = ((float)bc/(float)_totalBytesToConcatenate)*100.0;
 				[[self delegate] concatProgress:prcnt];
 			}
-			[NSApp updateWindows];
 			if(r != w) NSLog(@"Read %li bytes, Wrote %li bytes, something wrong?", r, w);
 		} while(r > 0 && _isConcatenating);
 		fclose(currentInputFile);

@@ -12,6 +12,7 @@
 @implementation POPDvd2Mp4TrackConverter
 {
 	NSArray* _stages;
+	POPDvd* _dvd;
 }
 -(id)initWithTrack:(POPDvdTrack *)track
 		   dvdPath:(NSString*)dvdPath
@@ -32,78 +33,51 @@
 											   attributes:nil
 													error:nil];*/
 	_tempFolderPath = [[outputFilePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:[[[_outputFileName lastPathComponent] stringByDeletingPathExtension] stringByAppendingFormat:@"%i",(int)[NSDate timeIntervalSinceReferenceDate]]];
-	[[NSFileManager defaultManager] createDirectoryAtPath:_tempFolderPath
+	/*[[NSFileManager defaultManager] createDirectoryAtPath:_tempFolderPath
 							  withIntermediateDirectories:YES
 											   attributes:nil
-													error:nil];
-	_vobcopy = [[POPVobcopy alloc] initWithDvdPath:dvdPath
+													error:nil];*/
+	/*_vobcopy = [[POPVobcopy alloc] initWithDvdPath:dvdPath
 											 title:[track title]
 										outputPath:_tempFolderPath];
-	//_concat = [[POPConcat alloc] initWithInputFolder:_tempFolderPath];
+	//_concat = [[POPConcat alloc] initWithInputFolder:_tempFolderPath];*/
 	//_ffmpeg = nil;//[[POPFfmpeg alloc] initWithInputPath:[_concat outputFilePath] OutputPath:outputFilePath Duration:[track lengthInSeconds]];
 	
-	[_vobcopy setDelegate:self];
+	//[_vobcopy setDelegate:self];
 	//[_concat setDelegate:self];
 	//[_ffmpeg setDelegate:self];
 	
+	_dvd = [[POPDvd alloc] initWithDevicePath:dvdPath];
+	[_dvd setDelegate:self];
 	return self;
 }
 
--(void) vobcopyStarted
+-(void) copyStarted
 {
+	NSLog(@"DVDTrackConverter: copy started");
 	_stage = POPDvd2Mp4StageVobcopy;
 	if(_delegate != nil)
 	{
 		[_delegate startStage:POPDvd2Mp4StageVobcopy];
 	}
 }
--(void) vobcopyProgress:(float)percent
+-(void) copyProgress:(double)percent
 {
 	if(_delegate != nil)
 	{
 		[_delegate stageProgress:POPDvd2Mp4StageVobcopy progress:percent];
 	}
 }
--(void) vobcopyEnded:(NSInteger)returnCode
+-(void) copyEnded
 {
+	NSLog(@"DVDTrackConverter: copy ended");
 	if(_delegate != nil)
 	{
 		[_delegate endStage:POPDvd2Mp4StageVobcopy];
 	}
 	if(_isConverting)
 	{
-		_concat = [[POPConcat alloc] initWithInputFolder:[self tempFolderPath]];
-		[_concat loadInputFiles];
-		[_concat setDelegate:self];
-		[_concat launch];
-	}
-}
-
--(void) concatStarted
-{
-	_stage = POPDvd2Mp4StageCat;
-	if(_delegate != nil)
-	{
-		[_delegate startStage:POPDvd2Mp4StageCat];
-	}
-}
--(void) concatProgress:(float)percent
-{
-	if(_delegate != nil)
-	{
-		[_delegate stageProgress:POPDvd2Mp4StageCat progress:percent];
-	}
-}
--(void) concatEnded
-{
-	if([self delegate] != nil)
-	{
-		[[self delegate] endStage:POPDvd2Mp4StageCat];
-	}
-	if([self isConverting])
-	{
-		_ffmpeg = [[POPFfmpeg alloc] initWithInputPath:[[_concat outputFilePath] copy] OutputPath:[_outputFileName copy] Duration:[_track lengthInSeconds]];
-		//_concat = nil;
+		_ffmpeg = [[POPFfmpeg alloc] initWithInputPath:_tempFilePath OutputPath:[_outputFileName copy] Duration:[_track lengthInSeconds]];
 		[_ffmpeg setDelegate:self];
 		[_ffmpeg launch];
 	}
@@ -111,6 +85,7 @@
 
 -(void) ffmpegStarted
 {
+	NSLog(@"DVDTrackConverter: ffmpeg started");
 	_stage = POPDvd2Mp4StageVob2Mp4;
 	if(_delegate != nil)
 	{
@@ -126,17 +101,31 @@
 }
 -(void) ffmpegEnded:(NSInteger)returnCode
 {
+	NSLog(@"DVDTrackConverter: ffmpeg ended");
+	[self setChapters];
+	if([[NSFileManager defaultManager] fileExistsAtPath:_tempFilePath])
+	{
+		NSError* error;
+		if(![[NSFileManager defaultManager] removeItemAtPath:_tempFilePath error:&error])
+		{
+			NSRunAlertPanel(@"Remove Temporary Folder ERROR", [NSString stringWithFormat:@"Unable to remove the temporary folder. Error: %@", [error description]], @"Ok", nil, nil);
+		}
+		else
+		{
+			NSLog(@"removed %@", _tempFilePath);
+		}
+	}
+	_isConverting = NO;
 	if(_delegate != nil)
 	{
 		[_delegate endStage:POPDvd2Mp4StageVob2Mp4];
 		[_delegate endConverter];
 	}
-	_isConverting = NO;
+	
 }
 
 -(void) setChapters
 {
-	[POPmp4v2dylibloader loadMp4v2Lib:[[NSBundle mainBundle] pathForResource:@"libmp4v2.2.dylib" ofType:@"dylib"]];
 	MP4FileHandle mp4File = _MP4Modify([[self outputFileName] cStringUsingEncoding:NSStringEncodingConversionAllowLossy], 0);
 	MP4Chapter_t* mp4Chapters = malloc(sizeof(MP4Chapter_t)*[[_track chapters] chapterCount]);
 	for(int i = 0; i < [[_track chapters] chapterCount]; i++)
@@ -158,7 +147,9 @@
 	{
 		[_delegate startConverter];
 	}
-	[_vobcopy launch];
+	_tempFilePath = [[[_outputFileName stringByDeletingPathExtension] stringByAppendingFormat:@"%i",(int)[NSDate timeIntervalSinceReferenceDate]] stringByAppendingPathExtension:@"vob"];
+	[_dvd copyTrack:[_track title] To:_tempFilePath];
+	//[_vobcopy launch];
 	
 	return YES;
 }
@@ -168,11 +159,8 @@
 	_isConverting = NO;
 	if(_stage == POPDvd2Mp4StageVobcopy)
 	{
-		if(_vobcopy != nil)[_vobcopy terminate];
-	}
-	else if(_stage == POPDvd2Mp4StageCat)
-	{
-		if(_concat != nil)[_concat terminate];
+		//if(_vobcopy != nil)[_vobcopy terminate];
+		[_dvd terminateCopyTrack];
 	}
 	else if(_stage == POPDvd2Mp4StageVob2Mp4)
 	{
@@ -285,21 +273,6 @@
 }
 -(void)endConverter
 {
-	NSError* error;
-	if(_currentConverterIndex < [_trackConverters count])
-	{
-		if([[NSFileManager defaultManager] fileExistsAtPath:[[_trackConverters objectAtIndex:_currentConverterIndex] tempFolderPath]])
-		{
-			if(![[NSFileManager defaultManager] removeItemAtPath:[[_trackConverters objectAtIndex:_currentConverterIndex] tempFolderPath] error:&error])
-			{
-				NSRunAlertPanel(@"Remove Temporary Folder ERROR", [NSString stringWithFormat:@"Unable to remove the temporary folder. Error: %@", [error description]], @"Ok", nil, nil);
-			}
-			else
-			{
-				NSLog(@"removed %@", [[_trackConverters objectAtIndex:_currentConverterIndex] tempFolderPath]);
-			}
-		}
-	}
 	if(_isConverting)
 	{
 		++_currentConverterIndex;
