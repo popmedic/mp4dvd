@@ -44,6 +44,7 @@ typedef enum
 
 - (IBAction)ripButtonClick:(id)sender;
 - (IBAction)cancelRipButtonClick:(id)sender;
+- (IBAction)helpClick:(id)sender;
 
 -(void)dvdDragEnded:(NSString*)path;
 

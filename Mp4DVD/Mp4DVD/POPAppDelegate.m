@@ -74,6 +74,11 @@
 	}
 }
 
+- (IBAction)helpClick:(id)sender
+{
+	[[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:@"https://github.com/popmedic/mp4dvd#mp4dvd"]];
+}
+
 -(POPMp4DVDPage)currentPage
 {
 	return _currentPage;
