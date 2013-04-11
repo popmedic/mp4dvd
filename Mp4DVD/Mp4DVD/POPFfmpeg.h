@@ -27,6 +27,7 @@
 -(id)initWithInputPath:(NSString*)inputPath OutputPath:(NSString*)outputPath Duration:(float)duration;
 
 -(BOOL)launch;
+-(void) waitUntilExit;
 -(BOOL)terminate;
 
 @end

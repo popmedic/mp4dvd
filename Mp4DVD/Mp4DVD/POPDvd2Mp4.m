@@ -75,12 +75,12 @@
 	{
 		[_delegate endStage:POPDvd2Mp4StageVobcopy];
 	}
-	if(_isConverting)
+	/*if(_isConverting)
 	{
 		_ffmpeg = [[POPFfmpeg alloc] initWithInputPath:_tempFilePath OutputPath:[_outputFileName copy] Duration:[_track lengthInSeconds]];
 		[_ffmpeg setDelegate:self];
 		[_ffmpeg launch];
-	}
+	}*/
 }
 
 -(void) ffmpegStarted
@@ -102,19 +102,7 @@
 -(void) ffmpegEnded:(NSInteger)returnCode
 {
 	NSLog(@"DVDTrackConverter: ffmpeg ended");
-	[self setChapters];
-	if([[NSFileManager defaultManager] fileExistsAtPath:_tempFilePath])
-	{
-		NSError* error;
-		if(![[NSFileManager defaultManager] removeItemAtPath:_tempFilePath error:&error])
-		{
-			NSRunAlertPanel(@"Remove Temporary Folder ERROR", [NSString stringWithFormat:@"Unable to remove the temporary folder. Error: %@", [error description]], @"Ok", nil, nil);
-		}
-		else
-		{
-			NSLog(@"removed %@", _tempFilePath);
-		}
-	}
+	
 	_isConverting = NO;
 	if(_delegate != nil)
 	{
@@ -124,22 +112,6 @@
 	
 }
 
--(void) setChapters
-{
-	MP4FileHandle mp4File = _MP4Modify([[self outputFileName] cStringUsingEncoding:NSStringEncodingConversionAllowLossy], 0);
-	MP4Chapter_t* mp4Chapters = malloc(sizeof(MP4Chapter_t)*[[_track chapters] chapterCount]);
-	for(int i = 0; i < [[_track chapters] chapterCount]; i++)
-	{
-		mp4Chapters[i].duration = [[[_track chapters] chapterAt:i] lengthInSeconds]*1000;
-		strcpy(mp4Chapters[i].title, [[[[_track chapters] chapterAt:i] title] cStringUsingEncoding:NSStringEncodingConversionAllowLossy]);
-	}
-	if(_MP4SetChapters(mp4File, mp4Chapters, (unsigned int)[[_track chapters] chapterCount], MP4ChapterTypeAny) != MP4ChapterTypeAny)
-	{
-		NSLog(@"Chapters were not able to be set");
-	}
-	_MP4Close(mp4File, 0);
-	free(mp4Chapters);
-}
 -(BOOL) launch
 {
 	_isConverting = YES;
@@ -147,8 +119,9 @@
 	{
 		[_delegate startConverter];
 	}
-	_tempFilePath = [[[_outputFileName stringByDeletingPathExtension] stringByAppendingFormat:@"%i",(int)[NSDate timeIntervalSinceReferenceDate]] stringByAppendingPathExtension:@"vob"];
-	[_dvd copyTrack:[_track title] To:_tempFilePath];
+	/*_tempFilePath = [[[_outputFileName stringByDeletingPathExtension] stringByAppendingFormat:@"%i",(int)[NSDate timeIntervalSinceReferenceDate]] stringByAppendingPathExtension:@"vob"];
+	[_dvd copyTrack:[_track title] To:_tempFilePath];*/
+	[_dvd copyAndConvertTrack:[_track title] To:_outputFileName Duration:[NSString stringWithFormat:@"%f", [_track lengthInSeconds]]];
 	//[_vobcopy launch];
 	
 	return YES;
@@ -164,7 +137,7 @@
 	}
 	else if(_stage == POPDvd2Mp4StageVob2Mp4)
 	{
-		if(_ffmpeg != nil)[_ffmpeg terminate];
+		[_dvd terminateCopyTrack];
 	}
 	if(_delegate != nil)
 	{

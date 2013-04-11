@@ -159,12 +159,19 @@
 	}
 	
     [_ffmpegTask launch];
-	
-	return YES;
+	return true;
+}
+-(void) waitUntilExit
+{
+	if(_ffmpegTask != nil)
+	{
+		[_ffmpegTask waitUntilExit];
+	}
 }
 -(BOOL)terminate
 {
 	_isEncoding = NO;
+	[_ffmpegTask terminate];
 	return YES;
 }
 

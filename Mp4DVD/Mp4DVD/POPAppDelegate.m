@@ -11,7 +11,6 @@
 #import "POPDvdTracksTableViewDataSource.h"
 #import "POPDvd2Mp4.h"
 #import "POPDvd.h"
-#import "POPlibdvddylibloader.h"
 #import "POPmp4v2dylibloader.h"
 
 @implementation POPAppDelegate
@@ -37,7 +36,6 @@
 	_dvd = nil;
 	
 	[POPmp4v2dylibloader loadMp4v2Lib:[[NSBundle mainBundle] pathForResource:@"libmp4v2.2.dylib" ofType:@"dylib"]];
-	[POPlibdvddylibloader loadLibDvd:[[NSBundle mainBundle] pathForResource:@"libdvdread.4.dylib" ofType:@"dylib"]];
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender
@@ -59,6 +57,7 @@
 
 -(void)dvdDragEnded:(NSString*)path
 {
+	//[self openDvdWithPath:@"/dev/disk2"];
 	[self openDvdWithPath:path];
 }
 
@@ -128,60 +127,84 @@
 -(void) dvdRipStarted
 {
 	NSLog(@"Ripping Started.");
-	[[self currentProgressLabel] setStringValue:@"Ripping Started..."];
-	[[self currentProgressIndicator] setDoubleValue:0.0];
-	[[self tracksProgressLabel] setStringValue:[NSString stringWithFormat:@"Ripping: %@", _tracks.device]];
-	[[self tracksProgressIndicator] setDoubleValue:0.0];
-	[[self overallProgressLabel] setStringValue:[NSString stringWithFormat:@"Ripping: %@", _tracks.device]];
-	[[self overallProgressIndicator] setDoubleValue:0.0];
-	[[self currentProgressLabel] display];
-	[[self currentProgressIndicator] display];
-	[[self tracksProgressLabel] display];
-	[[self tracksProgressIndicator] display];
-	[[self overallProgressLabel] display];
-	[[self overallProgressIndicator] display];
+	@synchronized(self)
+	{
+		[[self currentProgressLabel] setStringValue:@"Ripping Started..."];
+		[[self currentProgressIndicator] setDoubleValue:0.0];
+		[[self tracksProgressLabel] setStringValue:[NSString stringWithFormat:@"Ripping: %@", _tracks.device]];
+		[[self tracksProgressIndicator] setDoubleValue:0.0];
+		[[self overallProgressLabel] setStringValue:[NSString stringWithFormat:@"Ripping: %@", _tracks.device]];
+		[[self overallProgressIndicator] setDoubleValue:0.0];
+//		[[self currentProgressLabel] display];
+//		[[self currentProgressIndicator] display];
+//		[[self tracksProgressLabel] display];
+//		[[self tracksProgressIndicator] display];
+//		[[self overallProgressLabel] display];
+//		[[self overallProgressIndicator] display];
+	}
 }
 -(void) converterStarted:(NSInteger)i Of:(NSInteger)n
 {
 	NSLog(@"Converter Started. %li of %li", i, n);
-	_currentConvertTrackIndex = i;
-	_currentConvertTrackCount = n;
-	[[self currentProgressLabel] setStringValue:[NSString stringWithFormat:@"Converting track %li of %li.", i, n]];
-	[[self tracksProgressLabel] setStringValue:[NSString stringWithFormat:@"Converting track %li of %li.", i, n]];
-	[[self tracksProgressIndicator] setDoubleValue:(i/n)*100];
-	[[self currentProgressIndicator] setDoubleValue:0.0];
-	[[self currentProgressLabel] display];
-	[[self currentProgressIndicator] display];
-	[[self tracksProgressLabel] display];
-	[[self tracksProgressIndicator] display];
+	@synchronized(self)
+	{
+		_currentConvertTrackIndex = i;
+		_currentConvertTrackCount = n;
+		[[self currentProgressLabel] setStringValue:[NSString stringWithFormat:@"Converting track %li of %li.", i, n]];
+		[[self tracksProgressLabel] setStringValue:[NSString stringWithFormat:@"Converting track %li of %li.", i, n]];
+		[[self tracksProgressIndicator] setDoubleValue:(i/n)*100];
+		[[self currentProgressIndicator] setDoubleValue:0.0];
+//		[[self currentProgressLabel] display];
+//		[[self currentProgressIndicator] display];
+//		[[self tracksProgressLabel] display];
+//		[[self tracksProgressIndicator] display];
+		[[self currentProgressPercentLabel] setStringValue:@"0%"];
+//		[[self currentProgressPercentLabel] display];
+		[[self overallProgressPercentLabel] setStringValue:@"0%"];
+//		[[self overallProgressPercentLabel] display];
+		[[self tracksProgressPercentLabel] setStringValue:@"0%"];
+//		[[self tracksProgressPercentLabel] display];
+	}
 }
 -(void) stageStarted:(NSInteger)i Of:(NSInteger)n
 {
 	NSLog(@"Stage Started. %li of %li", i, n);
-	if(i == 1)
+	@synchronized(self)
 	{
-		[[self currentProgressLabel] setStringValue:[NSString stringWithFormat:@"Copying VOB file. (%li/%li)", i, n]];
+		if(i == 1)
+		{
+			[[self currentProgressLabel] setStringValue:[NSString stringWithFormat:@"Copying VOB file."]];
+		}
+		else if(i == 2)
+		{
+			[[self currentProgressLabel] setStringValue:[NSString stringWithFormat:@"Encoding to MP4 file. (%li/%li)", i, n]];
+		}
+		[[self currentProgressLabel] display];
 	}
-	else if(i == 2)
-	{
-		[[self currentProgressLabel] setStringValue:[NSString stringWithFormat:@"Encoding to MP4 file. (%li/%li)", i, n]];
-	}
-	[[self currentProgressLabel] display];
 }
 -(void) stageProgress:(POPDvd2Mp4Stage)stage progress:(float)percent
 {
-	double overall;
-	double track;
+	volatile double overall;
+	volatile double track;
+	volatile double prcnt = percent;
 	
-	track = (percent/(double)POPDvd2Mp4NumberOfStages)+(((double)stage/(double)POPDvd2Mp4NumberOfStages)*100.0);
-	overall = (track/(double)_currentConvertTrackCount)+(((double)_currentConvertTrackIndex-1/(double)_currentConvertTrackCount)*100.0);
-	
-	[[self currentProgressIndicator] setDoubleValue:percent];
-	[[self tracksProgressIndicator] setDoubleValue:track];
-	[[self overallProgressIndicator] setDoubleValue:overall];
-	[[self currentProgressIndicator] display];
-	[[self tracksProgressIndicator] display];
-	[[self overallProgressIndicator] display];
+	@synchronized(self)
+	{
+		track = (prcnt/(double)POPDvd2Mp4NumberOfStages)+(((double)stage/(double)POPDvd2Mp4NumberOfStages)*100.0 );
+		overall = (track/(double)_currentConvertTrackCount)+((((double)_currentConvertTrackIndex-1.0)/(double)_currentConvertTrackCount)*100.0);
+		@try
+		{
+			[[self currentProgressIndicator] setDoubleValue:prcnt];
+			//[[self currentProgressPercentLabel] setStringValue:[NSString stringWithFormat:@"%0.2f%%", prcnt]];
+			[[self tracksProgressIndicator] setDoubleValue:track];
+			//[[self tracksProgressPercentLabel] setStringValue:[NSString stringWithFormat:@"%0.2f%%", track]];
+			[[self overallProgressIndicator] setDoubleValue:overall];
+			//[[self overallProgressPercentLabel] setStringValue:[NSString stringWithFormat:@"%0.2f%%", overall]];
+		}
+		@catch (NSException* e) {
+			NSLog(@"Exception Caught, carry on my son: %@", e.description);
+		}
+	}
 }
 -(void) stageEnded:(NSInteger)i Of:(NSInteger)n
 {
@@ -194,16 +217,26 @@
 -(void) dvdRipEnded
 {
 	NSLog(@"Rip Ended.");
-	[[self currentProgressLabel] setStringValue:[NSString stringWithFormat:@"Rip Finished"]];
-	[[self overallProgressLabel] setStringValue:[NSString stringWithFormat:@"Rip Finished."]];
-	[[self tracksProgressLabel] setStringValue:[NSString stringWithFormat:@"Rip Finished."]];
-	[[self tracksProgressIndicator] setDoubleValue:100.0];
-	[[self overallProgressIndicator] setDoubleValue:100.0];
-	[[self currentProgressIndicator] setDoubleValue:100.0];
-	[[self currentProgressLabel] display];
-	[[self currentProgressIndicator] display];
-	[[self overallProgressLabel] display];
-	[[self overallProgressIndicator] display];
-	[[self cancelRipButton] setTitle:@"Close"];
+	
+	//@synchronized(self)
+	//{
+		[[self currentProgressLabel] setStringValue:[NSString stringWithFormat:@"Rip Finished"]];
+		[[self overallProgressLabel] setStringValue:[NSString stringWithFormat:@"Rip Finished."]];
+		[[self tracksProgressLabel] setStringValue:[NSString stringWithFormat:@"Rip Finished."]];
+		[[self tracksProgressIndicator] setDoubleValue:100.0];
+		[[self overallProgressIndicator] setDoubleValue:100.0];
+		[[self currentProgressIndicator] setDoubleValue:100.0];
+//		[[self currentProgressLabel] display];
+//		[[self currentProgressIndicator] display];
+//		[[self overallProgressLabel] display];
+//		[[self overallProgressIndicator] display];
+		[[self cancelRipButton] setTitle:@"Close"];
+//		[[self currentProgressPercentLabel] setStringValue:@"100%"];
+//		[[self currentProgressPercentLabel] display];
+//		[[self overallProgressPercentLabel] setStringValue:@"100%"];
+//		[[self overallProgressPercentLabel] display];
+//		[[self tracksProgressPercentLabel] setStringValue:@"100%"];
+//		[[self tracksProgressPercentLabel] display];
+	//}
 }
 @end

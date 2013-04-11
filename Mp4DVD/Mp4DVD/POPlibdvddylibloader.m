@@ -14,7 +14,7 @@
 +(void)loadLibDvd:(NSString*)path
 {
 	void *lib_read_handle = 0, *lib_css_handle = 0;
-	//lib_read_handle = dlopen("libdvdread.4.dylib", RTLD_LOCAL|RTLD_LAZY);
+	lib_read_handle = dlopen("libdvdread.4.dylib", RTLD_LOCAL|RTLD_LAZY);
 	if(!lib_read_handle)
 	{
 		lib_read_handle = dlopen([[[NSBundle mainBundle] pathForResource:@"libdvdread.4.dylib" ofType:@"dylib"] cStringUsingEncoding:NSUTF8StringEncoding], RTLD_LOCAL|RTLD_LAZY);
@@ -31,7 +31,7 @@
 									   reason:[NSString stringWithFormat:@"Unable to load %@", path]
 									 userInfo:nil];
 	}
-	//lib_css_handle = dlopen("libdvdcss.2.dylib", RTLD_LOCAL|RTLD_LAZY);
+	lib_css_handle = dlopen("libdvdcss.2.dylib", RTLD_LOCAL|RTLD_LAZY);
 	if(!lib_css_handle)
 	{
 		lib_css_handle = dlopen([[[NSBundle mainBundle] pathForResource:@"libdvdcss.2.dylib" ofType:@"dylib"] cStringUsingEncoding:NSUTF8StringEncoding], RTLD_LOCAL|RTLD_LAZY);

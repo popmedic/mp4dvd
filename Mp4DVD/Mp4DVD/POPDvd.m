@@ -7,8 +7,42 @@
 //
 
 #import "POPDvd.h"
-#import "POPlibdvddylibloader.h"
+#include <mp4v2/mp4v2.h>
+
+#define DVDCSS_VERBOSE 1
+#include <dvdread/dvd_reader.h>
+#include <dvdread/ifo_types.h>
+#include <dvdread/ifo_read.h>
+#include <dvdread/nav_read.h>
+#include <dvdread/nav_print.h>
+#include <sys/mount.h>
+
+typedef struct dvd_input_s *dvd_input_t;
+struct dvd_reader_s {
+	/* Basic information. */
+	int isImageFile;
+	
+	/* Hack for keeping track of the css status.
+	 * 0: no css, 1: perhaps (need init of keys), 2: have done init */
+	int css_state;
+	int css_title; /* Last title that we have called dvdinpute_title for. */
+	
+	/* Information required for an image file. */
+	dvd_input_t dev;
+	
+	/* Information required for a directory path drive. */
+	char *path_root;
+	
+	/* Filesystem cache */
+	int udfcache_level; /* 0 - turned off, 1 - on */
+	void *udfcache;
+};
+
+#import "POPDvdTracks.h"
+#import "POPmp4v2dylibloader.h"
+
 #define MAX_UNREAD_BLOCKS 10
+
 long dvdtime2msec(dvd_time_t *dt)
 {
 	double frames_per_s[4] = {-1.0, 25.00, -1.0, 29.97};
@@ -24,18 +58,47 @@ long dvdtime2msec(dvd_time_t *dt)
 	return ms;
 }
 
+bool device_path_with_volume_path(char *device_path, const char *volume_path, int max_device_path)
+{
+	struct statfs *mntbufp;
+	int num_of_mnts = 0;
+	int i;
+	
+	/* get our mount infos */
+	num_of_mnts = getmntinfo(&mntbufp, MNT_WAIT);
+	if(num_of_mnts == 0) /* no mounts returned, something is drastically wrong. */
+	{
+		fprintf(stderr, "No mounts???\n");
+		return false;
+	}
+	/* go though the mounts and see which one matches volume_path */
+	for(i = 0; i < num_of_mnts; i++)
+	{
+		/* fprintf(stdout, "[INFO Mount: %i (%s on %s)]\n", i, mntbufp[i].f_mntfromname, mntbufp[i].f_mntonname); */
+		if(strcmp(volume_path, mntbufp[i].f_mntonname) == 0)
+		{
+			strncpy(device_path, mntbufp[i].f_mntfromname, max_device_path); /* copy the device_path */
+			return true; /* found our guy, so, get out of here! */
+		}
+	}
+	return false; /* couldn't find our guy sorry :-( */
+}
+
 @implementation POPDvd
 {
 	NSString* _path;
+	NSString* _devicePath;
 	BOOL _isCopying;
 	id<POPDvdDelegate> _delegate;
+	POPFfmpeg* _ffmpeg;
+	volatile NSArray* _tracks;
 }
 -(id)init
 {
 	self = [super init];
 	_contents = nil;
 	_delegate = nil;
-	//_copyThread = nil;
+	_ffmpeg = nil;
 	[self setIsCopying:NO];
 	_error = @"none";
 	@synchronized(self)
@@ -74,15 +137,45 @@ long dvdtime2msec(dvd_time_t *dt)
 	{
 		_path = [path copy];
 	}
-	
-	dvd = _DVDOpen([path cStringUsingEncoding:NSStringEncodingConversionAllowLossy]);
+	//make sure we have a good devicePath
+	if([[_path substringWithRange:NSMakeRange(0, 5)] compare:@"/dev/"] == 0)
+	{
+		@synchronized(self)
+		{
+			_devicePath = [path copy];
+		}
+	}
+	else if([[_path substringWithRange:NSMakeRange(0, [@"/Volumes/" length])] compare:@"/Volumes/"] == 0)
+	{
+		char device_path[1024];
+		if(device_path_with_volume_path(device_path, [path cStringUsingEncoding:NSStringEncodingConversionAllowLossy],1024))
+		{
+			@synchronized(self)
+			{
+				_devicePath = [NSString stringWithCString:device_path encoding:NSStringEncodingConversionAllowLossy ];
+			}
+		}
+		else
+		{
+			NSRunAlertPanel(@"DEVICE NOT FOUND",
+							[NSString stringWithFormat:@"Sorry the path %@ is not a DVD device (unable to get device path from volume path).", path],
+							@"Ok", nil, nil);
+		}
+	}
+	else
+	{
+		NSRunAlertPanel(@"DEVICE NOT FOUNT",
+						[NSString stringWithFormat:@"Sorry the path %@ is not a DVD device (must start with /dev/ or /Volumes/).", path],
+						@"Ok", nil, nil);
+	}
+	dvd = DVDOpen([[self devicePath] cStringUsingEncoding:NSStringEncodingConversionAllowLossy]);
 	if(!dvd)
 	{
 		NSRunAlertPanel(@"libdvdread ERROR", [NSString stringWithFormat:@"unable to open DVD: %@" ,path], @"Ok",nil, nil);
 		return false;
 	}
 	
-	ifo_zero = _ifoOpen(dvd, 0);
+	ifo_zero = ifoOpen(dvd, 0);
 	if(!ifo_zero)
 	{
 		NSRunAlertPanel(@"libdvdread ERROR", [NSString stringWithFormat:@"unable to open main IFO\nDVD Path: %@", path], @"Ok",nil, nil);
@@ -98,9 +191,11 @@ long dvdtime2msec(dvd_time_t *dt)
 			return false;
 		}
 	}
+	@synchronized(self)
+	{
+		_numberOfTracks = ifo_zero->tt_srpt->nr_of_srpts;
+	}
 	
-	_numberOfTracks = ifo_zero->tt_srpt->nr_of_srpts;
-
 	NSMutableArray* tracks = [NSMutableArray array];
 	vmgi_mat = ifo_zero->vmgi_mat;
 	//go though the tracks.
@@ -147,101 +242,124 @@ long dvdtime2msec(dvd_time_t *dt)
 			}
 			NSDictionary* track = [NSDictionary dictionaryWithObjectsAndKeys:track_title, @"Title", track_length, @"Length", chapters, @"Chapters", nil];
 			[tracks addObject:track];
-		} // if vtsi_mat
-	} // for each title
+		}
+	}
 	
 	//clean up
 	for (i=1; i <= ifo_zero->vts_atrt->nr_of_vtss; i++)
 	{
-		_ifoClose(ifo[i]);
+		ifoClose(ifo[i]);
 	}
-	_ifoClose(ifo_zero);
-	_DVDClose(dvd);
+	ifoClose(ifo_zero);
+	DVDClose(dvd);
 	
 	//set the property contents.
-	_contents = [NSDictionary dictionaryWithObjectsAndKeys:_title, @"Title", max_track, @"LongestTrack", tracks, @"Tracks", nil];
-	
+	@synchronized(self)
+	{
+		_tracks = tracks;
+		_contents = [NSDictionary dictionaryWithObjectsAndKeys:_title, @"Title", max_track, @"LongestTrack", tracks, @"Tracks", nil];
+	}
 	return true;
 }
--(void) runCopyThread:(NSArray*)paths
+
+-(void) runCopyAndConvertThread:(NSArray*)paths
 {
 	NSString* dvdPath = [paths objectAtIndex:0];
 	NSString* trackTitle = [paths objectAtIndex:1];
-	NSString* outPath = [paths objectAtIndex:2];
+	NSString* outPath = [[paths objectAtIndex:2] copy];
+	float durationInSecs = [[paths objectAtIndex:3] floatValue];
+	NSString* tempPath = [[[outPath stringByDeletingPathExtension] stringByAppendingFormat:@"%i",(int)[NSDate timeIntervalSinceReferenceDate]] stringByAppendingPathExtension:@"vob"];
+	long trackNum = [trackTitle integerValue];
+	NSMutableArray* chapters = [NSMutableArray array];
 	[self setIsCopying:YES];
+	
 	//let the delegate know we started
 	if([self delegate] != nil) [[self delegate] copyStarted];
-	//create an array for all the files in trackTitle
-	/*NSMutableArray* trackPaths = [NSMutableArray array];
-	int i = 1;
-	NSString *trackPath = [NSString stringWithFormat:@"%@/vts_%.2ld_%d.vob", dvdPath, [trackTitle integerValue], i];
-	while([[NSFileManager defaultManager] fileExistsAtPath:trackPath])
-	{
-		[trackPaths addObject:trackPath];
-		++i;
-		trackPath = [NSString stringWithFormat:@"%@/vts_%.2ld_%d.vob", dvdPath, [trackTitle integerValue], i];
-	}
-	i = 1;
-	trackPath = [NSString stringWithFormat:@"%@/VTS_%.2ld_%d.VOB", dvdPath, [trackTitle integerValue], i];
-	while([[NSFileManager defaultManager] fileExistsAtPath:trackPath])
-	{
-		[trackPaths addObject:trackPath];
-		++i;
-		trackPath = [NSString stringWithFormat:@"%@/VTS_%.2ld_%d.VOB", dvdPath, [trackTitle integerValue], i];
-	}
-	i = 1;
-	trackPath = [NSString stringWithFormat:@"%@/video_ts/vts_%.2ld_%d.vob", dvdPath, [trackTitle integerValue], i];
-	while([[NSFileManager defaultManager] fileExistsAtPath:trackPath])
-	{
-		[trackPaths addObject:trackPath];
-		++i;
-		trackPath = [NSString stringWithFormat:@"%@/video_ts/vts_%.2ld_%d.vob", dvdPath, [trackTitle integerValue], i];
-	}
-	i = 1;
-	trackPath = [NSString stringWithFormat:@"%@/VIDEO_TS/VTS_%.2ld_%d.VOB", dvdPath, [trackTitle integerValue], i];
-	while([[NSFileManager defaultManager] fileExistsAtPath:trackPath])
-	{
-		[trackPaths addObject:trackPath];
-		++i;
-		trackPath = [NSString stringWithFormat:@"%@/VIDEO_TS/VTS_%.2ld_%d.VOB", dvdPath, [trackTitle integerValue], i];
-	}
-	for(NSString *trackPath in trackPaths)
-	{
-		NSLog(@"%@", trackPath);
-	}*/
 	
 	//open the dvd
-	dvd_reader_t* dvd = _DVDOpen([dvdPath cStringUsingEncoding:NSStringEncodingConversionAllowLossy]);
-	//open the dvd vts info file
-	ifo_handle_t* ifo_file = _ifoOpen(dvd, 0);
-	tt_srpt_t *tt_srpt = ifo_file->tt_srpt;
+	dvd_reader_t* dvd = DVDOpen([dvdPath cStringUsingEncoding:NSStringEncodingConversionAllowLossy]);
+	
+	//open the dvd image and vts info files
+	ifo_handle_t* vmg_file = ifoOpen(dvd, 0);
+	tt_srpt_t* tt_srpt = vmg_file->tt_srpt;
+	ifo_handle_t* vts_file = ifoOpen( dvd, tt_srpt->title[trackNum-1].title_set_nr );
+	
+	//see if we can use passthough
+	int audio_attr_cnt = vts_file->vtsi_mat->nr_of_vts_audio_streams;
+	audio_attr_t* audio_attrs = vts_file->vtsi_mat->vts_audio_attr;
+	bool use_passthough = false;
+	for(int i = 0; i < audio_attr_cnt; i++)
+	{
+		audio_attr_t audio_attr = audio_attrs[i];
+		if(audio_attr.channels == 2)
+		{
+			use_passthough = true;
+		}
+	}
+	//grab our program chain and create chapters array.
+	int ttn = tt_srpt->title[trackNum-1].vts_ttn;
+	vts_ptt_srpt_t* vts_ptt_srpt = vts_file->vts_ptt_srpt;
+	int pgc_id = vts_ptt_srpt->title[ttn - 1].ptt[0].pgcn;
+	pgc_t* pgc = vts_file->vts_pgcit->pgci_srp[pgc_id - 1].pgc;
+	//go though the chapters
+	long ms, cell = 0;
+	for (int i = 0; i < pgc->nr_of_programs; i++)
+	{
+		ms=0;
+		int next = pgc->program_map[i+1];
+		if (i == pgc->nr_of_programs - 1) next = pgc->nr_of_cells + 1;
+		
+		while (cell < next - 1)
+		{
+			ms = ms + dvdtime2msec(&pgc->cell_playback[cell].playback_time);
+			cell++;
+		}
+		NSString* chapter_title  = [NSString stringWithFormat:@"%i", i+1];
+		NSString* chapter_length = [NSString stringWithFormat:@"%f", ms * 0.001];
+		NSDictionary* chapter = [NSDictionary dictionaryWithObjectsAndKeys:chapter_title, @"Title", chapter_length, @"Length", nil];
+		[chapters addObject:chapter];
+	}
+	
+	//open the menu file and decrypt the CSS
+	dvd_file_t* trackMenuFile = DVDOpenFile(dvd, 0, DVD_READ_MENU_VOBS);
 	//now open the track
-	long trackNum = [trackTitle integerValue];
-	dvd_file_t* trackFile = _DVDOpenFile(dvd, tt_srpt->title[trackNum-1].title_set_nr, DVD_READ_TITLE_VOBS);
+	dvd_file_t* trackFile = DVDOpenFile(dvd, tt_srpt->title[trackNum-1].title_set_nr, DVD_READ_TITLE_VOBS);
 	//get the file block size
-	ssize_t fileSizeInBlocks = _DVDFileSize(trackFile);
+	ssize_t fileSizeInBlocks = DVDFileSize(trackFile);
+	
 	unsigned char buffer[DVD_VIDEO_LB_LEN*BLOCK_COUNT];
 	NSLog(@"Track: %@, Size: %li blocks", trackTitle, fileSizeInBlocks);
 	//open the out file
-	FILE* outFile = fopen([outPath cStringUsingEncoding:NSStringEncodingConversionAllowLossy], "w+");
+	FILE* outFile = fopen([[tempPath copy] cStringUsingEncoding:NSStringEncodingConversionAllowLossy], "w+");
 	//read in a block and write it out...
 	ssize_t readBlocks=0;
 	int offset = 0;
 	long bc = BLOCK_COUNT;
+	int missed_blocks = 0;
 	while(offset < fileSizeInBlocks && [self isCopying])
 	{
-		readBlocks = _DVDReadBlocks(trackFile, offset, bc, buffer);
+		readBlocks = DVDReadBlocks(trackFile, offset, bc, buffer);
 		if(readBlocks < 0)
 		{
 			int tries = 0;
 			while (tries < 10 && readBlocks < 0)
 			{
 				tries++;
-				readBlocks = _DVDReadBlocks(trackFile, offset, bc, buffer);
+				readBlocks = DVDReadBlocks(trackFile, offset, bc, buffer);
 			}
 			if(readBlocks < 0)
 			{
 				NSLog(@"Unable to read block %i", offset);
+				missed_blocks++;
+				if(missed_blocks > MAX_UNREAD_BLOCKS)
+				{
+					_error = [NSString stringWithFormat:@"Missed %i blocks, unable to copy DVD.", missed_blocks];
+					[self setIsCopying:NO];
+				}
+				else
+				{
+					offset += BLOCK_COUNT;
+				}
 			}
 			else
 			{
@@ -268,26 +386,83 @@ long dvdtime2msec(dvd_time_t *dt)
 			bc = fileSizeInBlocks - (long)offset;
 		}
 	}
-	if([self delegate] != nil) [[self delegate] copyEnded];
-	[self setIsCopying:NO];
-	_ifoClose(ifo_file);
-	_DVDCloseFile(trackFile);
-	fclose(outFile);
-	_DVDClose(dvd);
-}
--(BOOL)copyTrack:(NSString*)trackTitle To:(NSString*)outputPath
-{
-	NSArray* paths = [NSArray arrayWithObjects:[[self path] copy], [trackTitle copy], [outputPath copy], nil];
 	
-	//[NSThread detachNewThreadSelector:@selector(runCopyThread:) toTarget:self withObject:paths];
-	[self runCopyThread:paths];
+	//clean up the DVD read.
+	ifoClose(vmg_file);
+	ifoClose(vts_file);
+	DVDCloseFile(trackFile);
+	DVDCloseFile(trackMenuFile);
+	fclose(outFile);
+	DVDClose(dvd);
+	
+	//convert to an mp4.
+	if([self delegate] != nil) [[self delegate] copyEnded];
+	if([self isCopying])
+	{
+		_ffmpeg = [[POPFfmpeg alloc] initWithInputPath:tempPath OutputPath:outPath Duration:durationInSecs];
+		[_ffmpeg setDelegate:self];
+		[_ffmpeg launch];
+		[_ffmpeg waitUntilExit];
+		_ffmpeg = nil;
+	}
+	else
+	{
+		[[self delegate] ffmpegEnded:0];
+	}
+	
+	//add the mp4 chapter marks.
+	MP4FileHandle mp4File = _MP4Modify([outPath cStringUsingEncoding:NSStringEncodingConversionAllowLossy], 0);
+	if(mp4File != NULL)
+	{
+		MP4Chapter_t* mp4Chapters = malloc(sizeof(MP4Chapter_t)*[chapters count]);
+		for(int i = 0; i < [chapters count]; i++)
+		{
+			mp4Chapters[i].duration = [[[chapters objectAtIndex:i] objectForKey:@"Length"] doubleValue]*1000;
+			strcpy(mp4Chapters[i].title, [[[chapters objectAtIndex:i] objectForKey:@"Length"] cStringUsingEncoding:NSStringEncodingConversionAllowLossy]);
+		}
+		if(_MP4SetChapters(mp4File, mp4Chapters, (unsigned int)[chapters count], MP4ChapterTypeAny) != MP4ChapterTypeAny)
+		{
+			NSLog(@"Chapters were not able to be set");
+		}
+		_MP4Close(mp4File, 0);
+		free(mp4Chapters);
+	}
+	
+	//clean up the temp file.
+	if([[NSFileManager defaultManager] fileExistsAtPath:tempPath])
+	{
+		NSError* error;
+		if(![[NSFileManager defaultManager] removeItemAtPath:tempPath error:&error])
+		{
+			NSRunAlertPanel(@"Remove Temporary Folder ERROR", [NSString stringWithFormat:@"Unable to remove the temporary folder. Error: %@", [error description]], @"Ok", nil, nil);
+		}
+		else
+		{
+			NSLog(@"removed %@", tempPath);
+		}
+	}
+	
+	[self setIsCopying:NO];
+}
+
+-(BOOL)copyAndConvertTrack:(NSString*)trackTitle To:(NSString*)outputPath Duration:(NSString*)duration
+{
+	NSArray* paths = [NSArray arrayWithObjects:[[self devicePath] copy], [trackTitle copy], [outputPath copy], [duration copy], nil];
+	
+	[NSThread detachNewThreadSelector:@selector(runCopyAndConvertThread:) toTarget:self withObject:paths];
+	//[self runCopyThread:paths];
 	return true;
 }
+
 -(void)terminateCopyTrack
 {
 	if([self isCopying])
 	{
 		[self setIsCopying:NO];
+		if(_ffmpeg != nil)
+		{
+			[_ffmpeg terminate];
+		}
 	}
 }
 -(NSString*)path
@@ -296,6 +471,15 @@ long dvdtime2msec(dvd_time_t *dt)
 	@synchronized(self)
 	{
 		rtn = [_path copy];
+	}
+	return rtn;
+}
+-(NSString*)devicePath
+{
+	NSString* rtn;
+	@synchronized(self)
+	{
+		rtn = [_devicePath copy];
 	}
 	return rtn;
 }
@@ -325,5 +509,18 @@ long dvdtime2msec(dvd_time_t *dt)
 	{
 		_delegate = delegate;
 	}
+}
+
+-(void) ffmpegStarted
+{
+	if([self delegate] != nil)[[self delegate] ffmpegStarted];
+}
+-(void) ffmpegProgress:(float)percent
+{
+	if([self delegate] != nil)[[self delegate] ffmpegProgress:percent];
+}
+-(void) ffmpegEnded:(NSInteger)returnCode
+{
+	if([self delegate] != nil)[[self delegate] ffmpegEnded:returnCode];
 }
 @end

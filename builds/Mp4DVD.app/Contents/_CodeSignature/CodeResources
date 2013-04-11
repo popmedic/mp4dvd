@@ -30,34 +30,22 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			yvLPmAMZWvwJ06GbSh85PibXLzs=
+			mOavSoqTj4wm9TDv0BexmWBluDk=
 			</data>
 			<key>optional</key>
 			<true/>
 		</dict>
 		<key>Resources/ffmpeg</key>
 		<data>
-		oo5IKMkV6ofHkWQu0DTtm1eVivQ=
-		</data>
-		<key>Resources/libdvdcss.2.dylib</key>
-		<data>
-		R0qDeHC++g250J1PLZKPv39x2lw=
-		</data>
-		<key>Resources/libdvdread.4.dylib</key>
-		<data>
-		LdoQhoJAsq7bdVDiwqXvw6eQSq4=
+		9rQf5MR6EMWQaSh0snVvQzsGON0=
 		</data>
 		<key>Resources/libmp4v2.2.dylib</key>
 		<data>
-		WA3fItWF+oX5+m0NCh1CLvu8lbM=
+		XOeKEdo0eXUZpvPrUPj3Md9W4jo=
 		</data>
 		<key>Resources/mp4dvd.icns</key>
 		<data>
 		MzigO1EHVDs2ghCfkh3XJo9VySQ=
-		</data>
-		<key>Resources/vobcopy</key>
-		<data>
-		EGWXkgifIu/u0zhQ/2tmBHSTAKM=
 		</data>
 	</dict>
 	<key>rules</key>
