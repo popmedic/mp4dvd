@@ -295,6 +295,7 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 			use_passthough = true;
 		}
 	}
+#pragma mark Create chapters array.
 	//grab our program chain and create chapters array.
 	int ttn = tt_srpt->title[trackNum-1].vts_ttn;
 	vts_ptt_srpt_t* vts_ptt_srpt = vts_file->vts_ptt_srpt;
@@ -318,7 +319,7 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 		NSDictionary* chapter = [NSDictionary dictionaryWithObjectsAndKeys:chapter_title, @"Title", chapter_length, @"Length", nil];
 		[chapters addObject:chapter];
 	}
-	
+#pragma mark Copy VOB file.
 	//open the menu file and decrypt the CSS
 	dvd_file_t* trackMenuFile = DVDOpenFile(dvd, 0, DVD_READ_MENU_VOBS);
 	//now open the track
@@ -393,7 +394,7 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 	DVDCloseFile(trackMenuFile);
 	fclose(outFile);
 	DVDClose(dvd);
-	
+#pragma mark Convert to mp4.
 	//convert to an mp4.
 	if([self delegate] != nil) [[self delegate] copyEnded];
 	if([self isCopying])
@@ -408,7 +409,7 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 	{
 		[[self delegate] ffmpegEnded:0];
 	}
-	
+#pragma mark Add mp4 chapters
 	//add the mp4 chapter marks.
 	MP4FileHandle mp4File = _MP4Modify([outPath cStringUsingEncoding:NSStringEncodingConversionAllowLossy], 0);
 	if(mp4File != NULL)
@@ -417,7 +418,7 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 		for(int i = 0; i < [chapters count]; i++)
 		{
 			mp4Chapters[i].duration = [[[chapters objectAtIndex:i] objectForKey:@"Length"] doubleValue]*1000;
-			strcpy(mp4Chapters[i].title, [[[chapters objectAtIndex:i] objectForKey:@"Length"] cStringUsingEncoding:NSStringEncodingConversionAllowLossy]);
+			strcpy(mp4Chapters[i].title, [[[chapters objectAtIndex:i] objectForKey:@"Title"] cStringUsingEncoding:NSStringEncodingConversionAllowLossy]);
 		}
 		if(_MP4SetChapters(mp4File, mp4Chapters, (unsigned int)[chapters count], MP4ChapterTypeAny) != MP4ChapterTypeAny)
 		{

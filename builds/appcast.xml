@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"  xmlns:dc="http://purl.org/dc/elements/1.1/">
+	<channel>
+   		<title>Mp4Autotag Changelog</title>
+      	<link>http://popmedic.com/mp4autotag/sparkle/appcast.xml</link>
+      	<description>Base version.</description>
+      	<language>en</language>
+		<item>
+        	<title>Version 0.1.4 (beta release 1.4)</title>
+			<sparkle:releaseNotesLink>
+				http://popmedic.com/mp4autotag/sparkle/0.1.4.html
+			</sparkle:releaseNotesLink>
+          	<pubDate>Fri, 8 Mar 2013 15:50:33 +0700</pubDate>
+          	<enclosure
+			url="http://popmedic.com/mp4autotag_builds/latest/Mp4Autotag.zip"
+			sparkle:version="0.1.4"
+			sparkle:dsaSignature="MCwCFHZPZEHnRwc+FeAEtbA7yipmgu1MAhQhe1n0UthY+/iUGhC9AfONWQPycA=="
+			length="3003673"
+			type="application/octet-stream"
+			/>
+		</item>
+   </channel>
+</rss>

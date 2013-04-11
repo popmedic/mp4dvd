@@ -4,6 +4,10 @@
 <dict>
 	<key>files</key>
 	<dict>
+		<key>Resources/decoder.Plo</key>
+		<data>
+		oZ8ICg0jrPTOClbjD2Ol8hOWDnE=
+		</data>
 		<key>Resources/dropdvdhere.png</key>
 		<data>
 		v3y8l/Kr4vpNO7v7fOUSEWTdXO4=
@@ -30,22 +34,30 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			mOavSoqTj4wm9TDv0BexmWBluDk=
+			uxGIgGsssR7RntuB9GHgus+moJA=
 			</data>
 			<key>optional</key>
 			<true/>
 		</dict>
 		<key>Resources/ffmpeg</key>
 		<data>
-		9rQf5MR6EMWQaSh0snVvQzsGON0=
+		KmYB9U+Fnuxnpu0mma0hywcX2mA=
 		</data>
 		<key>Resources/libmp4v2.2.dylib</key>
 		<data>
-		XOeKEdo0eXUZpvPrUPj3Md9W4jo=
+		XP/Lvpy/jxAEN9BQVDZ4z0qzW2M=
 		</data>
 		<key>Resources/mp4dvd.icns</key>
 		<data>
 		MzigO1EHVDs2ghCfkh3XJo9VySQ=
+		</data>
+		<key>Resources/vm.Plo</key>
+		<data>
+		oZ8ICg0jrPTOClbjD2Ol8hOWDnE=
+		</data>
+		<key>Resources/vmcmd.Plo</key>
+		<data>
+		oZ8ICg0jrPTOClbjD2Ol8hOWDnE=
 		</data>
 	</dict>
 	<key>rules</key>
