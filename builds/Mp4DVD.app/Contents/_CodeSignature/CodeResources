@@ -12,6 +12,10 @@
 		<data>
 		v3y8l/Kr4vpNO7v7fOUSEWTdXO4=
 		</data>
+		<key>Resources/dsa_pub.pem</key>
+		<data>
+		pgIUCu3k9ujONoYi9WpDNe5Q8EY=
+		</data>
 		<key>Resources/en.lproj/Credits.rtf</key>
 		<dict>
 			<key>hash</key>
@@ -34,18 +38,18 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			uxGIgGsssR7RntuB9GHgus+moJA=
+			WzyZsuczMEChjlkwWUL/l/5TsVY=
 			</data>
 			<key>optional</key>
 			<true/>
 		</dict>
 		<key>Resources/ffmpeg</key>
 		<data>
-		KmYB9U+Fnuxnpu0mma0hywcX2mA=
+		9rQf5MR6EMWQaSh0snVvQzsGON0=
 		</data>
 		<key>Resources/libmp4v2.2.dylib</key>
 		<data>
-		XP/Lvpy/jxAEN9BQVDZ4z0qzW2M=
+		XOeKEdo0eXUZpvPrUPj3Md9W4jo=
 		</data>
 		<key>Resources/mp4dvd.icns</key>
 		<data>

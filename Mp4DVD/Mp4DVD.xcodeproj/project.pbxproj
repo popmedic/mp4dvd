@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0A1B4C7917172F5E00384239 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A1B4C7817172F5E00384239 /* Sparkle.framework */; };
+		0A1B4C7C17172FB700384239 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0A1B4C7817172F5E00384239 /* Sparkle.framework */; };
+		0A1B4C7E1717320900384239 /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = 0A1B4C7D1717320900384239 /* dsa_pub.pem */; };
 		0A30B59816FA5C4E008EA990 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A30B59716FA5C4E008EA990 /* Cocoa.framework */; };
 		0A30B5A216FA5C4E008EA990 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0A30B5A016FA5C4E008EA990 /* InfoPlist.strings */; };
 		0A30B5A416FA5C4E008EA990 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A30B5A316FA5C4E008EA990 /* main.m */; };
@@ -50,7 +53,22 @@
 		0A80C036170E0A8F00903BCB /* dropdvdhere.png in Resources */ = {isa = PBXBuildFile; fileRef = 0A30B5BF16FAAB73008EA990 /* dropdvdhere.png */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		0A1B4C7B17172F9A00384239 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				0A1B4C7C17172FB700384239 /* Sparkle.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		0A1B4C7817172F5E00384239 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
+		0A1B4C7D1717320900384239 /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
 		0A30B59316FA5C4E008EA990 /* Mp4DVD.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mp4DVD.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A30B59716FA5C4E008EA990 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		0A30B59A16FA5C4E008EA990 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -141,6 +159,7 @@
 			files = (
 				0A30B5DE16FB8F97008EA990 /* QTKit.framework in Frameworks */,
 				0A30B59816FA5C4E008EA990 /* Cocoa.framework in Frameworks */,
+				0A1B4C7917172F5E00384239 /* Sparkle.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -168,6 +187,7 @@
 		0A30B59616FA5C4E008EA990 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0A1B4C7817172F5E00384239 /* Sparkle.framework */,
 				0A30B59716FA5C4E008EA990 /* Cocoa.framework */,
 				0A30B59A16FA5C4E008EA990 /* AppKit.framework */,
 				0A30B59B16FA5C4E008EA990 /* CoreData.framework */,
@@ -202,6 +222,7 @@
 				0A30B5A316FA5C4E008EA990 /* main.m */,
 				0A30B5A516FA5C4E008EA990 /* Mp4DVD-Prefix.pch */,
 				0A30B5A616FA5C4E008EA990 /* Credits.rtf */,
+				0A1B4C7D1717320900384239 /* dsa_pub.pem */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -383,6 +404,7 @@
 				0A30B58F16FA5C4E008EA990 /* Sources */,
 				0A30B59016FA5C4E008EA990 /* Frameworks */,
 				0A30B59116FA5C4E008EA990 /* Resources */,
+				0A1B4C7B17172F9A00384239 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -435,6 +457,7 @@
 				0A3894391717031E009CB740 /* decoder.Plo in Resources */,
 				0A38943A1717031E009CB740 /* vm.Plo in Resources */,
 				0A38943B1717031E009CB740 /* vmcmd.Plo in Resources */,
+				0A1B4C7E1717320900384239 /* dsa_pub.pem in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
