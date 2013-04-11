@@ -11,7 +11,7 @@
 @implementation POPmp4v2dylibloader
 +(void)loadMp4v2Lib:(NSString*)path
 {
-	void* mp4v2_lib_handle;
+	void* mp4v2_lib_handle = NULL;
 	mp4v2_lib_handle = dlopen("libmp4v2.2.dylib", RTLD_LOCAL|RTLD_LAZY);
 	if(!mp4v2_lib_handle)
 	{

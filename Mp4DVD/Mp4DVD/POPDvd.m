@@ -7,9 +7,8 @@
 //
 
 #import "POPDvd.h"
-#include <mp4v2/mp4v2.h>
 
-#define DVDCSS_VERBOSE 1
+#include <mp4v2/mp4v2.h>
 #include <dvdread/dvd_reader.h>
 #include <dvdread/ifo_types.h>
 #include <dvdread/ifo_read.h>

@@ -22,8 +22,28 @@
 		0A30B5E916FC0194008EA990 /* POPDvd2Mp4.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A30B5E816FC0194008EA990 /* POPDvd2Mp4.m */; };
 		0A30B62016FCEF6E008EA990 /* POPFfmpeg.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A30B61F16FCEF6E008EA990 /* POPFfmpeg.m */; };
 		0A30B62216FD0AF0008EA990 /* ffmpeg in Resources */ = {isa = PBXBuildFile; fileRef = 0A30B62116FD0AF0008EA990 /* ffmpeg */; };
-		0A63ADA91715C4D700A8AA9C /* libdvdread.4.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A63ADA81715C4D700A8AA9C /* libdvdread.4.dylib */; };
-		0A63ADAB1715FFEB00A8AA9C /* libdvdcss.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A63ADAA1715FFEB00A8AA9C /* libdvdcss.2.dylib */; };
+		0A3894321717031E009CB740 /* dvdnav.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A38941E1717031E009CB740 /* dvdnav.c */; };
+		0A3894331717031E009CB740 /* highlight.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A38941F1717031E009CB740 /* highlight.c */; };
+		0A3894341717031E009CB740 /* navigation.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A3894201717031E009CB740 /* navigation.c */; };
+		0A3894351717031E009CB740 /* read_cache.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A3894211717031E009CB740 /* read_cache.c */; };
+		0A3894361717031E009CB740 /* remap.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A3894231717031E009CB740 /* remap.c */; };
+		0A3894371717031E009CB740 /* searching.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A3894251717031E009CB740 /* searching.c */; };
+		0A3894381717031E009CB740 /* settings.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A3894261717031E009CB740 /* settings.c */; };
+		0A3894391717031E009CB740 /* decoder.Plo in Resources */ = {isa = PBXBuildFile; fileRef = 0A3894291717031E009CB740 /* decoder.Plo */; };
+		0A38943A1717031E009CB740 /* vm.Plo in Resources */ = {isa = PBXBuildFile; fileRef = 0A38942A1717031E009CB740 /* vm.Plo */; };
+		0A38943B1717031E009CB740 /* vmcmd.Plo in Resources */ = {isa = PBXBuildFile; fileRef = 0A38942B1717031E009CB740 /* vmcmd.Plo */; };
+		0A38943C1717031E009CB740 /* decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A38942C1717031E009CB740 /* decoder.c */; };
+		0A38943D1717031E009CB740 /* vm.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A38942E1717031E009CB740 /* vm.c */; };
+		0A38943E1717031E009CB740 /* vmcmd.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A3894301717031E009CB740 /* vmcmd.c */; };
+		0A38947A17170503009CB740 /* bitreader.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A38946217170503009CB740 /* bitreader.c */; };
+		0A38947B17170503009CB740 /* dvd_input.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A38946517170503009CB740 /* dvd_input.c */; };
+		0A38947C17170503009CB740 /* dvd_reader.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A38946717170503009CB740 /* dvd_reader.c */; };
+		0A38947D17170503009CB740 /* dvd_udf.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A38946817170503009CB740 /* dvd_udf.c */; };
+		0A38947E17170503009CB740 /* ifo_print.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A38947417170503009CB740 /* ifo_print.c */; };
+		0A38947F17170503009CB740 /* ifo_read.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A38947517170503009CB740 /* ifo_read.c */; };
+		0A38948017170503009CB740 /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A38947617170503009CB740 /* md5.c */; };
+		0A38948117170503009CB740 /* nav_print.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A38947817170503009CB740 /* nav_print.c */; };
+		0A38948217170503009CB740 /* nav_read.c in Sources */ = {isa = PBXBuildFile; fileRef = 0A38947917170503009CB740 /* nav_read.c */; };
 		0A80C00D17038E2A00903BCB /* POPmp4v2dylibloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A80C00C17038E2A00903BCB /* POPmp4v2dylibloader.m */; };
 		0A80C0211704A27900903BCB /* libmp4v2.2.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 0A80C00E17038EEC00903BCB /* libmp4v2.2.dylib */; };
 		0A80C028170CD9BC00903BCB /* POPDvd.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A80C027170CD9BB00903BCB /* POPDvd.m */; };
@@ -60,8 +80,52 @@
 		0A30B61E16FCEF6E008EA990 /* POPFfmpeg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POPFfmpeg.h; sourceTree = "<group>"; };
 		0A30B61F16FCEF6E008EA990 /* POPFfmpeg.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POPFfmpeg.m; sourceTree = "<group>"; };
 		0A30B62116FD0AF0008EA990 /* ffmpeg */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = ffmpeg; sourceTree = "<group>"; };
-		0A63ADA81715C4D700A8AA9C /* libdvdread.4.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libdvdread.4.dylib; sourceTree = "<group>"; };
-		0A63ADAA1715FFEB00A8AA9C /* libdvdcss.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libdvdcss.2.dylib; sourceTree = "<group>"; };
+		0A3894181717031E009CB740 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = libdvdcss.src/config.h; sourceTree = "<group>"; };
+		0A38941A1717031E009CB740 /* dvd_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dvd_types.h; sourceTree = "<group>"; };
+		0A38941B1717031E009CB740 /* dvdnav.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dvdnav.h; sourceTree = "<group>"; };
+		0A38941C1717031E009CB740 /* dvdnav_events.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dvdnav_events.h; sourceTree = "<group>"; };
+		0A38941D1717031E009CB740 /* dvdnav_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dvdnav_internal.h; path = libdvdcss.src/dvdnav_internal.h; sourceTree = "<group>"; };
+		0A38941E1717031E009CB740 /* dvdnav.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dvdnav.c; path = libdvdcss.src/dvdnav.c; sourceTree = "<group>"; };
+		0A38941F1717031E009CB740 /* highlight.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = highlight.c; path = libdvdcss.src/highlight.c; sourceTree = "<group>"; };
+		0A3894201717031E009CB740 /* navigation.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = navigation.c; path = libdvdcss.src/navigation.c; sourceTree = "<group>"; };
+		0A3894211717031E009CB740 /* read_cache.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = read_cache.c; path = libdvdcss.src/read_cache.c; sourceTree = "<group>"; };
+		0A3894221717031E009CB740 /* read_cache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = read_cache.h; path = libdvdcss.src/read_cache.h; sourceTree = "<group>"; };
+		0A3894231717031E009CB740 /* remap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = remap.c; path = libdvdcss.src/remap.c; sourceTree = "<group>"; };
+		0A3894241717031E009CB740 /* remap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = remap.h; path = libdvdcss.src/remap.h; sourceTree = "<group>"; };
+		0A3894251717031E009CB740 /* searching.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = searching.c; path = libdvdcss.src/searching.c; sourceTree = "<group>"; };
+		0A3894261717031E009CB740 /* settings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = settings.c; path = libdvdcss.src/settings.c; sourceTree = "<group>"; };
+		0A3894291717031E009CB740 /* decoder.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = decoder.Plo; sourceTree = "<group>"; };
+		0A38942A1717031E009CB740 /* vm.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = vm.Plo; sourceTree = "<group>"; };
+		0A38942B1717031E009CB740 /* vmcmd.Plo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = vmcmd.Plo; sourceTree = "<group>"; };
+		0A38942C1717031E009CB740 /* decoder.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = decoder.c; sourceTree = "<group>"; };
+		0A38942D1717031E009CB740 /* decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = decoder.h; sourceTree = "<group>"; };
+		0A38942E1717031E009CB740 /* vm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vm.c; sourceTree = "<group>"; };
+		0A38942F1717031E009CB740 /* vm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vm.h; sourceTree = "<group>"; };
+		0A3894301717031E009CB740 /* vmcmd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vmcmd.c; sourceTree = "<group>"; };
+		0A3894311717031E009CB740 /* vmcmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vmcmd.h; sourceTree = "<group>"; };
+		0A38946217170503009CB740 /* bitreader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bitreader.c; path = libdvdread.src/bitreader.c; sourceTree = "<group>"; };
+		0A38946317170503009CB740 /* bswap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bswap.h; path = libdvdread.src/bswap.h; sourceTree = "<group>"; };
+		0A38946417170503009CB740 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = libdvdread.src/config.h; sourceTree = "<group>"; };
+		0A38946517170503009CB740 /* dvd_input.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dvd_input.c; path = libdvdread.src/dvd_input.c; sourceTree = "<group>"; };
+		0A38946617170503009CB740 /* dvd_input.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dvd_input.h; path = libdvdread.src/dvd_input.h; sourceTree = "<group>"; };
+		0A38946717170503009CB740 /* dvd_reader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dvd_reader.c; path = libdvdread.src/dvd_reader.c; sourceTree = "<group>"; };
+		0A38946817170503009CB740 /* dvd_udf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = dvd_udf.c; path = libdvdread.src/dvd_udf.c; sourceTree = "<group>"; };
+		0A38946A17170503009CB740 /* bitreader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bitreader.h; sourceTree = "<group>"; };
+		0A38946B17170503009CB740 /* dvd_reader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dvd_reader.h; sourceTree = "<group>"; };
+		0A38946C17170503009CB740 /* dvd_udf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dvd_udf.h; sourceTree = "<group>"; };
+		0A38946D17170503009CB740 /* ifo_print.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ifo_print.h; sourceTree = "<group>"; };
+		0A38946E17170503009CB740 /* ifo_read.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ifo_read.h; sourceTree = "<group>"; };
+		0A38946F17170503009CB740 /* ifo_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ifo_types.h; sourceTree = "<group>"; };
+		0A38947017170503009CB740 /* nav_print.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nav_print.h; sourceTree = "<group>"; };
+		0A38947117170503009CB740 /* nav_read.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nav_read.h; sourceTree = "<group>"; };
+		0A38947217170503009CB740 /* nav_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nav_types.h; sourceTree = "<group>"; };
+		0A38947317170503009CB740 /* dvdread_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dvdread_internal.h; path = libdvdread.src/dvdread_internal.h; sourceTree = "<group>"; };
+		0A38947417170503009CB740 /* ifo_print.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ifo_print.c; path = libdvdread.src/ifo_print.c; sourceTree = "<group>"; };
+		0A38947517170503009CB740 /* ifo_read.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ifo_read.c; path = libdvdread.src/ifo_read.c; sourceTree = "<group>"; };
+		0A38947617170503009CB740 /* md5.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = md5.c; path = libdvdread.src/md5.c; sourceTree = "<group>"; };
+		0A38947717170503009CB740 /* md5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = md5.h; path = libdvdread.src/md5.h; sourceTree = "<group>"; };
+		0A38947817170503009CB740 /* nav_print.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = nav_print.c; path = libdvdread.src/nav_print.c; sourceTree = "<group>"; };
+		0A38947917170503009CB740 /* nav_read.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = nav_read.c; path = libdvdread.src/nav_read.c; sourceTree = "<group>"; };
 		0A80C00717037D4F00903BCB /* Mp4DVD.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Mp4DVD.entitlements; sourceTree = "<group>"; };
 		0A80C00B17038E2A00903BCB /* POPmp4v2dylibloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POPmp4v2dylibloader.h; sourceTree = "<group>"; };
 		0A80C00C17038E2A00903BCB /* POPmp4v2dylibloader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POPmp4v2dylibloader.m; sourceTree = "<group>"; };
@@ -77,8 +141,6 @@
 			files = (
 				0A30B5DE16FB8F97008EA990 /* QTKit.framework in Frameworks */,
 				0A30B59816FA5C4E008EA990 /* Cocoa.framework in Frameworks */,
-				0A63ADA91715C4D700A8AA9C /* libdvdread.4.dylib in Frameworks */,
-				0A63ADAB1715FFEB00A8AA9C /* libdvdcss.2.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -88,7 +150,6 @@
 		0A30B58816FA5C4E008EA990 = {
 			isa = PBXGroup;
 			children = (
-				0A30B5DD16FB8F97008EA990 /* QTKit.framework */,
 				0A30B5BD16FA6971008EA990 /* mp4dvd.icns */,
 				0A30B59D16FA5C4E008EA990 /* Mp4DVD */,
 				0A30B59616FA5C4E008EA990 /* Frameworks */,
@@ -108,24 +169,19 @@
 			isa = PBXGroup;
 			children = (
 				0A30B59716FA5C4E008EA990 /* Cocoa.framework */,
-				0A30B59916FA5C4E008EA990 /* Other Frameworks */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		0A30B59916FA5C4E008EA990 /* Other Frameworks */ = {
-			isa = PBXGroup;
-			children = (
 				0A30B59A16FA5C4E008EA990 /* AppKit.framework */,
 				0A30B59B16FA5C4E008EA990 /* CoreData.framework */,
 				0A30B59C16FA5C4E008EA990 /* Foundation.framework */,
+				0A30B5DD16FB8F97008EA990 /* QTKit.framework */,
 			);
-			name = "Other Frameworks";
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		0A30B59D16FA5C4E008EA990 /* Mp4DVD */ = {
 			isa = PBXGroup;
 			children = (
+				0A38943F171704B0009CB740 /* libdvdread.src */,
+				0A3894171717020F009CB740 /* libdvdcss2.src */,
 				0A80C00717037D4F00903BCB /* Mp4DVD.entitlements */,
 				0A30B5EA16FCB441008EA990 /* Models */,
 				0A30B5C816FAE91C008EA990 /* Views */,
@@ -194,8 +250,6 @@
 		0A30B5CB16FAE9A7008EA990 /* Bins */ = {
 			isa = PBXGroup;
 			children = (
-				0A63ADAA1715FFEB00A8AA9C /* libdvdcss.2.dylib */,
-				0A63ADA81715C4D700A8AA9C /* libdvdread.4.dylib */,
 				0A80C00E17038EEC00903BCB /* libmp4v2.2.dylib */,
 				0A30B62116FD0AF0008EA990 /* ffmpeg */,
 			);
@@ -222,6 +276,101 @@
 				0A80C027170CD9BB00903BCB /* POPDvd.m */,
 			);
 			name = Models;
+			sourceTree = "<group>";
+		};
+		0A3894171717020F009CB740 /* libdvdcss2.src */ = {
+			isa = PBXGroup;
+			children = (
+				0A3894181717031E009CB740 /* config.h */,
+				0A3894191717031E009CB740 /* dvdnav */,
+				0A38941D1717031E009CB740 /* dvdnav_internal.h */,
+				0A38941E1717031E009CB740 /* dvdnav.c */,
+				0A38941F1717031E009CB740 /* highlight.c */,
+				0A3894201717031E009CB740 /* navigation.c */,
+				0A3894211717031E009CB740 /* read_cache.c */,
+				0A3894221717031E009CB740 /* read_cache.h */,
+				0A3894231717031E009CB740 /* remap.c */,
+				0A3894241717031E009CB740 /* remap.h */,
+				0A3894251717031E009CB740 /* searching.c */,
+				0A3894261717031E009CB740 /* settings.c */,
+				0A3894271717031E009CB740 /* vm */,
+			);
+			name = libdvdcss2.src;
+			sourceTree = "<group>";
+		};
+		0A3894191717031E009CB740 /* dvdnav */ = {
+			isa = PBXGroup;
+			children = (
+				0A38941A1717031E009CB740 /* dvd_types.h */,
+				0A38941B1717031E009CB740 /* dvdnav.h */,
+				0A38941C1717031E009CB740 /* dvdnav_events.h */,
+			);
+			name = dvdnav;
+			path = libdvdcss.src/dvdnav;
+			sourceTree = "<group>";
+		};
+		0A3894271717031E009CB740 /* vm */ = {
+			isa = PBXGroup;
+			children = (
+				0A3894281717031E009CB740 /* .deps */,
+				0A38942C1717031E009CB740 /* decoder.c */,
+				0A38942D1717031E009CB740 /* decoder.h */,
+				0A38942E1717031E009CB740 /* vm.c */,
+				0A38942F1717031E009CB740 /* vm.h */,
+				0A3894301717031E009CB740 /* vmcmd.c */,
+				0A3894311717031E009CB740 /* vmcmd.h */,
+			);
+			name = vm;
+			path = libdvdcss.src/vm;
+			sourceTree = "<group>";
+		};
+		0A3894281717031E009CB740 /* .deps */ = {
+			isa = PBXGroup;
+			children = (
+				0A3894291717031E009CB740 /* decoder.Plo */,
+				0A38942A1717031E009CB740 /* vm.Plo */,
+				0A38942B1717031E009CB740 /* vmcmd.Plo */,
+			);
+			path = .deps;
+			sourceTree = "<group>";
+		};
+		0A38943F171704B0009CB740 /* libdvdread.src */ = {
+			isa = PBXGroup;
+			children = (
+				0A38946217170503009CB740 /* bitreader.c */,
+				0A38946317170503009CB740 /* bswap.h */,
+				0A38946417170503009CB740 /* config.h */,
+				0A38946517170503009CB740 /* dvd_input.c */,
+				0A38946617170503009CB740 /* dvd_input.h */,
+				0A38946717170503009CB740 /* dvd_reader.c */,
+				0A38946817170503009CB740 /* dvd_udf.c */,
+				0A38946917170503009CB740 /* dvdread */,
+				0A38947317170503009CB740 /* dvdread_internal.h */,
+				0A38947417170503009CB740 /* ifo_print.c */,
+				0A38947517170503009CB740 /* ifo_read.c */,
+				0A38947617170503009CB740 /* md5.c */,
+				0A38947717170503009CB740 /* md5.h */,
+				0A38947817170503009CB740 /* nav_print.c */,
+				0A38947917170503009CB740 /* nav_read.c */,
+			);
+			name = libdvdread.src;
+			sourceTree = "<group>";
+		};
+		0A38946917170503009CB740 /* dvdread */ = {
+			isa = PBXGroup;
+			children = (
+				0A38946A17170503009CB740 /* bitreader.h */,
+				0A38946B17170503009CB740 /* dvd_reader.h */,
+				0A38946C17170503009CB740 /* dvd_udf.h */,
+				0A38946D17170503009CB740 /* ifo_print.h */,
+				0A38946E17170503009CB740 /* ifo_read.h */,
+				0A38946F17170503009CB740 /* ifo_types.h */,
+				0A38947017170503009CB740 /* nav_print.h */,
+				0A38947117170503009CB740 /* nav_read.h */,
+				0A38947217170503009CB740 /* nav_types.h */,
+			);
+			name = dvdread;
+			path = libdvdread.src/dvdread;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -283,6 +432,9 @@
 				0A30B62216FD0AF0008EA990 /* ffmpeg in Resources */,
 				0A80C036170E0A8F00903BCB /* dropdvdhere.png in Resources */,
 				0A80C0211704A27900903BCB /* libmp4v2.2.dylib in Resources */,
+				0A3894391717031E009CB740 /* decoder.Plo in Resources */,
+				0A38943A1717031E009CB740 /* vm.Plo in Resources */,
+				0A38943B1717031E009CB740 /* vmcmd.Plo in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -303,6 +455,25 @@
 				0A30B62016FCEF6E008EA990 /* POPFfmpeg.m in Sources */,
 				0A80C00D17038E2A00903BCB /* POPmp4v2dylibloader.m in Sources */,
 				0A80C028170CD9BC00903BCB /* POPDvd.m in Sources */,
+				0A3894321717031E009CB740 /* dvdnav.c in Sources */,
+				0A3894331717031E009CB740 /* highlight.c in Sources */,
+				0A3894341717031E009CB740 /* navigation.c in Sources */,
+				0A3894351717031E009CB740 /* read_cache.c in Sources */,
+				0A3894361717031E009CB740 /* remap.c in Sources */,
+				0A3894371717031E009CB740 /* searching.c in Sources */,
+				0A3894381717031E009CB740 /* settings.c in Sources */,
+				0A38943C1717031E009CB740 /* decoder.c in Sources */,
+				0A38943D1717031E009CB740 /* vm.c in Sources */,
+				0A38943E1717031E009CB740 /* vmcmd.c in Sources */,
+				0A38947A17170503009CB740 /* bitreader.c in Sources */,
+				0A38947B17170503009CB740 /* dvd_input.c in Sources */,
+				0A38947C17170503009CB740 /* dvd_reader.c in Sources */,
+				0A38947D17170503009CB740 /* dvd_udf.c in Sources */,
+				0A38947E17170503009CB740 /* ifo_print.c in Sources */,
+				0A38947F17170503009CB740 /* ifo_read.c in Sources */,
+				0A38948017170503009CB740 /* md5.c in Sources */,
+				0A38948117170503009CB740 /* nav_print.c in Sources */,
+				0A38948217170503009CB740 /* nav_read.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -359,7 +530,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = /usr/local/include;
+				HEADER_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "";
@@ -386,7 +557,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = /usr/local/include;
+				HEADER_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "";
@@ -399,8 +570,16 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Mp4DVD/Mp4DVD-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					Mp4DVD/libdvdcss.src,
+				);
 				INFOPLIST_FILE = "Mp4DVD/Mp4DVD-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -416,8 +595,16 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Mp4DVD/Mp4DVD-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					Mp4DVD/libdvdcss.src,
+				);
 				INFOPLIST_FILE = "Mp4DVD/Mp4DVD-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

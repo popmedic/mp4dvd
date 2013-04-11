@@ -35,7 +35,7 @@
 	_dvd2mp4 = nil;
 	_dvd = nil;
 	
-	[POPmp4v2dylibloader loadMp4v2Lib:[[NSBundle mainBundle] pathForResource:@"libmp4v2.2.dylib" ofType:@"dylib"]];
+	[POPmp4v2dylibloader loadMp4v2Lib:[[NSBundle mainBundle] pathForResource:@"libmp4v2.2" ofType:@"dylib"]];
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender
