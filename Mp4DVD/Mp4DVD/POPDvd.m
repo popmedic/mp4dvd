@@ -281,20 +281,25 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 	//open the dvd image and vts info files
 	ifo_handle_t* vmg_file = ifoOpen(dvd, 0);
 	tt_srpt_t* tt_srpt = vmg_file->tt_srpt;
-	ifo_handle_t* vts_file = ifoOpen( dvd, tt_srpt->title[trackNum-1].title_set_nr );
+	ifo_handle_t* vts_file = ifoOpen(dvd, tt_srpt->title[trackNum-1].title_set_nr);
 	
 	//see if we can use passthough
+	//-- in the future there will be a way to select which channel you want to encode,
+	//-- but for now, I just use the first audiostream.  If this stream is 2 channel, then
+	//-- we can use -vsync passthough which speeds it up and lines the audio and video up.
 	int audio_attr_cnt = vts_file->vtsi_mat->nr_of_vts_audio_streams;
 	audio_attr_t* audio_attrs = vts_file->vtsi_mat->vts_audio_attr;
 	bool use_passthough = false;
-	for(int i = 0; i < audio_attr_cnt; i++)
+	if(audio_attr_cnt > 0)
 	{
-		audio_attr_t audio_attr = audio_attrs[i];
-		if(audio_attr.channels == 2)
+		audio_attr_t* audio_attr = &audio_attrs[0];
+		int t_channels = audio_attr->channels+1;
+		if(t_channels == 2)
 		{
 			use_passthough = true;
 		}
 	}
+	
 #pragma mark Create chapters array.
 	//grab our program chain and create chapters array.
 	int ttn = tt_srpt->title[trackNum-1].vts_ttn;
@@ -358,7 +363,7 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 				}
 				else
 				{
-					offset += BLOCK_COUNT;
+					readBlocks = 0;
 				}
 			}
 			else
@@ -388,18 +393,18 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 	}
 	
 	//clean up the DVD read.
+	fclose(outFile);
 	ifoClose(vmg_file);
 	ifoClose(vts_file);
 	DVDCloseFile(trackFile);
 	DVDCloseFile(trackMenuFile);
-	fclose(outFile);
 	DVDClose(dvd);
 #pragma mark Convert to mp4.
 	//convert to an mp4.
 	if([self delegate] != nil) [[self delegate] copyEnded];
 	if([self isCopying])
 	{
-		_ffmpeg = [[POPFfmpeg alloc] initWithInputPath:tempPath OutputPath:outPath Duration:durationInSecs];
+		_ffmpeg = [[POPFfmpeg alloc] initWithInputPath:tempPath OutputPath:outPath Duration:durationInSecs Passthough:use_passthough];
 		[_ffmpeg setDelegate:self];
 		[_ffmpeg launch];
 		[_ffmpeg waitUntilExit];

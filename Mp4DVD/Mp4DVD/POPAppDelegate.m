@@ -55,12 +55,6 @@
 	[self setCurrentPage:POPMp4DVDPageTrackSelect];
 }
 
--(void)dvdDragEnded:(NSString*)path
-{
-	//[self openDvdWithPath:@"/dev/disk2"];
-	[self openDvdWithPath:path];
-}
-
 - (IBAction)cancelRipButtonClick:(id)sender
 {
 	if([[[self cancelRipButton] title] compare:@"Cancel"] == 0)
@@ -129,6 +123,16 @@
 	_currentPage = page;
 }
 
+#pragma mark POPDropDVDImageViewDelegate
+
+-(void)dvdDragEnded:(NSString*)path
+{
+	//[self openDvdWithPath:@"/dev/disk2"];
+	[self openDvdWithPath:path];
+}
+
+#pragma mark POPDvd2Mp4Delegate
+
 -(void) dvdRipStarted
 {
 	NSLog(@"Ripping Started.");
@@ -160,15 +164,9 @@
 		[[self tracksProgressIndicator] setDoubleValue:(i/n)*100];
 		[[self currentProgressIndicator] setDoubleValue:0.0];
 //		[[self currentProgressLabel] display];
-//		[[self currentProgressIndicator] display];
+		[[self currentProgressIndicator] display];
 //		[[self tracksProgressLabel] display];
-//		[[self tracksProgressIndicator] display];
-		[[self currentProgressPercentLabel] setStringValue:@"0%"];
-//		[[self currentProgressPercentLabel] display];
-		[[self overallProgressPercentLabel] setStringValue:@"0%"];
-//		[[self overallProgressPercentLabel] display];
-		[[self tracksProgressPercentLabel] setStringValue:@"0%"];
-//		[[self tracksProgressPercentLabel] display];
+		[[self tracksProgressIndicator] display];
 	}
 }
 -(void) stageStarted:(NSInteger)i Of:(NSInteger)n
@@ -182,9 +180,9 @@
 		}
 		else if(i == 2)
 		{
-			[[self currentProgressLabel] setStringValue:[NSString stringWithFormat:@"Encoding to MP4 file. (%li/%li)", i, n]];
+			[[self currentProgressLabel] setStringValue:[NSString stringWithFormat:@"Encoding to MP4 file."]];
 		}
-		[[self currentProgressLabel] display];
+//		[[self currentProgressLabel] display];
 	}
 }
 -(void) stageProgress:(POPDvd2Mp4Stage)stage progress:(float)percent
@@ -200,11 +198,8 @@
 		@try
 		{
 			[[self currentProgressIndicator] setDoubleValue:prcnt];
-			//[[self currentProgressPercentLabel] setStringValue:[NSString stringWithFormat:@"%0.2f%%", prcnt]];
 			[[self tracksProgressIndicator] setDoubleValue:track];
-			//[[self tracksProgressPercentLabel] setStringValue:[NSString stringWithFormat:@"%0.2f%%", track]];
 			[[self overallProgressIndicator] setDoubleValue:overall];
-			//[[self overallProgressPercentLabel] setStringValue:[NSString stringWithFormat:@"%0.2f%%", overall]];
 		}
 		@catch (NSException* e) {
 			NSLog(@"Exception Caught, carry on my son: %@", e.description);
@@ -236,12 +231,6 @@
 //		[[self overallProgressLabel] display];
 //		[[self overallProgressIndicator] display];
 		[[self cancelRipButton] setTitle:@"Close"];
-//		[[self currentProgressPercentLabel] setStringValue:@"100%"];
-//		[[self currentProgressPercentLabel] display];
-//		[[self overallProgressPercentLabel] setStringValue:@"100%"];
-//		[[self overallProgressPercentLabel] display];
-//		[[self tracksProgressPercentLabel] setStringValue:@"100%"];
-//		[[self tracksProgressPercentLabel] display];
 	//}
 }
 @end

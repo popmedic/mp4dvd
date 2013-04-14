@@ -24,7 +24,10 @@
 @property (readonly, assign) float trackDuration;
 @property (readonly, retain) NSTask* ffmpegTask;
 
--(id)initWithInputPath:(NSString*)inputPath OutputPath:(NSString*)outputPath Duration:(float)duration;
+-(id)initWithInputPath:(NSString*)inputPath
+			OutputPath:(NSString*)outputPath
+			  Duration:(float)duration
+			Passthough:(bool)passthough;
 
 -(BOOL)launch;
 -(void) waitUntilExit;

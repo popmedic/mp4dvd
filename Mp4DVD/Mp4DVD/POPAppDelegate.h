@@ -20,7 +20,6 @@ typedef enum
 @interface POPAppDelegate : NSObject <NSApplicationDelegate, POPDvd2Mp4Delegate>
 
 @property (assign) IBOutlet NSWindow *window;
-@property (assign) IBOutlet NSView *canvas;
 @property (assign) IBOutlet POPDropDVDImageView *dropDVDImageView;
 @property (assign) IBOutlet NSTableView *trackTableView;
 @property (assign) IBOutlet NSBox *tracksBoxView;
@@ -29,13 +28,10 @@ typedef enum
 @property (assign) IBOutlet NSButton *cancelRipButton;
 @property (assign) IBOutlet NSTextField *currentProgressLabel;
 @property (assign) IBOutlet NSProgressIndicator *currentProgressIndicator;
-@property (assign) IBOutlet NSTextField *currentProgressPercentLabel;
 @property (assign) IBOutlet NSTextField *overallProgressLabel;
 @property (assign) IBOutlet NSProgressIndicator *overallProgressIndicator;
-@property (assign) IBOutlet NSTextField *overallProgressPercentLabel;
 @property (assign) IBOutlet NSProgressIndicator *tracksProgressIndicator;
 @property (assign) IBOutlet NSTextField *tracksProgressLabel;
-@property (assign) IBOutlet NSTextField *tracksProgressPercentLabel;
 
 @property (getter=currentPage,setter=setCurrentPage:) POPMp4DVDPage currentPage;
 @property (retain) NSString* outputFileBasePath;

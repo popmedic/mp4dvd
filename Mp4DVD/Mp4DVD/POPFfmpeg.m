@@ -44,7 +44,10 @@
 	return NO;
 }
 
--(id) initWithInputPath:(NSString*)inputPath OutputPath:(NSString *)outputPath Duration:(float)duration
+-(id) initWithInputPath:(NSString*)inputPath
+			 OutputPath:(NSString *)outputPath
+			   Duration:(float)duration
+			 Passthough:(bool)passthough
 {
 	self = [super init];
 	
@@ -60,9 +63,36 @@
 	[_ffmpegTask setLaunchPath:[self ffmpegPath]];
 	[_ffmpegTask setStandardOutput:[[NSPipe alloc] init]];
 	[_ffmpegTask setStandardError:[_ffmpegTask standardOutput]];
-	[_ffmpegTask setArguments:[NSArray arrayWithObjects:@"-y", @"-i", inputPath, 
-							  @"-acodec", @"libfaac", @"-ac", @"2", @"-ab", @"128k", @"-copyts",
-							  @"-vcodec", @"libx264", @"-threads", @"0", outputPath,nil]];
+	if(passthough)
+	{
+		[_ffmpegTask setArguments:[NSArray arrayWithObjects:
+								   @"-y",
+								   @"-ss", @"00:00:00.0",
+								   @"-t", [POPTimeConverter timeStringFromSecs:duration],
+								   @"-i", inputPath,
+								   @"-acodec", @"libfaac",
+								   @"-ac", @"2",
+								   @"-ab", @"128k",
+								   @"-copyts",
+								   @"-vsync", @"passthrough",
+								   @"-vcodec", @"libx264",
+								   @"-threads", @"0",
+								   outputPath,nil]];
+	}
+	else{
+		[_ffmpegTask setArguments:[NSArray arrayWithObjects:
+							   @"-y",
+							   @"-ss", @"00:00:00.0",
+							   @"-t", [POPTimeConverter timeStringFromSecs:duration],
+							   @"-i", inputPath,
+							   @"-acodec", @"libfaac",
+							   @"-ac", @"2",
+							   @"-ab", @"128k",
+							   @"-copyts",
+							   @"-vcodec", @"libx264",
+							   @"-threads", @"0",
+							   outputPath,nil]];
+	}
 	
 	return self;
 }
@@ -73,7 +103,7 @@
      removeObserver:self
      name:NSFileHandleReadCompletionNotification
      object:[[_ffmpegTask standardOutput] fileHandleForReading]];
-    
+    NSLog(@"%@", _ffmpegOut);
 	[_ffmpegTask waitUntilExit];
 	if([_ffmpegTask terminationStatus] != 0 && _isEncoding == YES)
 	{
