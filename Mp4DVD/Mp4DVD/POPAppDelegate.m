@@ -155,19 +155,19 @@
 -(void) converterStarted:(NSInteger)i Of:(NSInteger)n
 {
 	NSLog(@"Converter Started. %li of %li", i, n);
-//	@synchronized(self)
-//	{
+	@synchronized(self)
+	{
 		_currentConvertTrackIndex = i;
 		_currentConvertTrackCount = n;
 		[[self currentProgressLabel] setStringValue:[NSString stringWithFormat:@"Converting track %li of %li.", i, n]];
 		[[self tracksProgressLabel] setStringValue:[NSString stringWithFormat:@"Converting track %li of %li.", i, n]];
 		[[self tracksProgressIndicator] setDoubleValue:(i/n)*100];
 		[[self currentProgressIndicator] setDoubleValue:0.0];
-		[[self currentProgressLabel] displayIfNeeded];
+//		[[self currentProgressLabel] displayIfNeeded];
 		[[self currentProgressIndicator] displayIfNeeded];
-		[[self tracksProgressLabel] displayIfNeeded];
+//		[[self tracksProgressLabel] displayIfNeeded];
 		[[self tracksProgressIndicator] displayIfNeeded];
-//	}
+	}
 }
 -(void) stageStarted:(NSInteger)i Of:(NSInteger)n
 {

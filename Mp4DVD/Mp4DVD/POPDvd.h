@@ -9,7 +9,9 @@
 #import <Foundation/Foundation.h>
 #import "POPFfmpeg.h"
 
-#define BLOCK_COUNT 64
+#define DVDREADBLOCKS_BLOCK_COUNT 64
+#define MAX_DVDREADBLOCKS_TRYS 5
+
 @protocol POPDvdDelegate <NSObject>
 
 @required

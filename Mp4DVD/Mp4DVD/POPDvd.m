@@ -319,7 +319,7 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 			cell++;
 		}
 		NSString* chapter_title  = [NSString stringWithFormat:@"%i", i+1];
-		NSString* chapter_length = [NSString stringWithFormat:@"%f", ms * 0.001];
+		NSString* chapter_length = [NSString stringWithFormat:@"%f", (ms * 0.001)+1];
 		NSDictionary* chapter = [NSDictionary dictionaryWithObjectsAndKeys:chapter_title, @"Title", chapter_length, @"Length", nil];
 		[chapters addObject:chapter];
 	}
@@ -333,14 +333,14 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 	//get the file block size
 	ssize_t fileSizeInBlocks = DVDFileSize(trackFile);
 	
-	unsigned char buffer[DVD_VIDEO_LB_LEN*BLOCK_COUNT];
+	unsigned char buffer[DVD_VIDEO_LB_LEN*DVDREADBLOCKS_BLOCK_COUNT];
 	NSLog(@"Track: %@, Size: %li blocks", trackTitle, fileSizeInBlocks);
 	//open the out file
 	FILE* outFile = fopen([[tempPath copy] cStringUsingEncoding:NSStringEncodingConversionAllowLossy], "w+");
 	//read in a block and write it out...
 	ssize_t readBlocks=0;
 	int offset = 0;
-	long bc = BLOCK_COUNT;
+	long bc = DVDREADBLOCKS_BLOCK_COUNT;
 	int missed_blocks = 0;
 	while(offset < fileSizeInBlocks && [self isCopying])
 	{
@@ -348,7 +348,7 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 		if(readBlocks < 0)
 		{
 			int tries = 0;
-			while (tries < 10 && readBlocks < 0)
+			while (tries < MAX_DVDREADBLOCKS_TRYS && readBlocks < 0 && [self isCopying])
 			{
 				tries++;
 				readBlocks = DVDReadBlocks(trackFile, offset, bc, buffer);
@@ -383,9 +383,9 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 		}
 		if([self delegate] != nil) [[self delegate] copyProgress:((double)offset/(double)fileSizeInBlocks)*100.0];
 		offset += readBlocks;
-		if((offset + BLOCK_COUNT) < fileSizeInBlocks)
+		if((offset + DVDREADBLOCKS_BLOCK_COUNT) < fileSizeInBlocks)
 		{
-			bc = BLOCK_COUNT;
+			bc = DVDREADBLOCKS_BLOCK_COUNT;
 		}
 		else
 		{
@@ -424,7 +424,7 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 		MP4Chapter_t* mp4Chapters = malloc(sizeof(MP4Chapter_t)*[chapters count]);
 		for(int i = 0; i < [chapters count]; i++)
 		{
-			mp4Chapters[i].duration = [[[chapters objectAtIndex:i] objectForKey:@"Length"] doubleValue]*1000;
+			mp4Chapters[i].duration = [[[chapters objectAtIndex:i] objectForKey:@"Length"] doubleValue] * 1000;
 			strcpy(mp4Chapters[i].title, [[[chapters objectAtIndex:i] objectForKey:@"Title"] cStringUsingEncoding:NSStringEncodingConversionAllowLossy]);
 		}
 		if(_MP4SetChapters(mp4File, mp4Chapters, (unsigned int)[chapters count], MP4ChapterTypeAny) != MP4ChapterTypeAny)
