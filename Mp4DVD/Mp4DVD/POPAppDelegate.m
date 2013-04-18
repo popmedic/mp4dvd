@@ -87,7 +87,7 @@
 	if(res == NSOKButton)
 	{
 		_outputFileBasePath = [[savePanel URL] path];
-		if([[_outputFileBasePath pathExtension] compare:@"mp4" options:NSCaseInsensitiveSearch] != 0)
+		if([[_outputFileBasePath pathExtension] compare:@"mp4" options:NSCaseInsensitiveSearch] == 0)
 		{
 			_outputFileBasePath = [_outputFileBasePath stringByDeletingPathExtension];
 		}
