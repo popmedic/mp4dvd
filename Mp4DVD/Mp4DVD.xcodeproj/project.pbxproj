@@ -166,6 +166,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0A2AD789171EF7650018B6BF /* Nibs */ = {
+			isa = PBXGroup;
+			children = (
+				0A30B5AC16FA5C4F008EA990 /* MainMenu.xib */,
+			);
+			name = Nibs;
+			sourceTree = "<group>";
+		};
 		0A30B58816FA5C4E008EA990 = {
 			isa = PBXGroup;
 			children = (
@@ -203,6 +211,7 @@
 				0A38943F171704B0009CB740 /* libdvdread.src */,
 				0A3894171717020F009CB740 /* libdvdcss2.src */,
 				0A80C00717037D4F00903BCB /* Mp4DVD.entitlements */,
+				0A2AD789171EF7650018B6BF /* Nibs */,
 				0A30B5EA16FCB441008EA990 /* Models */,
 				0A30B5C816FAE91C008EA990 /* Views */,
 				0A30B5C916FAE937008EA990 /* Controllers */,
@@ -247,7 +256,6 @@
 		0A30B5C916FAE937008EA990 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				0A30B5AC16FA5C4F008EA990 /* MainMenu.xib */,
 				0A30B5A916FA5C4E008EA990 /* POPAppDelegate.h */,
 				0A30B5AA16FA5C4E008EA990 /* POPAppDelegate.m */,
 				0A30B5E416FB9AEF008EA990 /* POPDvdTracksTableViewDataSource.h */,

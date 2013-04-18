@@ -13,6 +13,8 @@
 @protocol POPDvdDelegate <NSObject>
 
 @required
+-(void)copyAndConvertStarted;
+-(void)copyAndConvertEnded;
 -(void)copyStarted;
 -(void)copyProgress:(double)percent;
 -(void)copyEnded;
@@ -23,14 +25,14 @@
 
 @interface POPDvd : NSObject <POPFfmpegDelegate>
 
-@property (readonly, nonatomic, retain) NSDictionary* contents;
-@property (readonly, nonatomic, assign) NSInteger numberOfTracks;
-@property (readonly, nonatomic, retain) NSString* title;
-@property (readonly, nonatomic, retain) NSString* error;
-@property (readonly, nonatomic, retain, getter=path) NSString* path;
-@property (readonly, nonatomic, retain, getter=devicePath) NSString* devicePath;
-@property (readwrite, nonatomic, retain, getter=delegate, setter=setDelegate:) id<POPDvdDelegate> delegate;
-@property (readwrite, nonatomic, assign, getter=isCopying, setter=setIsCopying:) BOOL isCopying;
+@property (readonly, atomic, assign) NSDictionary* contents;
+@property (readonly, atomic, assign) NSInteger numberOfTracks;
+@property (readonly, atomic, assign) NSString* title;
+@property (readonly, atomic, assign) NSString* error;
+@property (readonly, atomic, assign, getter=path) NSString* path;
+@property (readonly, atomic, assign, getter=devicePath) NSString* devicePath;
+@property (readwrite, atomic, assign, getter=delegate, setter=setDelegate:) id<POPDvdDelegate> delegate;
+@property (readwrite, atomic, assign, getter=isCopying, setter=setIsCopying:) BOOL isCopying;
 
 -(id)init;
 -(id)initWithDevicePath:(NSString*)path;

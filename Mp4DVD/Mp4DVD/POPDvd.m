@@ -271,9 +271,8 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 	long trackNum = [trackTitle integerValue];
 	NSMutableArray* chapters = [NSMutableArray array];
 	[self setIsCopying:YES];
-	
-	//let the delegate know we started
-	if([self delegate] != nil) [[self delegate] copyStarted];
+	//let the delegate know we are starting the copy and convertion.
+	if([self delegate] != nil) [[self delegate] copyAndConvertStarted];
 	
 	//open the dvd
 	dvd_reader_t* dvd = DVDOpen([dvdPath cStringUsingEncoding:NSStringEncodingConversionAllowLossy]);
@@ -325,6 +324,8 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 		[chapters addObject:chapter];
 	}
 #pragma mark Copy VOB file.
+	//let the delegate know we started copying.
+	if([self delegate] != nil) [[self delegate] copyStarted];
 	//open the menu file and decrypt the CSS
 	dvd_file_t* trackMenuFile = DVDOpenFile(dvd, 0, DVD_READ_MENU_VOBS);
 	//now open the track
@@ -399,9 +400,10 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 	DVDCloseFile(trackFile);
 	DVDCloseFile(trackMenuFile);
 	DVDClose(dvd);
+	//let the delegate know we finsihed copying.
+	if([self delegate] != nil) [[self delegate] copyEnded];
 #pragma mark Convert to mp4.
 	//convert to an mp4.
-	if([self delegate] != nil) [[self delegate] copyEnded];
 	if([self isCopying])
 	{
 		_ffmpeg = [[POPFfmpeg alloc] initWithInputPath:tempPath OutputPath:outPath Duration:durationInSecs Passthough:use_passthough];
@@ -448,6 +450,9 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 	}
 	
 	[self setIsCopying:NO];
+	
+	//let the delegate know we finished
+	if([self delegate] != nil) [[self delegate] copyAndConvertEnded];
 }
 
 -(BOOL)copyAndConvertTrack:(NSString*)trackTitle To:(NSString*)outputPath Duration:(NSString*)duration

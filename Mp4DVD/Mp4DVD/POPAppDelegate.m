@@ -59,8 +59,8 @@
 {
 	if([[[self cancelRipButton] title] compare:@"Cancel"] == 0)
 	{
-		[[self cancelRipButton] setTitle:@"Close"];
 		[_dvd2mp4 terminate];
+		//[[self cancelRipButton] setTitle:@"Close"];
 	}
 	else if([[[self cancelRipButton] title] compare:@"Close"] == 0)
 	{
@@ -82,6 +82,7 @@
 {
 	NSSavePanel* savePanel	= [NSSavePanel savePanel];
 	[savePanel setNameFieldStringValue:[_tracks title]];
+	[savePanel setAllowedFileTypes:[NSArray arrayWithObjects:@"mp4", nil]];
 	NSInteger res	= [savePanel runModal];
 	if(res == NSOKButton)
 	{
@@ -91,13 +92,12 @@
 			_outputFileBasePath = [_outputFileBasePath stringByDeletingPathExtension];
 		}
 		[[self ripBoxView] setTitle:[_outputFileBasePath lastPathComponent]];
-		
+		[self setCurrentPage:POPMp4DVDPageRipping];
 		_dvd2mp4 = [[POPDvd2Mp4 alloc] initWithTracks:_tracks
 											  dvdPath:[_dvdPath stringByResolvingSymlinksInPath]
 								   outputFileBasePath:_outputFileBasePath];
 		[_dvd2mp4 setDelegate:self];
 		[_dvd2mp4 launch];
-		[self setCurrentPage:POPMp4DVDPageRipping];
 	}
 	savePanel = nil;
 }
@@ -107,7 +107,7 @@
 	{
 		[[self dropDVDImageView] setDelegate:(id<POPDropDVDImageViewDelegate>)self];
 		
-		[[self window]setContentView:[self dropDVDImageView]];
+		[[self window] setContentView:[self dropDVDImageView]];
 	}
 	else if(page == POPMp4DVDPageTrackSelect)
 	{
@@ -155,19 +155,19 @@
 -(void) converterStarted:(NSInteger)i Of:(NSInteger)n
 {
 	NSLog(@"Converter Started. %li of %li", i, n);
-	@synchronized(self)
-	{
+//	@synchronized(self)
+//	{
 		_currentConvertTrackIndex = i;
 		_currentConvertTrackCount = n;
 		[[self currentProgressLabel] setStringValue:[NSString stringWithFormat:@"Converting track %li of %li.", i, n]];
 		[[self tracksProgressLabel] setStringValue:[NSString stringWithFormat:@"Converting track %li of %li.", i, n]];
 		[[self tracksProgressIndicator] setDoubleValue:(i/n)*100];
 		[[self currentProgressIndicator] setDoubleValue:0.0];
-//		[[self currentProgressLabel] display];
-		[[self currentProgressIndicator] display];
-//		[[self tracksProgressLabel] display];
-		[[self tracksProgressIndicator] display];
-	}
+		[[self currentProgressLabel] displayIfNeeded];
+		[[self currentProgressIndicator] displayIfNeeded];
+		[[self tracksProgressLabel] displayIfNeeded];
+		[[self tracksProgressIndicator] displayIfNeeded];
+//	}
 }
 -(void) stageStarted:(NSInteger)i Of:(NSInteger)n
 {

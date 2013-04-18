@@ -181,13 +181,12 @@
      ];
     [[[_ffmpegTask standardOutput] fileHandleForReading] readInBackgroundAndNotify];
     
-    NSLog(@"Running task:\n %@ %@",[self ffmpegPath], [[_ffmpegTask arguments] componentsJoinedByString:@" "]);
-    
 	if([self delegate] != nil)
 	{
 		[[self delegate] ffmpegStarted];
 	}
 	
+    NSLog(@"Running task:\n %@ %@",[self ffmpegPath], [[_ffmpegTask arguments] componentsJoinedByString:@" "]);
     [_ffmpegTask launch];
 	return true;
 }

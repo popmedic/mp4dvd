@@ -5,16 +5,16 @@
       	<description>Base version.</description>
       	<language>en</language>
 		<item>
-        	<title>Version 0.0.2 (beta release 0.2)</title>
+        	<title>Version 0.0.3 (beta release 0.3)</title>
 			<sparkle:releaseNotesLink>
-				http://popmedic.com/mp4dvd_builds/0.0.2.html
+				http://popmedic.com/mp4dvd_builds/0.0.3.html
 			</sparkle:releaseNotesLink>
           	<pubDate>Thu, 11 Apr 2013 11:30:33 +0700</pubDate>
           	<enclosure
 			url="http://popmedic.com/mp4dvd_builds/latest/Mp4DVD.zip"
-			sparkle:version="0.0.2"
-			sparkle:dsaSignature="MCwCFHOXbfypEtEW1M/Vzf/ILTZGkdC+AhRepPA0sGZghjKHn2tZf0CDP7tj6g=="
-			length="5926802"
+			sparkle:version="0.0.3"
+			sparkle:dsaSignature="MC0CFQCfK9DRhIayqLDZq2E1VbnzxZVWWwIUDes5zm7pUIeQpRfQ1sd+yRh0O3o="
+			length="5925642"
 			type="application/octet-stream"
 			/>
 		</item>

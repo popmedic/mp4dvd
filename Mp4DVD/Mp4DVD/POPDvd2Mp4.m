@@ -82,6 +82,22 @@
 		[_ffmpeg launch];
 	}*/
 }
+-(void)copyAndConvertStarted
+{
+	NSLog(@"Copy and convert started.");
+	if(_delegate != nil)
+	{
+		[_delegate startConverter];
+	}
+}
+-(void)copyAndConvertEnded
+{
+	NSLog(@"Copy and convert ended.");
+	if(_delegate != nil)
+	{
+		[_delegate endConverter];
+	}
+}
 
 -(void) ffmpegStarted
 {
@@ -107,7 +123,6 @@
 	if(_delegate != nil)
 	{
 		[_delegate endStage:POPDvd2Mp4StageVob2Mp4];
-		[_delegate endConverter];
 	}
 	
 }
@@ -115,15 +130,9 @@
 -(BOOL) launch
 {
 	_isConverting = YES;
-	if(_delegate != nil)
-	{
-		[_delegate startConverter];
-	}
 	/*_tempFilePath = [[[_outputFileName stringByDeletingPathExtension] stringByAppendingFormat:@"%i",(int)[NSDate timeIntervalSinceReferenceDate]] stringByAppendingPathExtension:@"vob"];
 	[_dvd copyTrack:[_track title] To:_tempFilePath];*/
-	[_dvd copyAndConvertTrack:[_track title] To:_outputFileName Duration:[NSString stringWithFormat:@"%f", [_track lengthInSeconds]]];
-	//[_vobcopy launch];
-	
+	[_dvd copyAndConvertTrack:[_track title] To:_outputFileName Duration:[NSString stringWithFormat:@"%f", [_track lengthInSeconds]]];	
 	return YES;
 }
 
@@ -132,18 +141,12 @@
 	_isConverting = NO;
 	if(_stage == POPDvd2Mp4StageVobcopy)
 	{
-		//if(_vobcopy != nil)[_vobcopy terminate];
 		[_dvd terminateCopyTrack];
 	}
 	else if(_stage == POPDvd2Mp4StageVob2Mp4)
 	{
 		[_dvd terminateCopyTrack];
 	}
-	if(_delegate != nil)
-	{
-		[_delegate endConverter];
-	}
-	//[[NSFileManager defaultManager] removeItemAtPath:_tempFolderPath error:nil];
 	return YES;
 }
 @end
