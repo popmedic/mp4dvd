@@ -16,31 +16,8 @@
 #include <dvdread/nav_print.h>
 #include <sys/mount.h>
 
-typedef struct dvd_input_s *dvd_input_t;
-struct dvd_reader_s {
-	/* Basic information. */
-	int isImageFile;
-	
-	/* Hack for keeping track of the css status.
-	 * 0: no css, 1: perhaps (need init of keys), 2: have done init */
-	int css_state;
-	int css_title; /* Last title that we have called dvdinpute_title for. */
-	
-	/* Information required for an image file. */
-	dvd_input_t dev;
-	
-	/* Information required for a directory path drive. */
-	char *path_root;
-	
-	/* Filesystem cache */
-	int udfcache_level; /* 0 - turned off, 1 - on */
-	void *udfcache;
-};
-
 #import "POPDvdTracks.h"
 #import "POPmp4v2dylibloader.h"
-
-#define MAX_UNREAD_BLOCKS 10
 
 long dvdtime2msec(dvd_time_t *dt)
 {
@@ -357,7 +334,7 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 			{
 				NSLog(@"Unable to read block %i", offset);
 				missed_blocks++;
-				if(missed_blocks > MAX_UNREAD_BLOCKS)
+				if(missed_blocks > MAX_DVDREADBLOCKS_UNREAD_BLOCKS)
 				{
 					_error = [NSString stringWithFormat:@"Missed %i blocks, unable to copy DVD.", missed_blocks];
 					[self setIsCopying:NO];
@@ -380,6 +357,10 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 		if(readBlocks > 0)
 		{
 			fwrite(buffer, DVD_VIDEO_LB_LEN, readBlocks, outFile);
+		}
+		else
+		{
+			readBlocks = DVDREADBLOCKS_SKIP_BLOCKS;
 		}
 		if([self delegate] != nil) [[self delegate] copyProgress:((double)offset/(double)fileSizeInBlocks)*100.0];
 		offset += readBlocks;
