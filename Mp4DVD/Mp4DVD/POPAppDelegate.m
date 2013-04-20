@@ -142,7 +142,6 @@
 	[[self tracksProgressIndicator] setDoubleValue:0.0];
 	[[self overallProgressLabel] setStringValue:[NSString stringWithFormat:@"Ripping: %@", _tracks.device]];
 	[[self overallProgressIndicator] setDoubleValue:0.0];
-	[[[self window] contentView] display];
 }
 -(void) converterStarted:(NSInteger)i Of:(NSInteger)n
 {
@@ -155,7 +154,6 @@
 		[[self tracksProgressLabel] setStringValue:[NSString stringWithFormat:@"Converting track %li of %li.", i, n]];
 		[[self tracksProgressIndicator] setDoubleValue:(i/n)*100];
 		[[self currentProgressIndicator] setDoubleValue:0.0];
-		[[[self window] contentView] display];
 	}
 }
 -(void) stageStarted:(NSInteger)i Of:(NSInteger)n
@@ -206,19 +204,12 @@
 {
 	NSLog(@"Rip Ended.");
 	
-	//@synchronized(self)
-	//{
-		[[self currentProgressLabel] setStringValue:[NSString stringWithFormat:@"Rip Finished"]];
-		[[self overallProgressLabel] setStringValue:[NSString stringWithFormat:@"Rip Finished."]];
-		[[self tracksProgressLabel] setStringValue:[NSString stringWithFormat:@"Rip Finished."]];
-		[[self tracksProgressIndicator] setDoubleValue:100.0];
-		[[self overallProgressIndicator] setDoubleValue:100.0];
-		[[self currentProgressIndicator] setDoubleValue:100.0];
-//		[[self currentProgressLabel] display];
-//		[[self currentProgressIndicator] display];
-//		[[self overallProgressLabel] display];
-//		[[self overallProgressIndicator] display];
-		[[self cancelRipButton] setTitle:@"Close"];
-	//}
+	[[self currentProgressLabel] setStringValue:[NSString stringWithFormat:@"Rip Finished"]];
+	[[self overallProgressLabel] setStringValue:[NSString stringWithFormat:@"Rip Finished."]];
+	[[self tracksProgressLabel] setStringValue:[NSString stringWithFormat:@"Rip Finished."]];
+	[[self tracksProgressIndicator] setDoubleValue:100.0];
+	[[self overallProgressIndicator] setDoubleValue:100.0];
+	[[self currentProgressIndicator] setDoubleValue:100.0];
+	[[self cancelRipButton] setTitle:@"Close"];
 }
 @end
