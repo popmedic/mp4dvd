@@ -27,11 +27,16 @@ typedef enum
 @property (assign) IBOutlet NSBox *ripBoxView;
 @property (assign) IBOutlet NSButton *cancelRipButton;
 @property (assign) IBOutlet NSTextField *currentProgressLabel;
+@property (assign) IBOutlet NSTextField *currentPercentLabel;
 @property (assign) IBOutlet NSProgressIndicator *currentProgressIndicator;
 @property (assign) IBOutlet NSTextField *overallProgressLabel;
+@property (assign) IBOutlet NSTextField *overallPercentLabel;
 @property (assign) IBOutlet NSProgressIndicator *overallProgressIndicator;
 @property (assign) IBOutlet NSProgressIndicator *tracksProgressIndicator;
 @property (assign) IBOutlet NSTextField *tracksProgressLabel;
+@property (assign) IBOutlet NSTextField *tracksPercentLabel;
+@property (assign) IBOutlet NSTextField *elapsedTimeLabel;
+@property (assign) IBOutlet NSTextField *remainingTimeLabel;
 
 @property (getter=currentPage,setter=setCurrentPage:) POPMp4DVDPage currentPage;
 @property (retain) NSString* outputFileBasePath;

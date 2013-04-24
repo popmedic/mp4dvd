@@ -20,11 +20,12 @@
 -(void)copyAndConvertStarted;
 -(void)copyAndConvertEnded;
 -(void)copyStarted;
--(void)copyProgress:(double)percent;
+-(void)copyProgress:(NSNumber*)percent;
 -(void)copyEnded;
 -(void)ffmpegStarted;
--(void)ffmpegProgress:(float)percent;
--(void)ffmpegEnded:(NSInteger)returnCode;
+-(void)ffmpegProgress:(NSNumber*)percent;
+-(void)ffmpegEnded:(NSNumber*)returnCode;
+-(void)performSelectorOnMainThread:(SEL)aSelector withObject:(id)arg waitUntilDone:(BOOL)wait;
 @end
 
 @interface POPDvd : NSObject <POPFfmpegDelegate>

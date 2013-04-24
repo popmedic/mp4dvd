@@ -67,8 +67,8 @@
 	{
 		[_ffmpegTask setArguments:[NSArray arrayWithObjects:
 								   @"-y",
-								   @"-ss", @"00:00:00.0",
-								   @"-t", [POPTimeConverter timeStringFromSecs:duration],
+								   @"-ss", @"00:00:00.1",
+								   @"-t", [POPTimeConverter timeStringFromSecs:(duration - 0.1)],
 								   @"-i", inputPath,
 								   @"-acodec", @"libfaac",
 								   @"-ac", @"2",
@@ -82,8 +82,8 @@
 	else{
 		[_ffmpegTask setArguments:[NSArray arrayWithObjects:
 							   @"-y",
-							   @"-ss", @"00:00:00.0",
-							   @"-t", [POPTimeConverter timeStringFromSecs:duration],
+							   @"-ss", @"00:00:00.1",
+							   @"-t", [POPTimeConverter timeStringFromSecs:(duration - 0.1)],
 							   @"-i", inputPath,
 							   @"-acodec", @"libfaac",
 							   @"-ac", @"2",

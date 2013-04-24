@@ -1,0 +1,22 @@
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"  xmlns:dc="http://purl.org/dc/elements/1.1/">
+	<channel>
+   		<title>Mp4DVD Changelog</title>
+      	<link>http://popmedic.com/mp4dvd_builds/appcast.xml</link>
+      	<description>Base version.</description>
+      	<language>en</language>
+		<item>
+        	<title>Version 0.0.4 (beta release 0.4)</title>
+			<sparkle:releaseNotesLink>
+				http://popmedic.com/mp4dvd_builds/0.0.4.html
+			</sparkle:releaseNotesLink>
+          	<pubDate>Thu, 18 Apr 2013 5:33:33 +0700</pubDate>
+          	<enclosure
+			url="http://popmedic.com/mp4dvd_builds/latest/Mp4DVD.zip"
+			sparkle:version="0.0.4"
+			sparkle:dsaSignature="MC4CFQCCayglai+LhLc9LOnh3sUfXXyK7gIVAKPFxNr9BOig7q6Q97hhWJJt3YA5"
+			length="5925743"
+			type="application/octet-stream"
+			/>
+		</item>
+   </channel>
+</rss>

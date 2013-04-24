@@ -249,7 +249,7 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 	NSMutableArray* chapters = [NSMutableArray array];
 	[self setIsCopying:YES];
 	//let the delegate know we are starting the copy and convertion.
-	if([self delegate] != nil) [[self delegate] copyAndConvertStarted];
+	if([self delegate] != nil) [[self delegate] performSelectorOnMainThread:@selector(copyAndConvertStarted) withObject:nil waitUntilDone:NO];
 	
 	//open the dvd
 	dvd_reader_t* dvd = DVDOpen([dvdPath cStringUsingEncoding:NSStringEncodingConversionAllowLossy]);
@@ -283,26 +283,30 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 	int pgc_id = vts_ptt_srpt->title[ttn - 1].ptt[0].pgcn;
 	pgc_t* pgc = vts_file->vts_pgcit->pgci_srp[pgc_id - 1].pgc;
 	//go though the chapters
-	long ms, cell = 0;
+	long ms, st = 0, cell = 0;
 	for (int i = 0; i < pgc->nr_of_programs; i++)
 	{
 		ms=0;
 		int next = pgc->program_map[i+1];
 		if (i == pgc->nr_of_programs - 1) next = pgc->nr_of_cells + 1;
-		
 		while (cell < next - 1)
 		{
 			ms = ms + dvdtime2msec(&pgc->cell_playback[cell].playback_time);
 			cell++;
 		}
+		st = st + ms;
+		NSString* chapter_length = [NSString stringWithFormat:@"%f", (float)((ms * 0.001)+0.1)];
+		if((float)(st * 0.001) >= (float)(durationInSecs-0.1))
+		{
+			chapter_length = [NSString stringWithFormat:@"%f", durationInSecs];
+		}
 		NSString* chapter_title  = [NSString stringWithFormat:@"%i", i+1];
-		NSString* chapter_length = [NSString stringWithFormat:@"%f", (ms * 0.001)+1];
 		NSDictionary* chapter = [NSDictionary dictionaryWithObjectsAndKeys:chapter_title, @"Title", chapter_length, @"Length", nil];
 		[chapters addObject:chapter];
 	}
 #pragma mark Copy VOB file.
 	//let the delegate know we started copying.
-	if([self delegate] != nil) [[self delegate] copyStarted];
+	if([self delegate] != nil) [[self delegate] performSelectorOnMainThread:@selector(copyStarted) withObject:nil waitUntilDone:NO];
 	//open the menu file and decrypt the CSS
 	dvd_file_t* trackMenuFile = DVDOpenFile(dvd, 0, DVD_READ_MENU_VOBS);
 	//now open the track
@@ -362,7 +366,7 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 		{
 			readBlocks = DVDREADBLOCKS_SKIP_BLOCKS;
 		}
-		if([self delegate] != nil) [[self delegate] copyProgress:((double)offset/(double)fileSizeInBlocks)*100.0];
+		if([self delegate] != nil) [[self delegate] performSelectorOnMainThread:@selector(copyProgress:) withObject:[NSNumber numberWithDouble:((double)offset/(double)fileSizeInBlocks)*100.0] waitUntilDone:NO];
 		offset += readBlocks;
 		if((offset + DVDREADBLOCKS_BLOCK_COUNT) < fileSizeInBlocks)
 		{
@@ -382,7 +386,7 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 	DVDCloseFile(trackMenuFile);
 	DVDClose(dvd);
 	//let the delegate know we finsihed copying.
-	if([self delegate] != nil) [[self delegate] copyEnded];
+	if([self delegate] != nil) [[self delegate] performSelectorOnMainThread:@selector(copyEnded) withObject:nil waitUntilDone:NO];
 #pragma mark Convert to mp4.
 	//convert to an mp4.
 	if([self isCopying])
@@ -395,7 +399,7 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 	}
 	else
 	{
-		[[self delegate] ffmpegEnded:0];
+		if([self delegate] != nil) [[self delegate] performSelectorOnMainThread:@selector(ffmpegEnded:) withObject:[NSNumber numberWithInteger:0] waitUntilDone:NO];
 	}
 #pragma mark Add mp4 chapters
 	//add the mp4 chapter marks.
@@ -433,7 +437,7 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 	[self setIsCopying:NO];
 	
 	//let the delegate know we finished
-	if([self delegate] != nil) [[self delegate] copyAndConvertEnded];
+	if([self delegate] != nil) [[self delegate] performSelectorOnMainThread:@selector(copyAndConvertEnded) withObject:nil waitUntilDone:NO];
 }
 
 -(BOOL)copyAndConvertTrack:(NSString*)trackTitle To:(NSString*)outputPath Duration:(NSString*)duration
@@ -504,14 +508,14 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 
 -(void) ffmpegStarted
 {
-	if([self delegate] != nil)[[self delegate] ffmpegStarted];
+	if([self delegate] != nil)[[self delegate] performSelectorOnMainThread:@selector(ffmpegStarted) withObject:nil waitUntilDone:NO];
 }
 -(void) ffmpegProgress:(float)percent
 {
-	if([self delegate] != nil)[[self delegate] ffmpegProgress:percent];
+	if([self delegate] != nil)[[self delegate] performSelectorOnMainThread:@selector(ffmpegProgress:) withObject:[NSNumber numberWithFloat:percent] waitUntilDone:NO];
 }
 -(void) ffmpegEnded:(NSInteger)returnCode
 {
-	if([self delegate] != nil)[[self delegate] ffmpegEnded:returnCode];
+	if([self delegate] != nil)[[self delegate] performSelectorOnMainThread:@selector(ffmpegEnded:) withObject:[NSNumber numberWithInteger:returnCode] waitUntilDone:NO];
 }
 @end

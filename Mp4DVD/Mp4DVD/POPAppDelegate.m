@@ -12,6 +12,7 @@
 #import "POPDvd2Mp4.h"
 #import "POPDvd.h"
 #import "POPmp4v2dylibloader.h"
+#import "POPTimeConverter.h"
 
 @implementation POPAppDelegate
 {
@@ -21,6 +22,8 @@
 	NSInteger _currentConvertTrackIndex;
 	NSInteger _currentConvertTrackCount;
 	POPDvd* _dvd;
+	NSTimer* _updateTimer;
+	float _copyAndConvertElapsedSeconds;
 }
 - (void)dealloc
 {
@@ -131,6 +134,43 @@
 	[self openDvdWithPath:path];
 }
 
+#pragma mark Timer functions for updateCopyAndConvertView
+-(void)startUpdateCopyAndConvertTimer
+{
+	_copyAndConvertElapsedSeconds = 0.0;
+	_updateTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updateCopyAndConvertView) userInfo:nil repeats:YES];
+}
+
+-(void)endUpdateCopyAndConvertTimer
+{
+	[_updateTimer invalidate];
+	[[self remainingTimeLabel] setStringValue:@"~00:00:00.00"];
+}
+
+-(void)updateCopyAndConvertView
+{
+	double percent = [[self currentProgressIndicator] doubleValue];
+	double track = [[self tracksProgressIndicator] doubleValue];
+	double overall = [[self overallProgressIndicator] doubleValue];
+	
+	_copyAndConvertElapsedSeconds++;
+	double percent_per_second = overall / _copyAndConvertElapsedSeconds;
+	double remaining_percent = 100.0 - overall;
+	float remaining_seconds = remaining_percent / percent_per_second;
+	
+	NSString* elapsedTimeStr = [POPTimeConverter timeStringFromSecs:_copyAndConvertElapsedSeconds];
+	elapsedTimeStr = [elapsedTimeStr substringToIndex:[elapsedTimeStr rangeOfString:@"."].location];
+	[[self elapsedTimeLabel] setStringValue:elapsedTimeStr];
+	
+	NSString* remainingTimeStr = [NSString stringWithFormat:@"~%@",[POPTimeConverter timeStringFromSecs:remaining_seconds]];
+	remainingTimeStr = [remainingTimeStr substringToIndex:[remainingTimeStr rangeOfString:@"."].location];
+	[[self remainingTimeLabel] setStringValue:remainingTimeStr];
+	
+	[[self currentPercentLabel] setStringValue:[NSString stringWithFormat:@"%.2f%%", percent]];
+	[[self tracksPercentLabel] setStringValue:[NSString stringWithFormat:@"%.2f%%", track]];
+	[[self overallPercentLabel] setStringValue:[NSString stringWithFormat:@"%.2f%%", overall]];
+}
+
 #pragma mark POPDvd2Mp4Delegate
 
 -(void) dvdRipStarted
@@ -138,10 +178,14 @@
 	NSLog(@"Ripping Started.");
 	[[self currentProgressLabel] setStringValue:@"Ripping Started..."];
 	[[self currentProgressIndicator] setDoubleValue:0.0];
+	[[self currentPercentLabel] setStringValue:@"0.00%"];
 	[[self tracksProgressLabel] setStringValue:[NSString stringWithFormat:@"Ripping: %@", _tracks.device]];
 	[[self tracksProgressIndicator] setDoubleValue:0.0];
+	[[self tracksPercentLabel] setStringValue:@"0.00%"];
 	[[self overallProgressLabel] setStringValue:[NSString stringWithFormat:@"Ripping: %@", _tracks.device]];
 	[[self overallProgressIndicator] setDoubleValue:0.0];
+	[[self overallPercentLabel] setStringValue:@"0.00%"];
+	[self startUpdateCopyAndConvertTimer];
 }
 -(void) converterStarted:(NSInteger)i Of:(NSInteger)n
 {
@@ -173,24 +217,15 @@
 }
 -(void) stageProgress:(POPDvd2Mp4Stage)stage progress:(float)percent
 {
-	volatile double overall;
-	volatile double track;
-	volatile double prcnt = percent;
+	double overall;
+	double track;
 	
-	@synchronized(self)
-	{
-		track = (prcnt/(double)POPDvd2Mp4NumberOfStages)+(((double)stage/(double)POPDvd2Mp4NumberOfStages)*100.0 );
-		overall = (track/(double)_currentConvertTrackCount)+((((double)_currentConvertTrackIndex-1.0)/(double)_currentConvertTrackCount)*100.0);
-		@try
-		{
-			[[self currentProgressIndicator] setDoubleValue:prcnt];
-			[[self tracksProgressIndicator] setDoubleValue:track];
-			[[self overallProgressIndicator] setDoubleValue:overall];
-		}
-		@catch (NSException* e) {
-			NSLog(@"Exception Caught, carry on my son: %@", e.description);
-		}
-	}
+	track = (percent/(double)POPDvd2Mp4NumberOfStages)+(((double)stage/(double)POPDvd2Mp4NumberOfStages)*100.0 );
+	overall = (track/(double)_currentConvertTrackCount)+((((double)_currentConvertTrackIndex-1.0)/(double)_currentConvertTrackCount)*100.0);
+	
+	[[self currentProgressIndicator] setDoubleValue:percent];
+	[[self tracksProgressIndicator] setDoubleValue:track];
+	[[self overallProgressIndicator] setDoubleValue:overall];
 }
 -(void) stageEnded:(NSInteger)i Of:(NSInteger)n
 {
@@ -210,6 +245,10 @@
 	[[self tracksProgressIndicator] setDoubleValue:100.0];
 	[[self overallProgressIndicator] setDoubleValue:100.0];
 	[[self currentProgressIndicator] setDoubleValue:100.0];
+	[[self currentPercentLabel] setStringValue:@"100.00%"];
+	[[self tracksPercentLabel] setStringValue:@"100.00%"];
+	[[self overallPercentLabel] setStringValue:@"100.00%"];
+	[self endUpdateCopyAndConvertTimer];
 	[[self cancelRipButton] setTitle:@"Close"];
 }
 @end

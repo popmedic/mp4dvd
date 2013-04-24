@@ -61,11 +61,11 @@
 		[_delegate startStage:POPDvd2Mp4StageVobcopy];
 	}
 }
--(void) copyProgress:(double)percent
+-(void) copyProgress:(NSNumber*)percent
 {
 	if(_delegate != nil)
 	{
-		[_delegate stageProgress:POPDvd2Mp4StageVobcopy progress:percent];
+		[_delegate stageProgress:POPDvd2Mp4StageVobcopy progress:[percent doubleValue]];
 	}
 }
 -(void) copyEnded
@@ -108,14 +108,14 @@
 		[_delegate startStage:POPDvd2Mp4StageVob2Mp4];
 	}
 }
--(void) ffmpegProgress:(float)percent
+-(void) ffmpegProgress:(NSNumber*)percent
 {
 	if(_delegate != nil)
 	{
-		[_delegate stageProgress:POPDvd2Mp4StageVob2Mp4 progress:percent];
+		[_delegate stageProgress:POPDvd2Mp4StageVob2Mp4 progress:[percent floatValue]];
 	}
 }
--(void) ffmpegEnded:(NSInteger)returnCode
+-(void) ffmpegEnded:(NSNumber*)returnCode
 {
 	NSLog(@"DVDTrackConverter: ffmpeg ended");
 	
