@@ -10,8 +10,8 @@
 #import "POPFfmpeg.h"
 
 #define DVDREADBLOCKS_BLOCK_COUNT 64
-#define MAX_DVDREADBLOCKS_TRYS 5
-#define MAX_DVDREADBLOCKS_UNREAD_BLOCKS 10
+#define MAX_DVDREADBLOCKS_TRYS 0
+#define MAX_DVDREADBLOCKS_UNREAD_BLOCKS 25
 #define DVDREADBLOCKS_SKIP_BLOCKS DVDREADBLOCKS_BLOCK_COUNT
 
 @protocol POPDvdDelegate <NSObject>
@@ -43,6 +43,7 @@
 -(id)initWithDevicePath:(NSString*)path;
 -(BOOL)openDeviceWithPath:(NSString*)path;
 -(BOOL)copyAndConvertTrack:(NSString*)trackTitle To:(NSString*)outputPath Duration:(NSString*)duration;
+-(BOOL)copyTrack:(NSString*)trackTitle To:(NSString*)outputPath Duration:(NSString*)duration;
 -(void)terminateCopyTrack;
 
 @end

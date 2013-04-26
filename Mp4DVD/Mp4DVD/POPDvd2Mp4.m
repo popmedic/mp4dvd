@@ -132,7 +132,15 @@
 	_isConverting = YES;
 	/*_tempFilePath = [[[_outputFileName stringByDeletingPathExtension] stringByAppendingFormat:@"%i",(int)[NSDate timeIntervalSinceReferenceDate]] stringByAppendingPathExtension:@"vob"];
 	[_dvd copyTrack:[_track title] To:_tempFilePath];*/
-	[_dvd copyAndConvertTrack:[_track title] To:_outputFileName Duration:[NSString stringWithFormat:@"%f", [_track lengthInSeconds]]];	
+	NSInteger copyVOBOnlyState = [[[NSUserDefaults standardUserDefaults] objectForKey:@"copyVOBOnlyState"] integerValue];
+	if(copyVOBOnlyState == NSOnState)
+	{
+		[_dvd copyTrack:[_track title] To:_outputFileName Duration:[NSString stringWithFormat:@"%f", [_track lengthInSeconds]]];
+	}
+	else
+	{
+		[_dvd copyAndConvertTrack:[_track title] To:_outputFileName Duration:[NSString stringWithFormat:@"%f", [_track lengthInSeconds]]];
+	}
 	return YES;
 }
 

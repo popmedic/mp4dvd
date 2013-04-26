@@ -38,14 +38,22 @@ typedef enum
 @property (assign) IBOutlet NSTextField *elapsedTimeLabel;
 @property (assign) IBOutlet NSTextField *remainingTimeLabel;
 
+@property (assign) IBOutlet NSWindow *prefsWindow;
+@property (assign) IBOutlet NSButton *copyVOBOnlyBtn;
+@property (assign) IBOutlet NSButton *mirrorDVDBtn;
+
 @property (getter=currentPage,setter=setCurrentPage:) POPMp4DVDPage currentPage;
-@property (retain) NSString* outputFileBasePath;
-@property (retain) NSString* dvdPath;
-@property (retain, strong) POPDvd2Mp4* dvd2mp4;
+@property (assign) NSString* outputFileBasePath;
+@property (assign) NSString* dvdPath;
+@property (assign) POPDvd2Mp4* dvd2mp4;
 
 - (IBAction)ripButtonClick:(id)sender;
 - (IBAction)cancelRipButtonClick:(id)sender;
 - (IBAction)helpClick:(id)sender;
+- (IBAction)prefsClick:(id)sender;
+- (IBAction)prefsCopyVOBOnlyClick:(id)sender;
+- (IBAction)prefsMirrorDVDClick:(id)sender;
+- (IBAction)prefsCloseClick:(id)sender;
 
 -(void)dvdDragEnded:(NSString*)path;
 
