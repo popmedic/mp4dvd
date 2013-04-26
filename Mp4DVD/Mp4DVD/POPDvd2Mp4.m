@@ -132,8 +132,8 @@
 	_isConverting = YES;
 	/*_tempFilePath = [[[_outputFileName stringByDeletingPathExtension] stringByAppendingFormat:@"%i",(int)[NSDate timeIntervalSinceReferenceDate]] stringByAppendingPathExtension:@"vob"];
 	[_dvd copyTrack:[_track title] To:_tempFilePath];*/
-	NSInteger copyVOBOnlyState = [[[NSUserDefaults standardUserDefaults] objectForKey:@"copyVOBOnlyState"] integerValue];
-	if(copyVOBOnlyState == NSOnState)
+	NSInteger vobCopyOnlyState = [[[NSUserDefaults standardUserDefaults] objectForKey:@"vobCopyOnlyState"] integerValue];
+	if(vobCopyOnlyState == NSOnState)
 	{
 		[_dvd copyTrack:[_track title] To:_outputFileName Duration:[NSString stringWithFormat:@"%f", [_track lengthInSeconds]]];
 	}
@@ -209,13 +209,25 @@
 
 -(BOOL) launch
 {
-	POPDvd2Mp4TrackConverter* tc = [_trackConverters objectAtIndex:_currentConverterIndex];
-	if(_delegate != nil)
+	
+	NSInteger mirrorDVDState = [[[NSUserDefaults standardUserDefaults] objectForKey:@"mirrorDVDState"] integerValue];
+	if(mirrorDVDState == NSOnState)
 	{
-		[_delegate dvdRipStarted];
+		NSRunAlertPanel(@"Not Supported",
+						@"DVD ISO Back-up is in the works.\n\n Please be patient.",
+						@"Ok", nil, nil);
+		return NO;
 	}
-	_isConverting = YES;
-	[tc launch];
+	else
+	{
+		POPDvd2Mp4TrackConverter* tc = [_trackConverters objectAtIndex:_currentConverterIndex];
+		if(_delegate != nil)
+		{
+			[_delegate dvdRipStarted];
+		}
+		_isConverting = YES;
+		[tc launch];
+	}
 	return YES;
 }
 

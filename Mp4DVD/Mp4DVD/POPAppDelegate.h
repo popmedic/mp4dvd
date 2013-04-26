@@ -39,7 +39,7 @@ typedef enum
 @property (assign) IBOutlet NSTextField *remainingTimeLabel;
 
 @property (assign) IBOutlet NSWindow *prefsWindow;
-@property (assign) IBOutlet NSButton *copyVOBOnlyBtn;
+@property (assign) IBOutlet NSButton *vobCopyOnlyBtn;
 @property (assign) IBOutlet NSButton *mirrorDVDBtn;
 
 @property (getter=currentPage,setter=setCurrentPage:) POPMp4DVDPage currentPage;
@@ -51,7 +51,7 @@ typedef enum
 - (IBAction)cancelRipButtonClick:(id)sender;
 - (IBAction)helpClick:(id)sender;
 - (IBAction)prefsClick:(id)sender;
-- (IBAction)prefsCopyVOBOnlyClick:(id)sender;
+- (IBAction)prefsVobCopyOnlyClick:(id)sender;
 - (IBAction)prefsMirrorDVDClick:(id)sender;
 - (IBAction)prefsCloseClick:(id)sender;
 

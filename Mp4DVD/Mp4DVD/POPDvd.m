@@ -362,6 +362,8 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 	DVDClose(dvd);
 	//let the delegate know we finsihed copying.
 	if([self delegate] != nil) [[self delegate] performSelectorOnMainThread:@selector(copyEnded) withObject:nil waitUntilDone:NO];
+	//let the delegate know we finished - hack for ease of display
+	if([self delegate] != nil) [[self delegate] performSelectorOnMainThread:@selector(copyAndConvertEnded) withObject:nil waitUntilDone:NO];
 }
 
 -(BOOL)copyTrack:(NSString*)trackTitle To:(NSString*)outputPath Duration:(NSString*)duration
@@ -372,9 +374,6 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 	NSArray* paths = [NSArray arrayWithObjects:[[self devicePath] copy], [trackTitle copy], [outputPath copy], [duration copy], nil];
 	
 	[NSThread detachNewThreadSelector:@selector(runCopyThread:) toTarget:self withObject:paths];
-	
-	//let the delegate know we finished - hack for ease of display
-	if([self delegate] != nil) [[self delegate] performSelectorOnMainThread:@selector(copyAndConvertEnded) withObject:nil waitUntilDone:NO];
 	
 	return true;
 }

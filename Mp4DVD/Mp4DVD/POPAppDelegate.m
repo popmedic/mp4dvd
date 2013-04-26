@@ -39,14 +39,15 @@
 	_dvd = nil;
 	
 	
-	NSInteger copyVOBOnlyState = [[[NSUserDefaults standardUserDefaults] objectForKey:@"copyVOBOnlyState"] integerValue];
-	[[self copyVOBOnlyBtn] setState:copyVOBOnlyState];
+	NSInteger vobCopyOnlyState = [[[NSUserDefaults standardUserDefaults] objectForKey:@"vobCopyOnlyState"] integerValue];
+	[[self vobCopyOnlyBtn] setState:vobCopyOnlyState];
 	
 	NSInteger mirrorDVDState = [[[NSUserDefaults standardUserDefaults] objectForKey:@"mirrorDVDState"] integerValue];
 	[[self mirrorDVDBtn] setState:mirrorDVDState];
 	if(mirrorDVDState == NSOnState)
 	{
-		[[self copyVOBOnlyBtn] setEnabled:NO];
+		[[self vobCopyOnlyBtn] setEnabled:NO];
+		[[self trackTableView] setEnabled:NO];
 	}
 	
 	[POPmp4v2dylibloader loadMp4v2Lib:[[NSBundle mainBundle] pathForResource:@"libmp4v2.2" ofType:@"dylib"]];
@@ -145,26 +146,28 @@
 			_outputFileBasePath = [_outputFileBasePath stringByDeletingPathExtension];
 		}
 		[[self ripBoxView] setTitle:[_outputFileBasePath lastPathComponent]];
-		[self setCurrentPage:POPMp4DVDPageRipping];
-		
-		[[self copyVOBOnlyBtn] setEnabled:NO];
-		[[self mirrorDVDBtn] setEnabled:NO];
 		
 		_dvd2mp4 = [[POPDvd2Mp4 alloc] initWithTracks:_tracks
 											  dvdPath:[_dvdPath stringByResolvingSymlinksInPath]
 								   outputFileBasePath:_outputFileBasePath];
 		[_dvd2mp4 setDelegate:self];
-		[_dvd2mp4 launch];
+		if([_dvd2mp4 launch])
+		{
+			
+//			[[self vobCopyOnlyBtn] setEnabled:NO];
+//			[[self mirrorDVDBtn] setEnabled:NO];
+			[self setCurrentPage:POPMp4DVDPageRipping];
+		}
 	}
 	savePanel = nil;
 }
 
-#pragma mark Preferences Window actions
+#pragma mark Preferences actions
 
-- (IBAction)prefsCopyVOBOnlyClick:(id)sender
+- (IBAction)prefsVobCopyOnlyClick:(id)sender
 {
-	NSInteger copyVOBOnlyState = [(NSButton*)sender state];
-	[[NSUserDefaults standardUserDefaults] setInteger:copyVOBOnlyState forKey:@"copyVOBOnlyState"];
+	NSInteger vobCopyOnlyState = [(NSButton*)sender state];
+	[[NSUserDefaults standardUserDefaults] setInteger:vobCopyOnlyState forKey:@"vobCopyOnlyState"];
 }
 
 - (IBAction)prefsMirrorDVDClick:(id)sender
@@ -173,11 +176,13 @@
 	NSInteger mirrorDVDState = [(NSButton*)sender state];
 	if(mirrorDVDState == NSOnState)
 	{
-		[[self copyVOBOnlyBtn] setEnabled:NO];
+		[[self vobCopyOnlyBtn] setEnabled:NO];
+		[[self trackTableView] setEnabled:NO];
 	}
 	else
 	{
-		[[self copyVOBOnlyBtn] setEnabled:YES];
+		[[self vobCopyOnlyBtn] setEnabled:YES];
+		[[self trackTableView] setEnabled:YES];
 	}
 	[[NSUserDefaults standardUserDefaults] setInteger:mirrorDVDState forKey:@"mirrorDVDState"];
 }
@@ -280,10 +285,17 @@
 {
 	double overall;
 	double track;
-	
-	track = (percent/(double)POPDvd2Mp4NumberOfStages)+(((double)stage/(double)POPDvd2Mp4NumberOfStages)*100.0 );
-	overall = (track/(double)_currentConvertTrackCount)+((((double)_currentConvertTrackIndex-1.0)/(double)_currentConvertTrackCount)*100.0);
-	
+	NSInteger vobCopyOnlyState = [[[NSUserDefaults standardUserDefaults] objectForKey:@"vobCopyOnlyState"] integerValue];
+	if(vobCopyOnlyState == NSOnState)
+	{
+		track = percent;
+		overall = (track/(double)_currentConvertTrackCount)+((((double)_currentConvertTrackIndex-1.0)/(double)_currentConvertTrackCount)*100.0);
+	}
+	else
+	{
+		track = (percent/(double)POPDvd2Mp4NumberOfStages)+(((double)stage/(double)POPDvd2Mp4NumberOfStages)*100.0 );
+		overall = (track/(double)_currentConvertTrackCount)+((((double)_currentConvertTrackIndex-1.0)/(double)_currentConvertTrackCount)*100.0);
+	}
 	[[self currentProgressIndicator] setDoubleValue:percent];
 	[[self tracksProgressIndicator] setDoubleValue:track];
 	[[self overallProgressIndicator] setDoubleValue:overall];
