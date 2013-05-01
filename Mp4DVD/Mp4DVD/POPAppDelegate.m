@@ -9,7 +9,6 @@
 #import "POPAppDelegate.h"
 #import "POPDvdTracks.h"
 #import "POPDvdTracksTableViewDataSource.h"
-#import "POPDvd2Mp4.h"
 #import "POPDvd.h"
 #import "POPmp4v2dylibloader.h"
 #import "POPTimeConverter.h"
@@ -24,6 +23,8 @@
 	POPDvd* _dvd;
 	NSTimer* _updateTimer;
 	float _copyAndConvertElapsedSeconds;
+	NSTimer* _mirrorTimer;
+	float _mirrorElapsedSeconds;
 }
 - (void)dealloc
 {
@@ -97,7 +98,7 @@
 	if(_tracks != nil) _tracks = nil;
 	if(_tracksTableViewDataSource != nil) _tracksTableViewDataSource = nil;
 	
-	_dvd = [[POPDvd alloc] initWithDevicePath:path];
+	_dvd = [[POPDvd alloc] initWithDevicePath:path open:YES];
 	_tracks = [[POPDvdTracks alloc] initWithDictionary:[_dvd contents]];
 	_tracksTableViewDataSource = [[POPDvdTracksTableViewDataSource alloc] initWithTracks:_tracks];
 	
@@ -123,7 +124,17 @@
 {
 	if([[[self cancelRipButton] title] compare:@"Cancel"] == 0)
 	{
-		[_dvd2mp4 terminate];
+		[[self cancelRipButton] setEnabled:NO];
+		[[self cancelRipButton] display];
+		NSInteger mirrorDVDState = [[[NSUserDefaults standardUserDefaults] objectForKey:@"mirrorDVDState"] integerValue];
+		if(mirrorDVDState == NSOnState)
+		{
+			[_dvdCopy terminate];
+		}
+		else
+		{
+			[_dvd2mp4 terminate];
+		}
 	}
 	else if([[[self cancelRipButton] title] compare:@"Close"] == 0)
 	{
@@ -135,30 +146,52 @@
 - (IBAction)ripButtonClick:(id)sender
 {
 	NSSavePanel* savePanel	= [NSSavePanel savePanel];
-	[savePanel setNameFieldStringValue:[_tracks title]];
-	[savePanel setAllowedFileTypes:[NSArray arrayWithObjects:@"mp4", nil]];
+	[savePanel setNameFieldStringValue:[[_tracks title] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
+	
+	[[self ripButton] setEnabled:NO];
+	
+	//if we are just mirroring the DVD, or just copying a vob...
+	NSInteger mirrorDVDState = [[[NSUserDefaults standardUserDefaults] objectForKey:@"mirrorDVDState"] integerValue];
+	NSInteger vobCopyOnlyState = [[[NSUserDefaults standardUserDefaults] objectForKey:@"vobCopyOnlyState"] integerValue];
+	if(mirrorDVDState != NSOnState)
+	{
+		if(vobCopyOnlyState == NSOnState)
+		{
+			[savePanel setAllowedFileTypes:[NSArray arrayWithObjects:@"VOB", nil]];
+		}
+		else
+		{
+			[savePanel setAllowedFileTypes:[NSArray arrayWithObjects:@"mp4", nil]];
+		}
+	}
 	NSInteger res	= [savePanel runModal];
 	if(res == NSOKButton)
 	{
 		_outputFileBasePath = [[savePanel URL] path];
-		if([[_outputFileBasePath pathExtension] compare:@"mp4" options:NSCaseInsensitiveSearch] == 0)
+		if([[_outputFileBasePath pathExtension] compare:@"mp4" options:NSCaseInsensitiveSearch] == 0 ||
+		   [[_outputFileBasePath pathExtension] compare:@"vob" options:NSCaseInsensitiveSearch] == 0 )
 		{
 			_outputFileBasePath = [_outputFileBasePath stringByDeletingPathExtension];
 		}
 		[[self ripBoxView] setTitle:[_outputFileBasePath lastPathComponent]];
-		
-		_dvd2mp4 = [[POPDvd2Mp4 alloc] initWithTracks:_tracks
-											  dvdPath:[_dvdPath stringByResolvingSymlinksInPath]
-								   outputFileBasePath:_outputFileBasePath];
-		[_dvd2mp4 setDelegate:self];
-		if([_dvd2mp4 launch])
+		if(mirrorDVDState != NSOnState)
 		{
-			
-//			[[self vobCopyOnlyBtn] setEnabled:NO];
-//			[[self mirrorDVDBtn] setEnabled:NO];
-			[self setCurrentPage:POPMp4DVDPageRipping];
+			_dvd2mp4 = [[POPDvd2Mp4 alloc] initWithTracks:_tracks
+												  dvdPath:[_dvdPath stringByResolvingSymlinksInPath]
+									   outputFileBasePath:_outputFileBasePath];
+			[_dvd2mp4 setDelegate:self];
+			[_dvd2mp4 launch];
+		}
+		else
+		{
+			_dvdCopy = [[POPDvdCopy alloc] initWithDevicePath:[self dvdPath]];
+			[_dvdCopy setDelegate:self];
+			[_dvdCopy launchWithOutputPath:[_outputFileBasePath copy]];
 		}
 	}
+	
+	[[self ripButton] setEnabled:YES];
+	
 	savePanel = nil;
 }
 
@@ -237,6 +270,39 @@
 	[[self overallPercentLabel] setStringValue:[NSString stringWithFormat:@"%.2f%%", overall]];
 }
 
+#pragma mark Timer functions for updateMirrorView
+-(void)startUpdateMirrorTimer
+{
+	_mirrorElapsedSeconds = 0.0;
+	_mirrorTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updateMirrorView) userInfo:nil repeats:YES];
+}
+
+-(void)endUpdateMirrorTimer
+{
+	[_mirrorTimer invalidate];
+	[[self remainingTimeLabel] setStringValue:@"~00:00:00.00"];
+}
+
+-(void)updateMirrorView
+{
+	float percent = [[self currentProgressIndicator] doubleValue];
+	
+	_mirrorElapsedSeconds++;
+	float percent_per_second = percent / _mirrorElapsedSeconds;
+	float remaining_percent = 100.0 - percent;
+	float remaining_seconds = remaining_percent / percent_per_second;
+	
+	NSString* elapsedTimeStr = [POPTimeConverter timeStringFromSecs:_mirrorElapsedSeconds];
+	elapsedTimeStr = [elapsedTimeStr substringToIndex:[elapsedTimeStr rangeOfString:@"."].location];
+	[[self elapsedTimeLabel] setStringValue:elapsedTimeStr];
+	
+	NSString* remainingTimeStr = [NSString stringWithFormat:@"~%@",[POPTimeConverter timeStringFromSecs:remaining_seconds]];
+	remainingTimeStr = [remainingTimeStr substringToIndex:[remainingTimeStr rangeOfString:@"."].location];
+	[[self remainingTimeLabel] setStringValue:remainingTimeStr];
+	
+	[[self currentPercentLabel] setStringValue:[NSString stringWithFormat:@"%.2f%%", percent]];
+}
+
 #pragma mark POPDvd2Mp4Delegate
 
 -(void) dvdRipStarted
@@ -251,6 +317,8 @@
 	[[self overallProgressLabel] setStringValue:[NSString stringWithFormat:@"Ripping: %@", _tracks.device]];
 	[[self overallProgressIndicator] setDoubleValue:0.0];
 	[[self overallPercentLabel] setStringValue:@"0.00%"];
+	[self setCurrentPage:POPMp4DVDPageRipping];
+	[[self window] display];
 	[self startUpdateCopyAndConvertTimer];
 }
 -(void) converterStarted:(NSInteger)i Of:(NSInteger)n
@@ -323,6 +391,7 @@
 	[[self overallPercentLabel] setStringValue:@"100.00%"];
 	[self endUpdateCopyAndConvertTimer];
 	[[self cancelRipButton] setTitle:@"Close"];
+	[[self cancelRipButton] setEnabled:YES];
 	
 	NSInteger res = NSRunAlertPanel(@"Back-up Finished",
 									@"Finished backing up the DVD.",
@@ -335,4 +404,40 @@
 		[[NSWorkspace sharedWorkspace] openFile:[_outputFileBasePath stringByDeletingLastPathComponent]];
 	}
 }
+-(void) dvdMirrorStarted
+{
+	NSLog(@"Mirror Started");
+	[[self currentProgressLabel] setStringValue:@"Mirror Started..."];
+	[[self currentProgressIndicator] setDoubleValue:0.0];
+	[[self currentPercentLabel] setStringValue:@"0.00%"];
+	[[self tracksProgressLabel] setHidden:YES];
+	[[self tracksProgressIndicator] setHidden:YES];
+	[[self tracksPercentLabel] setHidden:YES];
+	[[self overallProgressLabel] setHidden:YES];
+	[[self overallProgressIndicator] setHidden:YES];
+	[[self overallPercentLabel] setHidden:YES];
+	[self setCurrentPage:POPMp4DVDPageRipping];
+	[self startUpdateMirrorTimer];
+}
+-(void) dvdMirrorProgress:(float)percent
+{
+	[[self currentProgressIndicator] setDoubleValue:percent];
+}
+-(void) dvdMirrorEnded
+{
+	NSLog(@"Mirror Ended");
+	[[self currentProgressLabel] setStringValue:[NSString stringWithFormat:@"Rip Finished"]];
+	[[self currentProgressIndicator] setDoubleValue:100.0];
+	[[self currentPercentLabel] setStringValue:@"100.00%"];
+	[self endUpdateMirrorTimer];
+	[[self cancelRipButton] setEnabled:YES];
+	[[self cancelRipButton] setTitle:@"Close"];
+	
+	NSRunAlertPanel(@"Back-up Finished",
+					@"Finished backing up the DVD.",
+					@"Ok",
+					nil,
+					nil);
+}
+
 @end

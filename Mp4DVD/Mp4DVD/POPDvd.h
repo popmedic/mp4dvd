@@ -25,6 +25,9 @@
 -(void)ffmpegStarted;
 -(void)ffmpegProgress:(NSNumber*)percent;
 -(void)ffmpegEnded:(NSNumber*)returnCode;
+-(void)mirrorStarted;
+-(void)mirrorProgress:(NSNumber*)percent;
+-(void)mirrorEnded;
 -(void)performSelectorOnMainThread:(SEL)aSelector withObject:(id)arg waitUntilDone:(BOOL)wait;
 @end
 
@@ -35,15 +38,16 @@
 @property (readonly, atomic, assign) NSString* title;
 @property (readonly, atomic, assign) NSString* error;
 @property (readonly, atomic, assign, getter=path) NSString* path;
-@property (readonly, atomic, assign, getter=devicePath) NSString* devicePath;
+@property (readonly, atomic, retain, getter=devicePath) NSString* devicePath;
 @property (readwrite, atomic, assign, getter=delegate, setter=setDelegate:) id<POPDvdDelegate> delegate;
 @property (readwrite, atomic, assign, getter=isCopying, setter=setIsCopying:) BOOL isCopying;
 
 -(id)init;
--(id)initWithDevicePath:(NSString*)path;
+-(id)initWithDevicePath:(NSString*)path open:(BOOL)openDevice;
 -(BOOL)openDeviceWithPath:(NSString*)path;
 -(BOOL)copyAndConvertTrack:(NSString*)trackTitle To:(NSString*)outputPath Duration:(NSString*)duration;
 -(BOOL)copyTrack:(NSString*)trackTitle To:(NSString*)outputPath Duration:(NSString*)duration;
+-(BOOL)mirrorDVD:(NSString*)outputPath;
 -(void)terminateCopyTrack;
 
 @end

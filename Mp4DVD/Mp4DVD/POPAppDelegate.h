@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import "POPDropDVDImageView.h"
 #import "POPDvd2Mp4.h"
+#import "POPDvdCopy.h"
 
 typedef enum
 {
@@ -17,7 +18,7 @@ typedef enum
 	POPMp4DVDPageRipping=3
 } POPMp4DVDPage;
 
-@interface POPAppDelegate : NSObject <NSApplicationDelegate, POPDvd2Mp4Delegate>
+@interface POPAppDelegate : NSObject <NSApplicationDelegate, POPDvd2Mp4Delegate, POPDvdCopyDelegate>
 
 @property (assign) IBOutlet NSWindow *window;
 @property (assign) IBOutlet POPDropDVDImageView *dropDVDImageView;
@@ -46,6 +47,7 @@ typedef enum
 @property (assign) NSString* outputFileBasePath;
 @property (assign) NSString* dvdPath;
 @property (assign) POPDvd2Mp4* dvd2mp4;
+@property (assign) POPDvdCopy* dvdCopy;
 
 - (IBAction)ripButtonClick:(id)sender;
 - (IBAction)cancelRipButtonClick:(id)sender;

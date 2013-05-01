@@ -51,6 +51,7 @@
 		0A80C0211704A27900903BCB /* libmp4v2.2.dylib in Resources */ = {isa = PBXBuildFile; fileRef = 0A80C00E17038EEC00903BCB /* libmp4v2.2.dylib */; };
 		0A80C028170CD9BC00903BCB /* POPDvd.m in Sources */ = {isa = PBXBuildFile; fileRef = 0A80C027170CD9BB00903BCB /* POPDvd.m */; };
 		0A80C036170E0A8F00903BCB /* dropdvdhere.png in Resources */ = {isa = PBXBuildFile; fileRef = 0A30B5BF16FAAB73008EA990 /* dropdvdhere.png */; };
+		0AAA69BC172B5B1E00B50BD9 /* POPDvdCopy.m in Sources */ = {isa = PBXBuildFile; fileRef = 0AAA69BB172B5B1E00B50BD9 /* POPDvdCopy.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -150,6 +151,8 @@
 		0A80C00E17038EEC00903BCB /* libmp4v2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libmp4v2.2.dylib; sourceTree = "<group>"; };
 		0A80C026170CD9BB00903BCB /* POPDvd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POPDvd.h; sourceTree = "<group>"; };
 		0A80C027170CD9BB00903BCB /* POPDvd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POPDvd.m; sourceTree = "<group>"; };
+		0AAA69BA172B5B1E00B50BD9 /* POPDvdCopy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = POPDvdCopy.h; sourceTree = "<group>"; };
+		0AAA69BB172B5B1E00B50BD9 /* POPDvdCopy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = POPDvdCopy.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -301,6 +304,8 @@
 				0A30B5D816FB7887008EA990 /* POPDvdTracks.m */,
 				0A30B5E716FC0193008EA990 /* POPDvd2Mp4.h */,
 				0A30B5E816FC0194008EA990 /* POPDvd2Mp4.m */,
+				0AAA69BA172B5B1E00B50BD9 /* POPDvdCopy.h */,
+				0AAA69BB172B5B1E00B50BD9 /* POPDvdCopy.m */,
 				0A80C026170CD9BB00903BCB /* POPDvd.h */,
 				0A80C027170CD9BB00903BCB /* POPDvd.m */,
 			);
@@ -505,6 +510,7 @@
 				0A38948017170503009CB740 /* md5.c in Sources */,
 				0A38948117170503009CB740 /* nav_print.c in Sources */,
 				0A38948217170503009CB740 /* nav_read.c in Sources */,
+				0AAA69BC172B5B1E00B50BD9 /* POPDvdCopy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

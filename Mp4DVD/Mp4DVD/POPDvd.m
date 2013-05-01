@@ -15,6 +15,7 @@
 #include <dvdread/nav_read.h>
 #include <dvdread/nav_print.h>
 #include <sys/mount.h>
+#include <dirent.h>
 
 #import "POPDvdTracks.h"
 #import "POPmp4v2dylibloader.h"
@@ -83,31 +84,9 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 	}
 	return self;
 }
--(id)initWithDevicePath:(NSString*)path
+-(id)initWithDevicePath:(NSString*)path open:(BOOL)openDevice
 {
 	self = [self init];
-	if([self openDeviceWithPath:path])
-	{
-		return self;
-	}
-	else{
-		return nil;
-	}
-}
-
--(BOOL)openDeviceWithPath:(NSString*)path
-{
-	dvd_reader_t *dvd;
-	ifo_handle_t *ifo_zero, **ifo;
-	vtsi_mat_t *vtsi_mat;
-	vmgi_mat_t *vmgi_mat;
-	pgcit_t *vts_pgcit;
-	pgc_t *pgc;
-	int i, j, vts_ttn, title_set_nr;
-	long max_length=0;
-	NSString* max_track = @"0";
-	_title = [path lastPathComponent];
-	if(_contents != nil) _contents = nil;
 	
 	@synchronized(self)
 	{
@@ -128,7 +107,7 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 		{
 			@synchronized(self)
 			{
-				_devicePath = [NSString stringWithCString:device_path encoding:NSStringEncodingConversionAllowLossy ];
+				_devicePath = [[NSString stringWithCString:device_path encoding:NSStringEncodingConversionAllowLossy] copy];
 			}
 		}
 		else
@@ -136,6 +115,7 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 			NSRunAlertPanel(@"DEVICE NOT FOUND",
 							[NSString stringWithFormat:@"Sorry the path %@ is not a DVD device (unable to get device path from volume path).", path],
 							@"Ok", nil, nil);
+			return nil;
 		}
 	}
 	else
@@ -143,7 +123,35 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 		NSRunAlertPanel(@"DEVICE NOT FOUNT",
 						[NSString stringWithFormat:@"Sorry the path %@ is not a DVD device (must start with /dev/ or /Volumes/).", path],
 						@"Ok", nil, nil);
+		return nil;
 	}
+	if(openDevice == YES)
+	{
+		if([self openDeviceWithPath:path])
+		{
+			return self;
+		}
+		else{
+			return nil;
+		}
+	}
+	return self;
+}
+
+-(BOOL)openDeviceWithPath:(NSString*)path
+{
+	dvd_reader_t *dvd;
+	ifo_handle_t *ifo_zero, **ifo;
+	vtsi_mat_t *vtsi_mat;
+	vmgi_mat_t *vmgi_mat;
+	pgcit_t *vts_pgcit;
+	pgc_t *pgc;
+	int i, j, vts_ttn, title_set_nr;
+	long max_length=0;
+	NSString* max_track = @"0";
+	_title = [path lastPathComponent];
+	if(_contents != nil) _contents = nil;
+	
 	dvd = DVDOpen([[self devicePath] cStringUsingEncoding:NSStringEncodingConversionAllowLossy]);
 	if(!dvd)
 	{
@@ -371,7 +379,7 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 	//let the delegate know we are starting the copy and convertion. - hack for ease of display.
 	if([self delegate] != nil) [[self delegate] performSelectorOnMainThread:@selector(copyStarted) withObject:nil waitUntilDone:NO];
 	
-	NSArray* paths = [NSArray arrayWithObjects:[[self devicePath] copy], [trackTitle copy], [outputPath copy], [duration copy], nil];
+	NSArray* paths = [NSArray arrayWithObjects:[self devicePath], [trackTitle copy], [outputPath copy], [duration copy], nil];
 	
 	[NSThread detachNewThreadSelector:@selector(runCopyThread:) toTarget:self withObject:paths];
 	
@@ -596,452 +604,362 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 
 -(void)runMirrorDVDThread:(NSArray*)paths
 {
+	NSError* error;
 	NSString* device_path = [paths objectAtIndex:0];
+	dvd_reader_t* dvd;
 	NSString* dvd_path = [paths objectAtIndex:1];
 	NSString* output_path = [paths objectAtIndex:2];
+	NSString* video_ts_path = nil;
+	NSString* mirror_to_path = nil;
+	BOOL file_exists, is_dir;
+	int i;
+	unsigned long j;
+	NSArray* video_ts_files;
+	unsigned long video_ts_size;
+	unsigned long src_file_size;
+	NSString* src_file_path;
+	NSString* dest_file_path;
+	long title_nr, sub_title_nr;
+	dvd_file_t* src_file;
+	FILE* dest_file;
+	unsigned char buffer[DVD_VIDEO_LB_LEN*DVDREADBLOCKS_BLOCK_COUNT];
+	unsigned long bytes_read;
+	int block_count = DVDREADBLOCKS_BLOCK_COUNT, file_block_count;
+	long blocks;
 	
-//	/*mirror beginning*/
-//	fprintf( stderr, _("\n[Info] DVD-name: %s\n"), dvd_name );
-//	if( provided_dvd_name_flag )
-//	{
-//		fprintf( stderr, _("\n[Info] Your name for the dvd: %s\n"), provided_dvd_name );
-//		safestrncpy( dvd_name, provided_dvd_name, sizeof(dvd_name)-1 );
-//	}
-//	
-//	char video_ts_dir[263];
-//	char number[8];
-//	char input_file[280];
-//	char output_file[255];
-//	int  i, start, title_nr = 0;
-//	off_t file_size;
-//	double tmp_i = 0, tmp_file_size = 0;
-//	int k = 0;
-//	char d_name[256];
-//	
-//	safestrncpy( name, pwd,  sizeof(name)-34 ); /*  255 */
-//	strncat( name, dvd_name, 33 );
-//	
-//	if( !stdout_flag )
-//	{
-//		makedir ( name );
-//		
-//		strcat( name, "/VIDEO_TS/" );
-//		
-//		makedir ( name );
-//		
-//		fprintf( stderr, _("[Info] Writing files to this dir: %s\n"), name );
-//	}
-//	/*TODO: substitute with open_dir function */
-//	strcpy( video_ts_dir, provided_input_dir );
-//	strcat( video_ts_dir, "video_ts"); /*it's either video_ts */
-//	dir = opendir( video_ts_dir );     /*or VIDEO_TS*/
-//	if ( dir == NULL )
-//	{
-//		strcpy( video_ts_dir, provided_input_dir );
-//		strcat( video_ts_dir, "VIDEO_TS");
-//		dir = opendir( video_ts_dir );
-//		if ( dir == NULL )
-//		{
-//			fprintf( stderr, _("[Error] Hmm, weird, the dir video_ts|VIDEO_TS on the dvd couldn't be opened\n"));
-//			fprintf( stderr, _("[Error] The dir to be opened was: %s\n"), video_ts_dir );
-//			fprintf( stderr, _("[Hint] Please mail me what your vobcopy call plus -v -v spits out\n"));
-//			exit( 1 );
-//		}
-//	}
-//	
-//	directory = readdir( dir ); /* thats the . entry */
-//	directory = readdir( dir ); /* thats the .. entry */
-//	/* according to the file type (vob, ifo, bup) the file gets copied */
-//	while( ( directory = readdir( dir ) ) != NULL )
-//	{/*main mirror loop*/
-//		
-//		k = 0;
-//		safestrncpy( output_file, name, sizeof(output_file)-1 );
-//		/*in dvd specs it says it must be uppercase VIDEO_TS/VTS...
-//		 but iso9660 mounted dvd's sometimes have it lowercase */
-//		while( directory->d_name[k] )
-//		{
-//			d_name[k] = toupper (directory->d_name[k] );
-//			k++;
-//		}
-//		d_name[k] = 0;
-//		
-//		
-//		if( stdout_flag ) /*this writes to stdout*/
-//		{
-//			streamout = STDOUT_FILENO; /*in other words: 1, see "man stdout" */
-//		}
-//		else
-//		{
-//			if( strstr( d_name, ";?" ) )
-//			{
-//				fprintf( stderr, _("\n[Hint] File on dvd ends in \";?\" (%s)\n"), d_name );
-//				strncat( output_file, d_name, strlen( d_name ) - 2 );
-//			}
-//			else
-//			{
-//				strcat( output_file, d_name );
-//			}
-//			
-//			fprintf( stderr, _("[Info] Writing to %s \n"), output_file);
-//			
-//			if( open( output_file, O_RDONLY ) >= 0 )
-//			{
-//				bool bSkip = FALSE;
-//				
-//				if ( overwrite_all_flag == FALSE )
-//					fprintf( stderr, _("\n[Error] File '%s' already exists, [o]verwrite, [x]overwrite all, [s]kip or [q]uit?  "), output_file );
-//				/*TODO: add [a]ppend  and seek thought stream till point of append is there */
-//				while ( 1 )
-//				{
-//					/* process a single character from stdin, ignore EOF bytes & newlines*/
-//					if ( overwrite_all_flag == TRUE )
-//						op = 'o';
-//					else
-//						do {
-//							op = fgetc (stdin);
-//						} while(op == EOF || op == '\n');
-//					if( op == 'o' || op == 'x' )
-//					{
-//						if( ( streamout = open( output_file, O_WRONLY | O_TRUNC ) ) < 0 )
-//						{
-//							fprintf( stderr, _("\n[Error] Error opening file %s\n"), output_file );
-//							fprintf( stderr, _("[Error] Error: %s\n"), strerror( errno ) );
-//							exit ( 1 );
-//						}
-//						else
-//							close (streamout);
-//						overwrite_flag = TRUE;
-//						if( op == 'x' )
-//						{
-//							overwrite_all_flag = TRUE;
-//						}
-//						break;
-//					}
-//					else if( op == 'q' )
-//					{
-//						DVDCloseFile( dvd_file );
-//						DVDClose( dvd );
-//						exit( 1 );
-//					}
-//					else if( op == 's' )
-//					{
-//						bSkip = TRUE;
-//						break;
-//					}
-//					else
-//					{
-//						fprintf( stderr, _("\n[Hint] Please choose [o]verwrite, [x]overwrite all, [s]kip, or [q]uit the next time ;-)\n") );
-//					}
-//				}
-//				if( bSkip )
-//					continue; /* next file, please! */
-//			}
-//			
-//			strcat( output_file, ".partial" );
-//			
-//			if( open( output_file, O_RDONLY ) >= 0 )
-//			{
-//				if ( overwrite_all_flag == FALSE )
-//					fprintf( stderr, _("\n[Error] File '%s' already exists, [o]verwrite, [x]overwrite all or [q]uit? \n"), output_file );
-//				/*TODO: add [a]ppend  and seek thought stream till point of append is there */
-//				while ( 1 )
-//				{
-//					if ( overwrite_all_flag == TRUE )
-//						op = 'o';
-//					else
-//					{
-//						while ((op = fgetc (stdin)) == EOF)
-//							usleep (1);
-//						fgetc ( stdin ); /* probably need to do this for second
-//										  time it comes around this loop */
-//					}
-//					if( op == 'o' || op == 'x' )
-//					{
-//						if( ( streamout = open( output_file, O_WRONLY | O_TRUNC ) ) < 0 )
-//						{
-//							fprintf( stderr, _("\n[Error] Error opening file %s\n"), output_file );
-//							fprintf( stderr, _("[Error] Error: %s\n"), strerror( errno ) );
-//							exit ( 1 );
-//						}
-//						/*                              else
-//						 close( streamout ); */
-//						overwrite_flag = TRUE;
-//						if ( op == 'x' )
-//						{
-//							overwrite_all_flag = TRUE;
-//						}
-//						break;
-//					}
-//					else if( op == 'q' )
-//					{
-//						DVDCloseFile( dvd_file );
-//						DVDClose( dvd );
-//						exit( 1 );
-//					}
-//					else
-//					{
-//						fprintf( stderr, _("\n[Hint] Please choose [o]verwrite, [x]overwrite all or [q]uit the next time ;-)\n") );
-//					}
-//				}
-//			}
-//			else
-//			{
-//				/*assign the stream */
-//				if( ( streamout = open( output_file, O_WRONLY | O_CREAT, 0644 ) ) < 0 )
-//				{
-//					fprintf( stderr, _("\n[Error] Error opening file %s\n"), output_file );
-//					fprintf( stderr, _("[Error] Error: %s\n"), strerror( errno ) );
-//					exit ( 1 );
-//				}
-//			}
-//		}
-//		/* get the size of that file*/
-//		strcpy( input_file, video_ts_dir );
-//		strcat( input_file, "/" );
-//		strcat( input_file, directory->d_name );
-//		stat( input_file, &buf );
-//		file_size = buf.st_size;
-//		tmp_file_size = file_size;
-//		
-//		memset( bufferin, 0, DVD_VIDEO_LB_LEN * sizeof( unsigned char ) );
-//		
-//		/*this here gets the title number*/
-//		for( i = 1; i <= 99; i++ ) /*there are 100 titles, but 0 is
-//									named video_ts, the others are
-//									vts_number_0.bup */
-//		{
-//			sprintf(number, "_%.2i", i);
-//			
-//			if ( strstr( directory->d_name, number ) )
-//			{
-//				title_nr = i;
-//				
-//				break; /*number found, is in i now*/
-//			}
-//			/*no number -> video_ts is the name -> title_nr = 0*/
-//		}
-//		
-//		/*which file type is it*/
-//		if( strstr( directory->d_name, ".bup" )
-//		   || strstr( directory->d_name, ".BUP" ) )
-//		{
-//			dvd_file = DVDOpenFile( dvd, title_nr, DVD_READ_INFO_BACKUP_FILE );
-//			/*this copies the data to the new file*/
-//			for( i = 0; i*DVD_VIDEO_LB_LEN < file_size; i++)
-//			{
-//				DVDReadBytes( dvd_file, bufferin, DVD_VIDEO_LB_LEN );
-//				if( write( streamout, bufferin, DVD_VIDEO_LB_LEN ) < 0 )
-//				{
-//					fprintf( stderr, _("\n[Error] Error writing to %s \n"), output_file );
-//					fprintf( stderr, _("[Error] Error: %s\n"), strerror( errno ) );
-//					exit( 1 );
-//				}
-//				/* progress indicator */
-//				tmp_i = i;
-//				fprintf( stderr, _("%4.0fkB of %4.0fkB written\r"),
-//						( tmp_i+1 )*( DVD_VIDEO_LB_LEN/1024 ), tmp_file_size/1024 );
-//			}
-//			fprintf( stderr, _("\n"));
-//			if( !stdout_flag )
-//			{
-//				if( fdatasync( streamout ) < 0 )
-//				{
-//					fprintf( stderr, _("\n[Error] error writing to %s \n"), output_file );
-//					fprintf( stderr, _("[Error] error: %s\n"), strerror( errno ) );
-//					exit( 1 );
-//				}
-//				
-//				close( streamout );
-//				re_name( output_file );
-//			}
-//		}
-//		
-//		if( strstr( directory->d_name, ".ifo" )
-//		   || strstr( directory->d_name, ".IFO" ) )
-//		{
-//			dvd_file = DVDOpenFile( dvd, title_nr, DVD_READ_INFO_FILE );
-//			
-//			/*this copies the data to the new file*/
-//			for( i = 0; i*DVD_VIDEO_LB_LEN < file_size; i++)
-//			{
-//				DVDReadBytes( dvd_file, bufferin, DVD_VIDEO_LB_LEN );
-//				if( write( streamout, bufferin, DVD_VIDEO_LB_LEN ) < 0 )
-//				{
-//					fprintf( stderr, _("\n[Error] Error writing to %s \n"), output_file );
-//					fprintf( stderr, _("[Error] Error: %s\n"), strerror( errno ) );
-//					exit( 1 );
-//				}
-//				/* progress indicator */
-//				tmp_i = i;
-//				fprintf( stderr, _("%4.0fkB of %4.0fkB written\r"),
-//						( tmp_i+1 )*( DVD_VIDEO_LB_LEN/1024 ), tmp_file_size/1024 );
-//			}
-//			fprintf( stderr, _("\n"));
-//			if( !stdout_flag )
-//			{
-//				if( fdatasync( streamout ) < 0 )
-//				{
-//					fprintf( stderr, _("\n[Error] error writing to %s \n"), output_file );
-//					fprintf( stderr, _("[Error] error: %s\n"), strerror( errno ) );
-//					exit( 1 );
-//				}
-//				
-//				close( streamout );
-//				re_name( output_file );
-//			}
-//		}
-//		
-//		if( strstr( directory->d_name, ".vob" )
-//		   || strstr( directory->d_name, ".VOB"  ) )
-//		{
-//			if( directory->d_name[7] == 48 || title_nr == 0  )
-//			{
-//				/*this is vts_xx_0.vob or video_ts.vob, a menu vob*/
-//				dvd_file = DVDOpenFile( dvd, title_nr, DVD_READ_MENU_VOBS );
-//				start = 0 ;
-//			}
-//			else
-//			{
-//				dvd_file = DVDOpenFile( dvd, title_nr, DVD_READ_TITLE_VOBS );
-//			}
-//			if( directory->d_name[7] == 49 || directory->d_name[7] == 48 ) /* 49 means in ascii 1 and 48 0 */
-//			{
-//				/* reset start when at beginning of Title */
-//				start = 0 ;
-//			}
-//			if( directory->d_name[7] > 49 && directory->d_name[7] < 58 ) /* 49 means in ascii 1 and 58 :  (i.e. over 9)*/
-//			{
-//				off_t culm_single_vob_size = 0;
-//				int a, subvob;
-//				
-//				subvob = ( directory->d_name[7] - 48 );
-//				
-//				for( a = 1; a < subvob; a++ )
-//				{
-//					if( strstr( input_file, ";?" ) )
-//						input_file[ strlen( input_file ) - 7 ] = ( a + 48 );
-//					else
-//						input_file[ strlen( input_file ) - 5 ] = ( a + 48 );
-//					
-//					/*			      input_file[ strlen( input_file ) - 5 ] = ( a + 48 );*/
-//					if( stat( input_file, &buf ) < 0 )
-//					{
-//						fprintf( stderr, _("[Info] Can't stat() %s.\n"), input_file );
-//						exit( 1 );
-//					}
-//					
-//					culm_single_vob_size += buf.st_size;
-//					if( verbosity_level > 1 )
-//						fprintf( stderr, _("[Info] Vob %d %d (%s) has a size of %lli\n"), title_nr, subvob, input_file, buf.st_size );
-//				}
-//				
-//				start = ( culm_single_vob_size / DVD_VIDEO_LB_LEN );
-//				/*                          start = ( ( ( directory->d_name[7] - 49 ) * 512 * 1024 ) - ( directory->d_name[7] - 49 ) );  */
-//				/* this here seeks d_name[7]
-//				 (which is the 3 in vts_01_3.vob) Gigabyte (which is equivalent to 512 * 1024 blocks
-//				 (a block is 2kb) in the dvd stream in order to reach the 3 in the above example.
-//				 * NOT! the sizes of the "1GB" files aren't 1GB...
-//				 */
-//			}
-//			
-//			/*this copies the data to the new file*/
-//			if( verbosity_level > 1)
-//				fprintf( stderr, _("[Info] Start of %s at %d blocks \n"), output_file, start );
-//			file_block_count = block_count;
-//			starttime = time(NULL);
-//			for( i = start; ( i - start ) * DVD_VIDEO_LB_LEN < file_size; i += file_block_count)
-//			{
-//				int tries = 0, skipped_blocks = 0;
-//				/* Only read and write as many blocks as there are left in the file */
-//				if ( ( i - start + file_block_count ) * DVD_VIDEO_LB_LEN > file_size )
-//				{
-//					file_block_count = ( file_size / DVD_VIDEO_LB_LEN ) - ( i - start );
-//				}
-//				
-//				/*		      DVDReadBlocks( dvd_file, i, 1, bufferin );this has to be wrong with the 1 there...*/
-//				
-//				while( ( blocks = DVDReadBlocks( dvd_file, i, file_block_count, bufferin ) ) <= 0 && tries < 10 )
-//				{
-//					if( tries == 9 )
-//					{
-//						i += file_block_count;
-//						skipped_blocks +=1;
-//						overall_skipped_blocks +=1;
-//						tries=0;
-//					}
-//					/*                          if( verbosity_level >= 1 )
-//					 fprintf( stderr, _("[Warn] Had to skip %d blocks (reading block %d)! \n "), skipped_blocks, i ); */
-//					tries++;
-//				}
-//				
-//				if( verbosity_level >= 1 && skipped_blocks > 0 )
-//					fprintf( stderr, _("[Warn] Had to skip (couldn't read) %d blocks (before block %d)! \n "), skipped_blocks, i );
-//				
-//				/*TODO: this skipping here writes too few bytes to the output */
-//				
-//				if( write( streamout, bufferin, DVD_VIDEO_LB_LEN * blocks ) < 0 )
-//				{
-//					fprintf( stderr, _("\n[Error] Error writing to %s \n"), output_file );
-//					fprintf( stderr, _("[Error] Error: %s, errno: %d \n"), strerror( errno ), errno );
-//					exit( 1 );
-//				}
-//				
-//				/*progression bar*/
-//				/*this here doesn't work with -F 10 */
-//				/*		      if( !( ( ( ( i-start )+1 )*DVD_VIDEO_LB_LEN )%( 1024*1024 ) ) ) */
-//				progressUpdate(starttime, (int)(( ( i-start+1 )*DVD_VIDEO_LB_LEN )), (int)(tmp_file_size+2048), FALSE);
-//				/*
-//				 if( check_progress() )
-//				 {
-//				 tmp_i = ( i-start );
-//				 
-//				 percent = ( ( ( ( tmp_i+1 )*DVD_VIDEO_LB_LEN )*100 )/tmp_file_size );
-//				 fprintf( stderr, _("\r%4.0fMB of %4.0fMB written "),
-//				 ( ( tmp_i+1 )*DVD_VIDEO_LB_LEN )/( 1024*1024 ),
-//				 ( tmp_file_size+2048 )/( 1024*1024 ) );
-//				 fprintf( stderr, _("( %3.1f %% ) "), percent );
-//				 }
-//				 */
-//			}
-//			/*this is just so that at the end it actually says 100.0% all the time... */
-//			/*TODO: if it is correct to always assume it's 100% is a good question.... */
-//			/*                  fprintf( stderr, _("\r%4.0fMB of %4.0fMB written "),
-//			 ( ( tmp_i+1 )*DVD_VIDEO_LB_LEN )/( 1024*1024 ),
-//			 ( tmp_file_size+2048 )/( 1024*1024 ) );
-//			 fprintf( stderr, _("( 100.0%% ) ") );
-//			 */
-//			lastpos = 0;
-//			progressUpdate(starttime, (int)(( ( i-start+1 )*DVD_VIDEO_LB_LEN )), (int)(tmp_file_size+2048), TRUE);
-//			start=i;
-//			fprintf( stderr, _("\n") );
-//			if( !stdout_flag )
-//			{
-//				if( fdatasync( streamout ) < 0 )
-//				{
-//					fprintf( stderr, _("\n[Error] error writing to %s \n"), output_file );
-//					fprintf( stderr, _("[Error] error: %s\n"), strerror( errno ) );
-//					exit( 1 );
-//				}
-//				
-//				close( streamout );
-//				re_name( output_file );
-//			}
-//		}
-//	}
-//	
-//	ifoClose( vmg_file );
-//	DVDCloseFile( dvd_file );
-//	DVDClose( dvd );
-//	if ( overall_skipped_blocks > 0 )
-//		fprintf( stderr, _("[Info] %d blocks had to be skipped, be warned.\n"), overall_skipped_blocks );
-//	exit( 0 );
-//	/*end of mirror block*/
+	//tell the delegate we started
+	if([self delegate] != nil) [[self delegate] performSelectorOnMainThread:@selector(mirrorStarted) withObject:nil waitUntilDone:NO];
+	[self setIsCopying:YES];
+	//open the dvd
+	dvd = DVDOpen([device_path cStringUsingEncoding:NSStringEncodingConversionAllowLossy]);
+	if(dvd == NULL)
+	{
+		//if this didn't work let the world know...
+		if([self delegate] != nil) [[self delegate] performSelectorOnMainThread:@selector(mirrorEnded) withObject:nil waitUntilDone:NO];
+		NSRunAlertPanel(@"Mirror DVD Error",
+						[NSString stringWithFormat:@"Unable to open DVD:%@\n\nDevice:\n\t%@",
+						 dvd_path, device_path],
+						@"Ok",
+						nil,
+						nil);
+		return;
+	}
+#pragma mark Set video_ts_path
+	//Set the from directory, it should be dvd_path with "/VIDEO_TS" or "/video_ts"
+	NSArray* files = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:dvd_path error:&error];
+	if(files == nil)
+	{
+		//if this didn't work let the world know...
+		if([self delegate] != nil) [[self delegate] performSelectorOnMainThread:@selector(mirrorEnded) withObject:nil waitUntilDone:NO];
+		NSRunAlertPanel(@"Mirror DVD Error",
+						[NSString stringWithFormat:@"Unable to read Directory:%@\n\nReason:\n\t%@",
+						 dvd_path, [error description]],
+						@"Ok",
+						nil,
+						nil);
+		DVDClose(dvd);
+		return;
+	}
+	//cycle though looking for VIDEO_TS (makes case not matter)
+	for(NSString* file in files)
+	{
+		if([file compare:@"video_ts" options:NSCaseInsensitiveSearch] == 0)
+		{
+			video_ts_path = [dvd_path stringByAppendingPathComponent:file];
+		}
+	}
+	//make sure we found something
+	if(video_ts_path == nil)
+	{
+		//if this didn't work let the world know...
+		if([self delegate] != nil) [[self delegate] performSelectorOnMainThread:@selector(mirrorEnded) withObject:nil waitUntilDone:NO];
+		NSRunAlertPanel(@"Mirror DVD Error",
+						[NSString stringWithFormat:@"Unable to find a VIDEO_TS folder in:%@", dvd_path],
+						@"Ok",
+						nil,
+						nil);
+		DVDClose(dvd);
+		return;
+	}
+	//make sure what we found is a directory
+	file_exists = [[NSFileManager defaultManager] fileExistsAtPath:video_ts_path isDirectory:&is_dir];
+	if(!file_exists || !is_dir)
+	{
+		//if this didn't work let the world know...
+		if([self delegate] != nil) [[self delegate] performSelectorOnMainThread:@selector(mirrorEnded) withObject:nil waitUntilDone:NO];
+		NSRunAlertPanel(@"Mirror DVD Error",
+						[NSString stringWithFormat:@"VIDEO_TS folder \"%@\" does not exist or is not a folder.",video_ts_path],
+						@"Ok",
+						nil,
+						nil);
+		DVDClose(dvd);
+		return;
+	}
+
+#pragma mark set destination path
+	
+	//We always start with a new directory, so if output_path exists, we will make output_path+"[i]"...
+	i = 0;
+	mirror_to_path = [output_path copy];
+	while([[NSFileManager defaultManager] fileExistsAtPath:mirror_to_path isDirectory:&is_dir] && is_dir)
+	{
+		mirror_to_path = [output_path stringByAppendingFormat:@"[%i]", ++i];
+	}
+	//now tack the last component of video_ts_path (should be /VIDEO_TS) onto it...
+	mirror_to_path = [mirror_to_path stringByAppendingPathComponent:[video_ts_path lastPathComponent]];
+	//create the copy_to_path directory
+	if([[NSFileManager defaultManager] createDirectoryAtPath:mirror_to_path
+								 withIntermediateDirectories:YES
+												  attributes:nil
+													   error:&error] == NO)
+	{
+		//if this didn't work let the world know...
+		if([self delegate] != nil) [[self delegate] performSelectorOnMainThread:@selector(mirrorEnded) withObject:nil waitUntilDone:NO];
+		NSRunAlertPanel(@"Mirror DVD Error",
+						[NSString stringWithFormat:@"Unable to create directory:%@\n\nReason:\n\t%@",
+						 mirror_to_path, [error description]],
+						@"Ok",
+						nil,
+						nil);
+		DVDClose(dvd);
+		return;
+	}
+	
+#pragma mark Size up folder DVD/VIDEO_TS
+	video_ts_files = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:video_ts_path error:&error];
+	if(video_ts_files == nil)
+	{
+		//if this didn't work let the world know...
+		if([self delegate] != nil) [[self delegate] performSelectorOnMainThread:@selector(mirrorEnded) withObject:nil waitUntilDone:NO];
+		NSRunAlertPanel(@"Mirror DVD Error",
+						[NSString stringWithFormat:@"Unable to get contents of folder:%@\n\nReason:\n\t%@",
+						 video_ts_path, [error description]],
+						@"Ok",
+						nil,
+						nil);
+		DVDClose(dvd);
+		return;
+	}
+	//run though the contents, add up the sizes of all *.VOB, *.IFO, *.BUP files.
+	video_ts_size = 0;
+	for(i = 0; i < [video_ts_files count]; i++)
+	{
+		src_file_path = [video_ts_path stringByAppendingPathComponent:[video_ts_files objectAtIndex:i]];
+		if([src_file_path compare:@"."] != 0 ||
+		   [src_file_path compare:@".." ] != 0)
+		{
+			video_ts_size = video_ts_size + [[[NSFileManager defaultManager] attributesOfItemAtPath:src_file_path error:nil][NSFileSize] longLongValue];
+		}
+	}
+	NSLog(@"%@ total size = %lu", video_ts_path, video_ts_size);
+	
+#pragma mark Copy files loop
+	bytes_read = 0;
+	for(i = 0; i < [video_ts_files count] && [self isCopying]; i++)
+	{
+		//get the file to copy...
+		src_file_path = [video_ts_path stringByAppendingPathComponent:[video_ts_files objectAtIndex:i]];
+		//make sure it is not . or ..
+		if([src_file_path compare:@"."] != 0 ||
+		   [src_file_path compare:@".." ] != 0)
+		{
+			src_file_size = [[[NSFileManager defaultManager] attributesOfItemAtPath:src_file_path error:nil][NSFileSize] longLongValue];
+			//set the destination file.
+			dest_file_path = [mirror_to_path stringByAppendingPathComponent:[video_ts_files objectAtIndex:i]];
+//			file name format in VIDEO_TS:
+//				VIDEO_TS.[IFO, BUP, VOB] - main menu files.
+//				VTS_TT_S.[IFO, BUP, VOB] - title files.
+//					where TT is the title number and S is the sub-title number.
+			//get the title number, we don't have to worry about VIDEO_TS file, integerValue will make it 0.
+			NSArray* parts = [(NSString*)[video_ts_files objectAtIndex:i] componentsSeparatedByString:@"_"];
+			title_nr = [[parts objectAtIndex:1] integerValue];
+			//now get the sub-title number
+			parts = [(NSString*)[video_ts_files objectAtIndex:i] componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"_."]];
+			if([parts count] >= 3)
+			{
+				sub_title_nr = [[parts objectAtIndex:2] integerValue];
+			}
+			else
+			{
+				sub_title_nr = 0;
+			}
+			NSLog(@"title/sub for %@: %li/%li", src_file_path, title_nr, sub_title_nr);
+#pragma mark IFO file copy
+			//switch on file extention, all file types are copied differently... CSS again.
+			if([[src_file_path pathExtension] compare:@"IFO" options:NSCaseInsensitiveSearch] == 0)
+			{
+				//an IFO file, just read and write...
+				src_file = DVDOpenFile(dvd, (int)title_nr, DVD_READ_INFO_FILE);
+				if(src_file == NULL)
+				{
+					//if this didn't work let the world know...
+					if([self delegate] != nil) [[self delegate] performSelectorOnMainThread:@selector(mirrorEnded) withObject:nil waitUntilDone:NO];
+					NSRunAlertPanel(@"Mirror DVD Error",
+									[NSString stringWithFormat:@"Unable to open file:%@",
+									 src_file_path],
+									@"Ok",
+									nil,
+									nil);
+					fclose(dest_file);
+					DVDClose(dvd);
+					return;
+				}
+				//open the destination stream
+				dest_file = fopen([dest_file_path cStringUsingEncoding:NSStringEncodingConversionAllowLossy], "w");
+				if(dest_file == NULL)
+				{
+					//if this didn't work let the world know...
+					if([self delegate] != nil) [[self delegate] performSelectorOnMainThread:@selector(mirrorEnded) withObject:nil waitUntilDone:NO];
+					NSRunAlertPanel(@"Mirror DVD Error",
+									[NSString stringWithFormat:@"Unable to open file:%@",
+									 dest_file_path],
+									@"Ok",
+									nil,
+									nil);
+					DVDClose(dvd);
+					return;
+				}
+				for(j = 0; j*DVD_VIDEO_LB_LEN < src_file_size; j++)
+				{
+					bytes_read += DVDReadBytes(src_file, buffer, DVD_VIDEO_LB_LEN);
+					fwrite(buffer, DVD_VIDEO_LB_LEN, sizeof(unsigned char), dest_file);
+					//let our delegate know where we are at...
+					if([self delegate] != nil) [[self delegate] performSelectorOnMainThread:@selector(mirrorProgress:) withObject:[NSNumber numberWithFloat:(float)(bytes_read / video_ts_size)*100.0f] waitUntilDone:NO];
+				}
+				DVDCloseFile(src_file);
+				fclose(dest_file);
+			}
+			else if([[src_file_path pathExtension] compare:@"BUP" options:NSCaseInsensitiveSearch] == 0)
+			{
+#pragma mark BUP file copy
+				//a BUP file, just read and copy
+				src_file = DVDOpenFile(dvd, (int)title_nr, DVD_READ_INFO_BACKUP_FILE);
+				if(src_file == NULL)
+				{
+					//if this didn't work let the world know...
+					if([self delegate] != nil) [[self delegate] performSelectorOnMainThread:@selector(mirrorEnded) withObject:nil waitUntilDone:NO];
+					NSRunAlertPanel(@"Mirror DVD Error",
+									[NSString stringWithFormat:@"Unable to open file:%@",
+									 src_file_path],
+									@"Ok",
+									nil,
+									nil);
+					DVDClose(dvd);
+					return;
+				}
+				//open the destination stream
+				dest_file = fopen([dest_file_path cStringUsingEncoding:NSStringEncodingConversionAllowLossy], "w");
+				if(dest_file == NULL)
+				{
+					//if this didn't work let the world know...
+					if([self delegate] != nil) [[self delegate] performSelectorOnMainThread:@selector(mirrorEnded) withObject:nil waitUntilDone:NO];
+					NSRunAlertPanel(@"Mirror DVD Error",
+									[NSString stringWithFormat:@"Unable to open file:%@",
+									 dest_file_path],
+									@"Ok",
+									nil,
+									nil);
+					DVDCloseFile(src_file);
+					DVDClose(dvd);
+					return;
+				}
+				for(j = 0; j*DVD_VIDEO_LB_LEN < src_file_size; j++)
+				{
+					bytes_read += DVDReadBytes(src_file, buffer, DVD_VIDEO_LB_LEN);
+					fwrite(buffer, DVD_VIDEO_LB_LEN, sizeof(unsigned char), dest_file);
+					//let our delegate know where we are at...
+					if([self delegate] != nil) [[self delegate] performSelectorOnMainThread:@selector(mirrorProgress:) withObject:[NSNumber numberWithFloat:(float)(bytes_read / video_ts_size)*100.0] waitUntilDone:NO];
+					
+				}
+				DVDCloseFile(src_file);
+				fclose(dest_file);
+			}
+			else if([[src_file_path pathExtension] compare:@"VOB" options:NSCaseInsensitiveSearch] == 0)
+			{
+#pragma mark VOB file copy
+				unsigned long start = 0;
+				if(sub_title_nr == 0 || title_nr == 0  ) //menu files
+				{
+					src_file = DVDOpenFile(dvd, (int)title_nr, DVD_READ_MENU_VOBS);
+					start = 0;
+				}
+				else
+				{
+					src_file = DVDOpenFile( dvd, (int)title_nr, DVD_READ_TITLE_VOBS );
+				}
+				//open the destination stream
+				dest_file = fopen([dest_file_path cStringUsingEncoding:NSStringEncodingConversionAllowLossy], "w");
+				if(dest_file == NULL)
+				{
+					//if this didn't work let the world know...
+					if([self delegate] != nil) [[self delegate] performSelectorOnMainThread:@selector(mirrorEnded) withObject:nil waitUntilDone:NO];
+					NSRunAlertPanel(@"Mirror DVD Error",
+									[NSString stringWithFormat:@"Unable to open file:%@",
+									 dest_file_path],
+									@"Ok",
+									nil,
+									nil);
+					DVDCloseFile(src_file);
+					DVDClose(dvd);
+					return;
+				}
+				if(sub_title_nr == 1 || sub_title_nr == 0 )
+				{
+					start = 0;
+				}
+				if(sub_title_nr > 1 && sub_title_nr < 9)
+				{
+					unsigned long single_vob_size = 0;
+					int a;
+					NSString* t_src_file_path;
+					for(a = 1; a < sub_title_nr; a++)
+					{
+						t_src_file_path = [src_file_path stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"_%li.", title_nr]
+																				   withString:[NSString stringWithFormat:@"_%i.", a]];
+						single_vob_size += [[[NSFileManager defaultManager] attributesOfItemAtPath:src_file_path error:nil][NSFileSize] longLongValue];
+					}
+
+					start = ( single_vob_size / DVD_VIDEO_LB_LEN );
+				}
+				file_block_count = block_count;
+				for(j = start; (j - start)*DVD_VIDEO_LB_LEN < src_file_size && [self isCopying]; j += file_block_count)
+				{
+					int tries = 0, skipped_blocks = 0;
+					if((j - start + file_block_count) * DVD_VIDEO_LB_LEN > src_file_size )
+					{
+						file_block_count = (int)((src_file_size / DVD_VIDEO_LB_LEN) - (j - start));
+					}
+
+					while((blocks = DVDReadBlocks(src_file, (int)j, file_block_count, buffer)) <= 0 && tries < 3 && [self isCopying])
+					{
+						if(tries == 2)
+						{
+							j += file_block_count;
+							skipped_blocks +=1;
+							tries=0;
+						}
+						tries++;
+					}
+					long br = blocks * DVD_VIDEO_LB_LEN;
+					bytes_read += blocks * DVD_VIDEO_LB_LEN;
+					fwrite(buffer, br, sizeof(unsigned char), dest_file);
+					//let our delegate know where we are at...
+					if([self delegate] != nil) [[self delegate] performSelectorOnMainThread:@selector(mirrorProgress:) withObject:[NSNumber numberWithFloat:(float)((float)bytes_read / (float)video_ts_size)*100.0] waitUntilDone:NO];
+				}
+				DVDCloseFile(src_file);
+				fclose(dest_file);
+			}
+		}
+	}
+
+	DVDClose(dvd);
+	//the end
+	if([self delegate] != nil) [[self delegate] performSelectorOnMainThread:@selector(mirrorEnded) withObject:nil waitUntilDone:NO];
 }
 
 -(BOOL)mirrorDVD:(NSString*)outputPath
 {
-	NSArray* paths = [NSArray arrayWithObjects:[[self devicePath] copy], [outputPath copy], nil];
+	NSArray* paths = [NSArray arrayWithObjects:[[self devicePath] copy], [[self path] copy], [outputPath copy], nil];
 	
 	[NSThread detachNewThreadSelector:@selector(runMirrorDVDThread:) toTarget:self withObject:paths];
 	return true;

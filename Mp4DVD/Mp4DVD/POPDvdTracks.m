@@ -85,7 +85,7 @@
 {
 	POPDvdTracks* rtn = nil;
 	
-	POPDvd* dvd = [[POPDvd alloc] initWithDevicePath:path];
+	POPDvd* dvd = [[POPDvd alloc] initWithDevicePath:path open:YES];
 	rtn = [[POPDvdTracks alloc] initWithDictionary:[dvd contents]];
 	dvd = nil;
 	

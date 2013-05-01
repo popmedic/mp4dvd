@@ -27,27 +27,9 @@
 	_outputFileName = [outputFilePath copy];
 	_isConverting = NO;
 	
-	/*_tempFolderPath = [NSTemporaryDirectory() stringByAppendingPathComponent:[[[_outputFileName lastPathComponent] stringByDeletingPathExtension] stringByAppendingFormat:@"%i",(int)[NSDate timeIntervalSinceReferenceDate]]];
-	[[NSFileManager defaultManager] createDirectoryAtPath:_tempFolderPath
-							  withIntermediateDirectories:YES
-											   attributes:nil
-													error:nil];*/
 	_tempFolderPath = [[outputFilePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:[[[_outputFileName lastPathComponent] stringByDeletingPathExtension] stringByAppendingFormat:@"%i",(int)[NSDate timeIntervalSinceReferenceDate]]];
-	/*[[NSFileManager defaultManager] createDirectoryAtPath:_tempFolderPath
-							  withIntermediateDirectories:YES
-											   attributes:nil
-													error:nil];*/
-	/*_vobcopy = [[POPVobcopy alloc] initWithDvdPath:dvdPath
-											 title:[track title]
-										outputPath:_tempFolderPath];
-	//_concat = [[POPConcat alloc] initWithInputFolder:_tempFolderPath];*/
-	//_ffmpeg = nil;//[[POPFfmpeg alloc] initWithInputPath:[_concat outputFilePath] OutputPath:outputFilePath Duration:[track lengthInSeconds]];
 	
-	//[_vobcopy setDelegate:self];
-	//[_concat setDelegate:self];
-	//[_ffmpeg setDelegate:self];
-	
-	_dvd = [[POPDvd alloc] initWithDevicePath:dvdPath];
+	_dvd = [[POPDvd alloc] initWithDevicePath:dvdPath open:NO];
 	[_dvd setDelegate:self];
 	return self;
 }
@@ -126,6 +108,18 @@
 	}
 	
 }
+-(void)mirrorStarted
+{
+	NSLog(@"DVDTrackConverter: mirror started");
+}
+-(void)mirrorProgress:(NSNumber*)percent
+{
+	NSLog(@"DVDTrackConverter: mirror ended");
+}
+-(void)mirrorEnded
+{
+	NSLog(@"DVDTrackConverter: ffmpeg ended");
+}
 
 -(BOOL) launch
 {
@@ -160,7 +154,9 @@
 @end
 
 @implementation POPDvd2Mp4
-
+{
+	POPDvd* _dvd;
+}
 -(id)initWithTracks:(POPDvdTracks*)tracks
 			dvdPath:(NSString*)dvdPath
 	 outputFileBasePath:(NSString*)outputFileBasePath
@@ -171,10 +167,11 @@
 	self = [super init];
 	
 	_delegate = nil;
+	_dvd = nil;
 	_currentConverterIndex = 0;
 	_tracks = tracks;
-	_dvdPath = dvdPath;
-	_outputFileBasePath = outputFileBasePath;
+	_dvdPath = [dvdPath copy];
+	_outputFileBasePath = [outputFileBasePath copy];
 	_outputFileBaseName = [outputFileBasePath lastPathComponent];
 	
 	_trackConverters = [[NSMutableArray alloc] init];
@@ -209,35 +206,30 @@
 
 -(BOOL) launch
 {
+	POPDvd2Mp4TrackConverter* tc = [_trackConverters objectAtIndex:_currentConverterIndex];
+	if(_delegate != nil)
+	{
+		[_delegate dvdRipStarted];
+	}
+	_isConverting = YES;
+	[tc launch];
 	
-	NSInteger mirrorDVDState = [[[NSUserDefaults standardUserDefaults] objectForKey:@"mirrorDVDState"] integerValue];
-	if(mirrorDVDState == NSOnState)
-	{
-		NSRunAlertPanel(@"Not Supported",
-						@"DVD ISO Back-up is in the works.\n\n Please be patient.",
-						@"Ok", nil, nil);
-		return NO;
-	}
-	else
-	{
-		POPDvd2Mp4TrackConverter* tc = [_trackConverters objectAtIndex:_currentConverterIndex];
-		if(_delegate != nil)
-		{
-			[_delegate dvdRipStarted];
-		}
-		_isConverting = YES;
-		[tc launch];
-	}
 	return YES;
 }
 
 -(BOOL) terminate
 {
-	POPDvd2Mp4TrackConverter* tc = [_trackConverters objectAtIndex:_currentConverterIndex];
+	NSInteger mirrorDVDState = [[[NSUserDefaults standardUserDefaults] objectForKey:@"mirrorDVDState"] integerValue];
+	if(mirrorDVDState != NSOnState)
+	{
+		POPDvd2Mp4TrackConverter* tc = [_trackConverters objectAtIndex:_currentConverterIndex];
+		[tc terminate];
+	}
 	_isConverting = NO;
-	[tc terminate];
 	return YES;
 }
+
+#pragma mark POPDvd2Mp4TrackConverter Delegate Callbacks
 
 -(void)startConverter
 {
@@ -303,5 +295,4 @@
 		}
 	}
 }
-
 @end
