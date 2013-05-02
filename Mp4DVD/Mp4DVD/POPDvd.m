@@ -315,8 +315,8 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 			}
 			
 			st = st + ms;
-			NSString* chapter_length = [NSString stringWithFormat:@"%f", (float)((ms * 0.001)+0.1)];
-			if((float)(st * 0.001) >= (float)(durationInSecs-0.1))
+			NSString* chapter_length = [NSString stringWithFormat:@"%f", (float)(ms * 0.001)];
+			if((float)(st * 0.001) >= (float)durationInSecs)
 			{
 				chapter_length = [NSString stringWithFormat:@"%f", durationInSecs];
 			}
