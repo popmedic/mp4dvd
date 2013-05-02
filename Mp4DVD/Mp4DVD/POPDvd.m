@@ -17,6 +17,7 @@
 #include <sys/mount.h>
 #include <dirent.h>
 
+//#import <QTKit/QTKit.h>
 #import "POPDvdTracks.h"
 #import "POPmp4v2dylibloader.h"
 
@@ -253,7 +254,7 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 	NSString* dvdPath = [paths objectAtIndex:0];
 	NSString* trackTitle = [paths objectAtIndex:1];
 	NSString* outPath = [[paths objectAtIndex:2] copy];
-	//float durationInSecs = [[paths objectAtIndex:3] floatValue];
+	float durationInSecs = [[paths objectAtIndex:3] floatValue];
 	long trackNum = [trackTitle integerValue];
 	
 	[self setIsCopying:YES];
@@ -283,8 +284,53 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 			use_passthough = true;
 		}
 	}
-	
-	//let the delegate know we are starting the copy and convertion.
+#pragma mark Create Chapters file for Mp4Split
+	//see if userinfo is set to output a chapters file.
+	NSInteger chptrFileCreateState = [[NSUserDefaults standardUserDefaults] integerForKey:@"chptrFileCreateState"];
+	//if we are to create the file...
+	if(chptrFileCreateState == NSOnState)
+	{
+		//grab our program chain and create chapters array.
+		int ttn = tt_srpt->title[trackNum-1].vts_ttn;
+		vts_ptt_srpt_t* vts_ptt_srpt = vts_file->vts_ptt_srpt;
+		int pgc_id = vts_ptt_srpt->title[ttn - 1].ptt[0].pgcn;
+		pgc_t* pgc = vts_file->vts_pgcit->pgci_srp[pgc_id - 1].pgc;
+		FILE* chap_out_file;
+		//if we got chapters, then create the file...
+		if(pgc->nr_of_programs > 0)
+		{
+			chap_out_file = fopen([[[outPath stringByDeletingPathExtension] stringByAppendingPathExtension:@"chptr"] cStringUsingEncoding:NSStringEncodingConversionAllowLossy], "w+");
+		}
+		//go though the chapters
+		long ms, st = 0, cell = 0;
+		for (int i = 0; i < pgc->nr_of_programs; i++)
+		{
+			ms=0;
+			int next = pgc->program_map[i+1];
+			if (i == pgc->nr_of_programs - 1) next = pgc->nr_of_cells + 1;
+			while (cell < next - 1)
+			{
+				ms = ms + dvdtime2msec(&pgc->cell_playback[cell].playback_time);
+				cell++;
+			}
+			
+			st = st + ms;
+			NSString* chapter_length = [NSString stringWithFormat:@"%f", (float)((ms * 0.001)+0.1)];
+			if((float)(st * 0.001) >= (float)(durationInSecs-0.1))
+			{
+				chapter_length = [NSString stringWithFormat:@"%f", durationInSecs];
+			}
+			NSString* chapter_title  = [NSString stringWithFormat:@"%i", i+1];
+			
+			fprintf(chap_out_file, "%s:%s\n", [chapter_title cStringUsingEncoding:NSStringEncodingConversionAllowLossy], [chapter_length cStringUsingEncoding:NSStringEncodingConversionAllowLossy]);
+		}
+		if(pgc->nr_of_programs > 0)
+		{
+			fclose(chap_out_file);
+		}
+	}
+#pragma mark Start Copy
+	//let the delegate know we are starting the copy
 	if([self delegate] != nil) [[self delegate] performSelectorOnMainThread:@selector(copyAndConvertStarted) withObject:nil waitUntilDone:NO];
 	//let the delegate know we started copying.
 	if([self delegate] != nil) [[self delegate] performSelectorOnMainThread:@selector(copyStarted) withObject:nil waitUntilDone:NO];
@@ -559,10 +605,25 @@ bool device_path_with_volume_path(char *device_path, const char *volume_path, in
 	if(mp4File != NULL)
 	{
 		MP4Chapter_t* mp4Chapters = malloc(sizeof(MP4Chapter_t)*[chapters count]);
+//		NSMutableArray* m4vChapters = [NSMutableArray array];
+//		unsigned long long chap_st_secs = 0.0;
 		for(int i = 0; i < [chapters count]; i++)
 		{
-			mp4Chapters[i].duration = [[[chapters objectAtIndex:i] objectForKey:@"Length"] doubleValue] * 1000;
-			strcpy(mp4Chapters[i].title, [[[chapters objectAtIndex:i] objectForKey:@"Title"] cStringUsingEncoding:NSStringEncodingConversionAllowLossy]);
+			unsigned long long chap_len_secs = [[[chapters objectAtIndex:i] objectForKey:@"Length"] doubleValue];
+			NSString* chap_name = [[chapters objectAtIndex:i] objectForKey:@"Title"];
+			
+			mp4Chapters[i].duration = chap_len_secs * 1000;
+			strcpy(mp4Chapters[i].title, [chap_name cStringUsingEncoding:NSStringEncodingConversionAllowLossy]);
+			
+//			chap_st_secs += chap_len_secs;
+//			QTTime t_qt_time = QTMakeTime(chap_len_secs * 1000, 1000);
+//			NSValue* m4v_chap_qttime = [NSValue valueWithQTTime:t_qt_time];
+//			NSDictionary* new_m4v_chap = [NSDictionary dictionaryWithObjectsAndKeys:
+//										  chap_name, QTMovieChapterName,
+//										  m4v_chap_qttime, QTMovieChapterStartTime,
+//										  nil];
+//			NSDictionary* new_m4v_chap_attrs = [NSDictionary dictionaryWithObjectsAndKeys:
+//												, nil]
 		}
 		if(_MP4SetChapters(mp4File, mp4Chapters, (unsigned int)[chapters count], MP4ChapterTypeAny) != MP4ChapterTypeAny)
 		{

@@ -39,15 +39,26 @@
 	_dvd2mp4 = nil;
 	_dvd = nil;
 	
+	NSInteger chptrFileCreateState = [[[NSUserDefaults standardUserDefaults] objectForKey:@"chptrFileCreateState"] integerValue];
+	[[self chptrFileCreateBtn] setState:chptrFileCreateState];
 	
 	NSInteger vobCopyOnlyState = [[[NSUserDefaults standardUserDefaults] objectForKey:@"vobCopyOnlyState"] integerValue];
 	[[self vobCopyOnlyBtn] setState:vobCopyOnlyState];
+	if(vobCopyOnlyState == NSOnState)
+	{
+		[[self chptrFileCreateBtn] setEnabled:YES];
+	}
+	else
+	{
+		[[self chptrFileCreateBtn] setEnabled:NO];
+	}
 	
 	NSInteger mirrorDVDState = [[[NSUserDefaults standardUserDefaults] objectForKey:@"mirrorDVDState"] integerValue];
 	[[self mirrorDVDBtn] setState:mirrorDVDState];
 	if(mirrorDVDState == NSOnState)
 	{
 		[[self vobCopyOnlyBtn] setEnabled:NO];
+		[[self chptrFileCreateBtn] setEnabled:NO];
 		[[self trackTableView] setEnabled:NO];
 	}
 	
@@ -200,6 +211,14 @@
 - (IBAction)prefsVobCopyOnlyClick:(id)sender
 {
 	NSInteger vobCopyOnlyState = [(NSButton*)sender state];
+	if(vobCopyOnlyState == NSOnState)
+	{
+		[[self chptrFileCreateBtn] setEnabled:YES];
+	}
+	else
+	{
+		[[self chptrFileCreateBtn] setEnabled:NO];
+	}
 	[[NSUserDefaults standardUserDefaults] setInteger:vobCopyOnlyState forKey:@"vobCopyOnlyState"];
 }
 
@@ -210,14 +229,30 @@
 	if(mirrorDVDState == NSOnState)
 	{
 		[[self vobCopyOnlyBtn] setEnabled:NO];
+		[[self chptrFileCreateBtn] setEnabled:NO];
 		[[self trackTableView] setEnabled:NO];
 	}
 	else
 	{
 		[[self vobCopyOnlyBtn] setEnabled:YES];
+		NSInteger vobCopyOnlyState = [[NSUserDefaults standardUserDefaults] integerForKey:@"vobCopyOnlyState"];
+		if(vobCopyOnlyState == NSOnState)
+		{
+			[[self chptrFileCreateBtn] setEnabled:YES];
+		}
+		else
+		{
+			[[self chptrFileCreateBtn] setEnabled:NO];
+		}
 		[[self trackTableView] setEnabled:YES];
 	}
 	[[NSUserDefaults standardUserDefaults] setInteger:mirrorDVDState forKey:@"mirrorDVDState"];
+}
+
+- (IBAction)prefsChptrFileCreateClick:(id)sender
+{
+	NSInteger chptrFileCreateState = [(NSButton*)sender state];
+	[[NSUserDefaults standardUserDefaults] setInteger:chptrFileCreateState forKey:@"chptrFileCreateState"];
 }
 
 - (IBAction)prefsCloseClick:(id)sender
